@@ -1,26 +1,9 @@
 This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
 
-## How to use this template
+## This folder contains the initial screens for the mobile mechanic application
+The files were generated using the Ionic Creator online tool.
+The files were exported as a zip file and placed into the www folder of a blank ionic application.
+The config.xml was copied inside the www folder and the steps mentioned in [How To Build Ionic App with PhoneGap build](http://pointdeveloper.com/how-to-build-ionic-app-with-phonegap-build/) were performed.
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
-
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
-
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
-
-```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myBlank blank
-```
-
-Then, to run it, cd into `myBlank` and run:
-
-```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
-```
-
-Substitute ios for android if not on a Mac.
-
+## To run the application:
+import the folder into the phoneGap desktop application
