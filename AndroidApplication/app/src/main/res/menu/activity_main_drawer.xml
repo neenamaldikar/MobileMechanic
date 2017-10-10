@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_account_circle_white_24dp"
+            android:title="Profile" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history_white_24dp"
+            android:title="History" />
+        <item
+            android:id="@+id/nav_payment"
+            android:icon="@drawable/ic_credit_card_white_24dp"
+            android:title="Payment" />
+    </group>
+
+    <group >
+        <item
+            android:id="@+id/nav_sign_up_mech"
+            android:icon="@drawable/ic_face_white_24dp"
+            android:title="Sign up as Mechanic" />
+
+        <item
+            android:id="@+id/nav_sign_out"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Sign Out" />
+    </group>
+
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="none" >
+
+        <item
+            android:id="@+id/nav_legal_info"
+            android:icon="@drawable/ic_info_outline_white_24dp"
+            android:title="Legal Information" />
+
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help_outline_white_24dp"
+            android:title="Help" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="Settings" />
+    </group>
+
+
+
+</menu>

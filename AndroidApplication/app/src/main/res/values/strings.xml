@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">TestLogin</string>
+    <string name="title_main">TestLogin</string>
+    <string name="title_login_name">Login Screen</string>
+    <string name="title_profile_edit">Edit Profile</string>
+    <string name="title_mech_profile_edit">Sign up as Mechanic</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="facebook_app_id">811832542261786</string>
+
+
+    <string name="test_rest_client_name">Test Rest Client</string>
+</resources>
