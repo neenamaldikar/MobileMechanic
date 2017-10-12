@@ -17,6 +17,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.login.mm.nealio.testlogin.R;
 import com.mm.mobilemechanic.authorization.RestClient;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +92,11 @@ public class LoginActivity extends AppCompatActivity {
                 request.setParameters(parameters);
                 request.executeAsync();
 
-                RestClient.getUserJWToken(loginResult.getAccessToken(), "", getUserTokenCallback);
+                //// RestClient.getUserJWToken(token, "", getUserTokenCallback);  //TODO uncomment when python service is running
+                Bundle bundle = new Bundle();
+                bundle.putString("token", "FakeToken");
+                onSuccessLaunchMainScreen(bundle);
+                ////
             }
 
             @Override
@@ -112,6 +118,11 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main_logo, menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mFBcallbackManager = CallbackManager.Factory.create();
         initFacebookLoginButton();
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         AccessToken token = AccessToken.getCurrentAccessToken();
 
