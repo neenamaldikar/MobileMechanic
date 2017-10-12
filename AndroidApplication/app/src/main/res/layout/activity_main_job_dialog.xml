@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textView_dialog_job_summary"
+        android:layout_width="wrap_content"
+        android:textSize="32sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_dialog_job_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- just draw a red line -->
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="2dip"
+        android:background="#000000" />
+
+    <TextView
+        android:id="@+id/textView_dialog_onSiteDiagnostic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_dialog_carInWorkingCondition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textView_dialog_repairCanBeDoneOnSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_dialog_carPickUpDropOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_dialog_parkingAvailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>

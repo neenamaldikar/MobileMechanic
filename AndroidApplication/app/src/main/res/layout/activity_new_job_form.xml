@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Summary:" />
+
+        <EditText
+            android:id="@+id/editText_job_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:inputType="textMultiLine"
+            android:maxLines="1" />
+
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description:" />
+
+        <EditText
+            android:id="@+id/editText_job_description"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="4dp"
+            android:hint="Enter description of problem"
+            android:inputType="textMultiLine" />
+
+        <EditText
+            android:id="@+id/editText_car_make"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter car make" />
+
+        <EditText
+            android:id="@+id/editText_car_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter car model" />
+
+        <EditText
+            android:id="@+id/editText_car_year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter car year" />
+
+        <TextView
+            android:id="@+id/textView56"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Additional options:" />
+
+        <Switch
+            android:id="@+id/switch_on_site_diagnostic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Need on-site diagnostic" />
+
+        <Switch
+            android:id="@+id/switch_car_in_working_condition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Is car in working condition" />
+
+        <Switch
+            android:id="@+id/switch_repair_done_on_site"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Can repair be done on-site" />
+
+        <Switch
+            android:id="@+id/switch_car_pick_up_drop_off"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Need car pick-up and drop-off" />
+
+        <Switch
+            android:id="@+id/switch_parking_available"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="Parking available for mechanic" />
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ll_images_from_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+
+            <Button
+                android:id="@+id/button_cancel_job"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/button_submit_job"
+                android:layout_toStartOf="@+id/button_submit_job"
+                android:onClick="cancelJobOnClick"
+                android:text="Cancel" />
+
+            <Button
+                android:id="@+id/button_submit_job"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:onClick="submitJobOnClick"
+                android:text="Submit" />
+
+            <Button
+                android:id="@+id/button_choose_pictures"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:onClick="ChoosePicturesFromGalleryOnClick"
+                android:text="Add pictures" />
+        </RelativeLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="32dp"/>
+    </LinearLayout>
+
+
+</ScrollView>
+
+
