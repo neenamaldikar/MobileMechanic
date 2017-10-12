@@ -1,9 +1,10 @@
 import facebook
-import config
+# added so that we can run the code from the terminal
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from DAO.usersDAO import UsersDAO
 from app import db
 from DTO.user import User
-
 usersDAO = UsersDAO(db)
 
 def authenticate(username, password):
@@ -23,8 +24,7 @@ def authenticate(username, password):
 
 
 def is_appinfo_valid(token_app_id, token_application):
-    if token_app_id.encode('utf8') == config.APP_ID and \
-                    token_application.encode('utf8') == config.APP_NAME:
+    if token_app_id.encode('utf8') == os.getenv('APP_ID') and token_application.encode('utf8') == os.getenv('APP_NAME'):
         return True
     else:
         return False
@@ -36,11 +36,13 @@ def get_info_from_token(username):
     except facebook.GraphAPIError:
         return
 
+    print ('username is', username)
+    print ('APP_ID is ', os.getenv('APP_ID'), 'APP_SECRET', os.getenv('APP_SECRET'))
     token_info = graph.debug_access_token(token=username,
-                                          app_id=config.APP_ID,
-                                          app_secret=config.APP_SECRET)
+                                          app_id=os.getenv('APP_ID'),
+                                          app_secret=os.getenv('APP_SECRET'))
 
-    valid = token_info.get('data').get('is_valid')
+    #valid = token_info.get('data').get('is_valid')
 
     if token_info.get('data').get('is_valid'):
         token_app_id = token_info.get('data').get('app_id')

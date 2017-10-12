@@ -1,9 +1,9 @@
 from flask_restful import fields, Resource, reqparse, marshal, abort
 from flask_jwt import jwt_required, current_identity
-from flask import jsonify
+from flask import jsonify, request
 from DAO.usersDAO import UsersDAO
 from app import db
-
+import os
 import collections
 
 class UserAPI(Resource):
@@ -76,3 +76,18 @@ class UserAPI(Resource):
                 user[k] = v
             return { 'user': marshal(user, user_fields) }, 201
     '''
+
+class ImageUploadAPI(Resource):
+
+    @jwt_required()
+    def post(self, user_id, job_id):
+        f = request.files['imagefile']
+        test_dir = 'test'  # makes a test directory in the app-root folder
+        if f.filename == '':
+            abort(404)
+        else:
+            filename = f.filename
+            if not os.path.exists(test_dir):
+                os.makedirs(test_dir)
+            f.save(os.path.join(test_dir, filename))
+            return jsonify({'success': 'Successfully uploaded file'})
