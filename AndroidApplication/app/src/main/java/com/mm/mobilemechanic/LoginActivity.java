@@ -154,9 +154,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        if (token != null) {
+        if (token != null) {  // get the JWT directly and open the next screen
             Toast.makeText(getApplicationContext(), "Token still valid", Toast.LENGTH_SHORT).show();
-            RestClient.getUserJWToken(token, "", getUserTokenCallback);
+
+            //// RestClient.getUserJWToken(token, "", getUserTokenCallback);  //TODO uncomment when python service is running
+            Bundle bundle = new Bundle();
+            bundle.putString("token", "FakeToken");
+            onSuccessLaunchMainScreen(bundle);
+            ////
         }
 
 

@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);  // starting the intent with special id that will be called back
                 break;
             case R.id.nav_history:
-                intent = new Intent(this, RestClientActivity.class);
-                startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);
+                //intent = new Intent(this, RestClientActivity.class);
+                //startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);
 
                 break;
             case R.id.nav_payment:
