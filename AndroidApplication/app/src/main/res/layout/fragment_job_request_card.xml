@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="8dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <View
+            android:id="@+id/view_hex_color"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:background="#25cc12" />
+
+        <TextView
+            android:id="@+id/textView_job_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/view_hex_color"
+            android:textColor="#101010"
+            android:textSize="@dimen/text_body"
+            tools:text="Job Summary" />
+
+
+        <TextView
+            android:id="@+id/textView_quotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_job_summary"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="4dp"
+            android:layout_toEndOf="@+id/view_hex_color"
+            android:text="Number of quotes:"
+            android:textSize="@dimen/text_small_body" />
+
+        <TextView
+            android:id="@+id/textView_number_of_quotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_job_summary"
+            android:layout_toEndOf="@+id/textView_quotes"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/textView_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_quotes"
+            android:layout_marginEnd="4dp"
+            android:layout_toEndOf="@+id/view_hex_color"
+            android:text="Status:" />
+
+        <TextView
+            android:id="@+id/textView_current_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_quotes"
+            android:layout_toEndOf="@+id/textView_status"
+            tools:text="Quotes requested" />
+
+        <ImageButton
+
+            android:id="@+id/imageButton"
+            android:layout_width="25dp"
+            android:layout_height="35dp"
+            android:onClick="showPopup"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_more_vert_white_24dp"
+            android:layout_above="@+id/textView_number_of_quotes"
+
+ />
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
