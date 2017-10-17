@@ -7,7 +7,7 @@
     android:baselineAligned="false"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="com.login.mm.nealio.testlogin.com.mm.mobilemechanic.MainActivity">
+    tools:context="com.mm.mobilemechanic.MainActivity">
 
 
     <android.support.design.widget.AppBarLayout

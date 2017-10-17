@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.login.mm.nealio.testlogin.R;
 import com.mm.mobilemechanic.user.Job;
 
 import java.util.ArrayList;

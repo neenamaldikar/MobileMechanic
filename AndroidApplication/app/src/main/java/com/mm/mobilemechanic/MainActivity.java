@@ -22,8 +22,6 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
-import com.login.mm.nealio.testlogin.R;
-import com.mm.mobilemechanic.authorization.RestClientActivity;
 import com.mm.mobilemechanic.user.Job;
 import com.mm.mobilemechanic.user.User;
 

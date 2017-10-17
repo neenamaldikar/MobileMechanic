@@ -15,9 +15,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.login.mm.nealio.testlogin.R;
-import com.mm.mobilemechanic.authorization.RestClient;
-import android.support.v7.widget.Toolbar;
+
 import android.view.Menu;
 
 import org.json.JSONException;

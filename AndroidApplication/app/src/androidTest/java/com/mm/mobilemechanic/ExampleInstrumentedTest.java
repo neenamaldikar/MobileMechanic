@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.login.mm.nealio.testlogin", appContext.getPackageName());
+        assertEquals("com.mm.mobilemechanic", appContext.getPackageName());
     }
 }
