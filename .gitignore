@@ -1,2 +1,3 @@
-MobileMechanicCloud/*.pyc
-MobileMechanicCloud/*/*.pyc
+MobileMechanicCloud/__pycache__
+MobileMechanicCloud/*/__pycache__
+MobileMechanicCloud/*/*/__pycache__
