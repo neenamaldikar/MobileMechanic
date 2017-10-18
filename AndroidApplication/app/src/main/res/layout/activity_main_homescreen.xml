@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    tools:context="com.mm.mobilemechanic.MainActivity">
+    tools:context="com.mm.mobilemechanic.MainActivity"
+    android:weightSum="1"
+    android:orientation="vertical">
 
 
     <android.support.design.widget.AppBarLayout
@@ -23,87 +24,39 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+
+
+
+    <Button
+        android:id="@+id/button_create_new_job"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:orientation="vertical">
-
-            <!-- just draw a red line -->
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="2dip"
-                android:layout_margin="4dp"
-                android:background="#000000" />
-
-            <TableLayout
-                android:id="@+id/tl_main_jobs_table"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:padding="4dp"
-                        android:text="Job1"
-                        android:textSize="32sp" />
-
-                    <Button
-                        android:id="@+id/button2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="4dp"
-                        android:background="#32a741"
-                        android:text="Status 1" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:padding="4dp"
-                        android:text="Job2"
-                        android:textSize="32sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
+        android:background="#33ac21"
+        android:text="Create new job"
+        android:layout_weight="0.06" />
 
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="4dp"
-                        android:background="#ab2d2d"
-                        android:text="Status 2" />
-                </TableRow>
-            </TableLayout>
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:textSize="@dimen/text_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Job Requests:" />
 
-            <Button
-                android:id="@+id/button_main_create_new_job"
-                android:layout_marginTop="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="createNewJobOnClick"
-                android:text="Create new job" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_main_homescreen_jobs_table"
+        android:layout_width="match_parent"
+        android:paddingBottom="64dp"
+        android:layout_height="wrap_content" >
 
-        </LinearLayout>
-    </ScrollView>
+    </android.support.v7.widget.RecyclerView>
+
+
 </LinearLayout>
