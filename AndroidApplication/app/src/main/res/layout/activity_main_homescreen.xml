@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:fitsSystemWindows="true"
+    tools:context="com.mm.mobilemechanic.MainActivity"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+
+
+
+    <Button
+        android:id="@+id/button_create_new_job"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
+        android:background="#33ac21"
+        android:text="Create new job"
+        android:layout_weight="0.06" />
+
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:textSize="@dimen/text_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Job Requests:" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_main_homescreen_jobs_table"
+        android:layout_width="match_parent"
+        android:paddingBottom="64dp"
+        android:layout_height="wrap_content" >
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

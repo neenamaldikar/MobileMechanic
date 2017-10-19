@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/image_profile_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:contentDescription="User profile picture"
+            android:src="@drawable/ic_menu_manage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/ll_mech_profile_text_views"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+
+
+            <EditText
+                android:id="@+id/editText_mech_res_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Residential Address"
+                android:inputType="textMultiLine" />
+
+            <EditText
+                android:id="@+id/editText_mech_work_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Mechanic Shop Address"
+                android:inputType="textMultiLine" />
+
+            <EditText
+                android:id="@+id/editText_mech_expertise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Expertise"
+                android:inputType="textMultiLine" />
+
+            <EditText
+                android:id="@+id/editText_mech_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Summary"
+                android:inputType="textMultiLine" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
