@@ -1,5 +1,5 @@
 import facebook
-from database import UsersDAO
+from database.database import UsersDAO
 from extensions import mongo
 import os
 # check safety of app usage

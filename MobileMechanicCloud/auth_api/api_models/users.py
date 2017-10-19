@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, abort
 from flask_jwt import jwt_required, current_identity
 from flask import jsonify
-from database import UsersDAO
+from database.database import UsersDAO
 from extensions import mongo
 
 class UserAPI(Resource):
