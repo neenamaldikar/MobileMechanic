@@ -7,6 +7,7 @@ package com.mm.mobilemechanic.user;
 
 public class Job {
 
+    private JobStatus status;
     private String summary;
     private String description;
 
@@ -20,16 +21,22 @@ public class Job {
 
     }
 
-    public Job (String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff) {
+    public Job (String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
         this.summary = summary;
         this.description = description;
         this.onSiteDiagnostic = onSiteDiagnostic;
         this.carInWorkingCondition = carInWorkingCondition;
         this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
         this.carPickUpAndDropOff = carPickUpAndDropOff;
-
+        this.status = status;
     }
 
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
+    public JobStatus getStatus() {
+        return this.status;
+    }
 
     public String getSummary() {
         return summary;

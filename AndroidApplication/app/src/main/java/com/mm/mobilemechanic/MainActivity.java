@@ -9,10 +9,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -22,8 +25,13 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
+import com.mm.mobilemechanic.ui.jobcards.JobRequestsAdapter;
 import com.mm.mobilemechanic.user.Job;
+import com.mm.mobilemechanic.user.JobStatus;
 import com.mm.mobilemechanic.user.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -157,34 +165,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    public void displayJobsOnMainHomeScreen(final Job job) {
-        TableLayout tableLayout = (TableLayout)findViewById(R.id.tl_main_jobs_table);
-        TableRow tableRow = new TableRow(this);
-        tableRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-/* Create a Button to be the row-content. */
-        TextView textView = new TextView(this);
-        textView.setText(job.getSummary());
-        textView.setTextSize(32);
-        tableRow.addView(textView);
-
-        Button statusButton = new Button(this);
-        statusButton.setText("status");
-
-        statusButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                showJobInformation(job);
-            }
-        });
-
-        tableRow.addView(statusButton, 1);
-        tableLayout.addView(tableRow);
-
-    }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -201,7 +181,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
                     newJob.getSummary();
-                    displayJobsOnMainHomeScreen(newJob);
+
                     break;
             }
         }
@@ -212,6 +192,24 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
+
+    }
+
+
+    public void createFakeJobs() {
+
+        List<Job> jobLists = new ArrayList<>();
+        jobLists.add(new Job("summary1", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("summary2", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("summary3", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("summary4", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("summary5", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+
+
+        JobRequestsAdapter adapter = new JobRequestsAdapter(jobLists);
+        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
 
     }
 
@@ -234,10 +232,14 @@ public class MainActivity extends AppCompatActivity
 
 
         String jwtoken = getIntent().getExtras().getString("token");
-
         Log.i(TAG, jwtoken);
 
         mCustomer = new User("TEST_customer1");
+
+
+
+
+        createFakeJobs();
     }
 
 

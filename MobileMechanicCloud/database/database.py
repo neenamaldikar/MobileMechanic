@@ -1,12 +1,11 @@
-from DTO.user import User
-import time
+from extensions import mongo
+from model import user_model
 from pymongo import errors
-# The UserProfile Data Access Object handles all interactions with the UserProfile table.
-
+import time
 
 class UsersDAO:
-    def __init__(self, db):
-        self.db = db
+    def __init__(self, mongo):
+        self.db = mongo.db
 
     def find_user(self, user_id):
         try:
@@ -17,10 +16,11 @@ class UsersDAO:
         if user is None:
             return None
         else:
-            return User(user['id'],user['first_name'], user['last_name'],
-                        user['email'], user['last_seen'],state=user.get('state'),
+            return user_model.User(user['id'], user['first_name'], user['last_name'],
+                        user['email'], user['last_seen'], state=user.get('state'),
                         zip=user.get('zip'), city=user.get('city'),
-                        address_line1=user.get('address_line1'),address_line2=user.get('address_line2'))
+                        address_line1=user.get('address_line1'),
+                        address_line2=user.get('address_line2'))
 
     def insert_user(self, user_id, first_name, last_name, email):
         try:
@@ -33,7 +33,7 @@ class UsersDAO:
 
     def update_user(self, user_id, updated_values):
         try:
-            #updated_values = str(updated_values)
+            # updated_values = str(updated_values)
             result = self.db.users.update_one({'id': user_id}, {'$set': updated_values})
             if result.matched_count == 1:
                 return True
