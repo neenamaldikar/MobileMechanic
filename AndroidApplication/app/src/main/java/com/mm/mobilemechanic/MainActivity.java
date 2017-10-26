@@ -208,7 +208,6 @@ public class MainActivity extends AppCompatActivity
         RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
-
     }
 
     @Override
