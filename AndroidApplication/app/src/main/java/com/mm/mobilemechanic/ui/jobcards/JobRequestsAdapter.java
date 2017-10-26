@@ -1,5 +1,6 @@
 package com.mm.mobilemechanic.ui.jobcards;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,10 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.mm.mobilemechanic.JobFormActivity;
 import com.mm.mobilemechanic.R;
 import com.mm.mobilemechanic.user.Job;
 
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by ndw6152 on 10/13/2017.
@@ -38,6 +43,14 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         holder.jobSummary.setText(job.getSummary());
         holder.numberOfQuotes.setText(5 + "");  // TODO get actual number of quotes
         holder.currentStatus.setText(job.getStatus().toString());
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {  // TODO open summary and job req info
+            @Override
+            public void onClick(View v) {
+                //implement onClick
+                System.out.println("Clicked");
+            }
+        });
     }
 
     @Override
@@ -50,11 +63,14 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         TextView jobSummary;
         TextView numberOfQuotes;
         TextView currentStatus;
-        CardView cv;
+        CardView cardView;
+
+
 
         public JobCardsViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.card_view);
+            ButterKnife.bind(this, itemView);
+            cardView = (CardView) itemView.findViewById(R.id.card_view);
             hexColor = (View) itemView.findViewById(R.id.view_hex_color);
             jobSummary = (TextView) itemView.findViewById(R.id.textView_job_summary);
             numberOfQuotes = (TextView) itemView.findViewById(R.id.textView_number_of_quotes);

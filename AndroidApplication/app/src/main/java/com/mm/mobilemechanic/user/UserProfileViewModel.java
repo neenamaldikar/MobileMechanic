@@ -14,6 +14,8 @@ public class UserProfileViewModel extends ViewModel {
 
     public void init(String userId) {
         this.userId = userId;
+
+        // TODO init the user from REST call
     }
     public LiveData<User> getUser() {
         return user;
