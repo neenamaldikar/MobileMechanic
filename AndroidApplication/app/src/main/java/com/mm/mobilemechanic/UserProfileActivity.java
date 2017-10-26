@@ -1,9 +1,12 @@
 package com.mm.mobilemechanic;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -15,15 +18,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.user.UserProfileViewModel;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by ndw6152 on 4/12/2017.
  *
  */
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity {
     private String TAG = "ProfileScreen";
     private boolean textChanged = false;
+    private UserProfileViewModel viewModel;
+    @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
+    @BindView(R.id.editText_profile_bio) EditText mEditTextBio;
+    @BindView(R.id.editText_profile_email) EditText mEditTextemail;
+    @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
+    @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
+
 
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -114,8 +130,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         };
 
-
-
         // loop to add the listener to all edittext box
         for( int i = 0; i < profileEditTextViews.getChildCount(); i++ ) {
             if( profileEditTextViews.getChildAt(i) instanceof EditText) {
@@ -127,9 +141,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_edit);
+        setContentView(R.layout.activity_user_profile);
 
-        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
+        ButterKnife.bind(this);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -139,5 +153,20 @@ public class ProfileEditActivity extends AppCompatActivity {
         Bundle b = in.getExtras();
         EditText nameView = (EditText) findViewById(R.id.editText_profile_name);
         nameView.setText(b.getString("key1"));
+
+        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
+        viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
+        viewModel.init("FAKE_USER_ID"); // TODO get actual user ID
+
+        viewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                mEditTextProfileName.setText(user.getName());
+                mEditTextPhoneNumber.setText(user.getPhonenumber());
+                mEditTextemail.setText(user.getEmail());
+                mEditTextGender.setText(user.getGender());
+                mEditTextBio.setText(user.getBio());
+            }
+        });
     }
 }

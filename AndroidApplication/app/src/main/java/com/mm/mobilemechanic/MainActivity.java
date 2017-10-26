@@ -15,11 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +28,9 @@ import com.mm.mobilemechanic.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.nav_profile:
-                intent = new Intent(this, ProfileEditActivity.class);
+                intent = new Intent(this, UserProfileActivity.class);
 
                 Bundle b = new Bundle();
                 b.putString("key1", mCustomer.getName());
@@ -187,19 +186,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+    @OnClick(R.id.button_create_new_job)
     public void createNewJobOnClick(View view) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
-
     }
 
 
     public void createFakeJobs() {
 
         List<Job> jobLists = new ArrayList<>();
-        jobLists.add(new Job("summary1", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job(getResources().getString(R.string.facebook_app_id), "summary1", true, false, false, false, JobStatus.QUOTES_REQUESTED));
         jobLists.add(new Job("summary2", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
         jobLists.add(new Job("summary3", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
         jobLists.add(new Job("summary4", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
@@ -217,6 +215,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

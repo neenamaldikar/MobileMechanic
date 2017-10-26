@@ -10,33 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/activity_profile_edit_toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="?attr/colorPrimary">-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_profile_discard_changes"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_gravity="left"-->
-                <!--android:layout_marginLeft="16dp"-->
-                <!--android:background="@drawable/com_facebook_tooltip_black_xout"-->
-                <!--app:srcCompat="@drawable/com_facebook_tooltip_black_xout" />-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_profile_save_changes"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_gravity="right"-->
-                <!--android:layout_marginRight="16dp"-->
-                <!--android:background="@drawable/com_facebook_button_like_icon_selected"-->
-                <!--app:srcCompat="@drawable/com_facebook_button_like_icon_selected" />-->
-
-        <!--</android.support.v7.widget.Toolbar>-->
-
         <ImageView
             android:id="@+id/image_profile_pic"
             android:layout_width="wrap_content"
