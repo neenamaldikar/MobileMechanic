@@ -62,11 +62,11 @@ public class RestClientActivity extends AppCompatActivity {
     };
 
     public void testGetCall(String url) {
-        RestClient.get(url, getCallback);
+        RestClient.GET(url, getCallback);
     }
 
     public void testPostCall(String url, String postBody) {
-        RestClient.post(url, postBody, getCallback);
+        RestClient.POST(url, postBody, getCallback);
     }
 
     public void runTestPostCall() {
@@ -84,7 +84,7 @@ public class RestClientActivity extends AppCompatActivity {
         json.addProperty("password", "none");
 
         String url = "http://50.43.59.234:5000/mobilemechanic/api/v1.0/auth";
-        RestClient.post(url, json.toString(), getCallback);
+        RestClient.POST(url, json.toString(), getCallback);
         Log.i(TAG, "Finish posting");
     }
 
