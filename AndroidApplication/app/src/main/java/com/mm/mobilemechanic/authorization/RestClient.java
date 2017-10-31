@@ -21,6 +21,7 @@ public class RestClient {
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
 
+    public static String URL_ADDRESS = "192.168.86.22";
 
     public static void GET(String url, Callback responseCallback) {
         Request request = new Request.Builder()
@@ -41,7 +42,7 @@ public class RestClient {
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", authToken)
-                .post(RequestBody.create(JSON, json))
+                .put(RequestBody.create(JSON, json))
                 .build();
         client.newCall(request).enqueue(responseCallback);
     }
@@ -70,10 +71,19 @@ public class RestClient {
         json.addProperty("username", fbToken.getToken());
         json.addProperty("password", "none");
 
-        url = "http://192.168.1.4:5000/mobilemechanic/api/v1.0/auth";
+        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/auth";
         RestClient.POST(url, json.toString(), responseCallback);
     }
 
+    public static void getUserInfo(String url, String userId, String authToken, Callback responseCallback) {
+        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
+    public static void updateUser(String url, String userId, String json, String authToken, Callback responseCallback) {
+        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+        RestClient.PUT(url, authToken, json, responseCallback);
+    }
 
 }
 

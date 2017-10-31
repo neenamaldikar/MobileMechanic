@@ -180,7 +180,6 @@ public class MainActivity extends AppCompatActivity
                     }
                     Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
                     newJob.getSummary();
-
                     break;
             }
         }
@@ -229,7 +228,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        String jwtoken = getIntent().getExtras().getString("token");
+        String jwtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, jwtoken);
 
         mCustomer = new User("TEST_customer1");
