@@ -9,32 +9,34 @@ class UsersDAO:
 
     def find_user(self, user_id):
         try:
-            user = self.db.users.find_one({'id': user_id})
+            user = self.db.users.find_one({'user_id': user_id})
+            if user is None:
+                return None
+            print ('User is ', user)
+            return user_model.User(user['user_id'], user['first_name'],
+                                   user['last_name'], user['email'], user['last_seen'],
+                                   address_line1=user.get('address_line1'),
+                                   address_line2=user.get('address_line2'),
+                                   city=user.get('city'), state=user.get('state'),
+                                   zipcode=user.get('zipcode'), role=user.get('role'))
         except errors.OperationFailure:
-            user = None
-
-        if user is None:
             return None
-        else:
-            return user_model.User(user['id'], user['first_name'], user['last_name'],
-                        user['email'], user['last_seen'], state=user.get('state'),
-                        zip=user.get('zip'), city=user.get('city'),
-                        address_line1=user.get('address_line1'),
-                        address_line2=user.get('address_line2'))
 
     def insert_user(self, user_id, first_name, last_name, email):
         try:
-            result = self.db.users.insert_one({'id': user_id, 'first_name': first_name,
+            result = self.db.users.insert_one({'user_id': user_id, 'first_name': first_name,
                                                'last_name': last_name, 'email': email,
                                                'last_seen': time.time()})
             return result.acknowledged
         except errors.PyMongoError:
             return False
 
+    # this step is required for jobs
     def update_user(self, user_id, updated_values):
         try:
-            # updated_values = str(updated_values)
-            result = self.db.users.update_one({'id': user_id}, {'$set': updated_values})
+            print ('Updating user with', updated_values)
+            result = self.db.users.update_one({'user_id': user_id}, {'$set': updated_values})
+            print ("The result is", result)
             if result.matched_count == 1:
                 return True
             else:
@@ -44,7 +46,7 @@ class UsersDAO:
 
     def delete_one(self, user_id):
         try:
-            result = self.db.users.delete_one({'id': user_id})
+            result = self.db.users.delete_one({'user_id': user_id})
             if result.deleted_count == 1:
                 return True
             else:

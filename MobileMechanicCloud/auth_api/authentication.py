@@ -1,5 +1,5 @@
 import facebook
-from database.database import UsersDAO
+from database.user_request import UsersDAO
 from extensions import mongo
 import os
 # check safety of app usage
@@ -58,6 +58,7 @@ def get_info_from_token(username):
         args = {'fields': 'id,first_name,last_name,email'}
         # profile=graph.get_object('me')
         profile = graph.get_object('me', **args)
+        print ('fecthed profile is ', profile)
     else:
         print ('token info invalid')
         profile = token_app_id = token_application = None
