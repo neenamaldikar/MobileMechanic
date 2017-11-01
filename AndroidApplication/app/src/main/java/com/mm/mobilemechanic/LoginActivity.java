@@ -150,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
         mFbToken =  AccessToken.getCurrentAccessToken();
         if (mFbToken != null) {  // get the JWT directly and open the next screen
             mProgress.show();
-            RestClient.getUserJWT("192.168.86.22", mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
+            RestClient.getUserJWT("", mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
         }
 
 

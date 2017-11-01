@@ -37,8 +37,9 @@ public class MainActivity extends AppCompatActivity
 
     private String TAG = "MainScreen";
     private User mCustomer;
+    private String mJWTtoken;
 
-    private static final int FROM_PROFILE_EDIT_SCREEN = 123;
+    private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
 
     @Override
@@ -95,15 +96,14 @@ public class MainActivity extends AppCompatActivity
         {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-
                 Bundle b = new Bundle();
-                b.putString("key1", mCustomer.getName());
+                b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
-                startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);  // starting the intent with special id that will be called back
+                startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
                 break;
             case R.id.nav_history:
                 //intent = new Intent(this, RestClientActivity.class);
-                //startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);
+                //startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);
 
                 break;
             case R.id.nav_payment:
@@ -169,8 +169,8 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             switch(requestCode) {
-                case (FROM_PROFILE_EDIT_SCREEN):
-                    Bundle b = data.getExtras();
+                case (FROM_USER_PROFILE_SCREEN):
+                    System.out.println("came from user profile activity");
                     break;
                 case (FROM_NEW_JOB_SCREEN):
                     String jsonMyObject = "";
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        String jwtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, jwtoken);
+        mJWTtoken = getIntent().getExtras().getString("JWT");
+        Log.i(TAG, mJWTtoken);
 
         mCustomer = new User("TEST_customer1");
 

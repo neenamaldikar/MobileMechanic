@@ -40,6 +40,7 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
     @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
 
+    private String mJWToken;
 
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -149,14 +150,12 @@ public class UserProfileActivity extends AppCompatActivity {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // getting initial information from the main activitiy and setting the first edit text view content
-        Intent in = getIntent();
-        Bundle b = in.getExtras();
-        EditText nameView = (EditText) findViewById(R.id.editText_profile_name);
-        nameView.setText(b.getString("key1"));
+
+        mJWToken = getIntent().getExtras().getString("JWT");
 
         addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
         viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
-        viewModel.init("FAKE_USER_ID"); // TODO get actual user ID
+        viewModel.init("10154273638187653", mJWToken); // TODO get actual user ID and token
 
         viewModel.getUser().observe(this, new Observer<User>() {
             @Override
