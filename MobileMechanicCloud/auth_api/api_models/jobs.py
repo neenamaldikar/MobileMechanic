@@ -15,25 +15,27 @@ class JobAPI(Resource):
         self.usersDAO = UsersDAO(mongo)
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('job', type=dict, location='json')
+        self.reqparse.add_argument('job_id', type=str, location='args')
 
     @jwt_required()
     def get(self, user_id):
         user_id = str(user_id)
-        # the args should contain job id for a specific use case
-        # args = self.reqparse.parse_args()
-        # print ('Get request args are', args)
         if user_id != current_identity._get_current_object().id:
             abort(401)
-
-        jobs_list = self.jobsDAO.find_job(user_id)
-        print('jobs_list is', jobs_list)
-        print(jobs_list)
-        if jobs_list is None:
-            abort(404)
-        final_list = []
-        for i in jobs_list:
-            final_list.append(i.__dict__)
-        return jsonify(final_list)
+        args = self.reqparse.parse_args()
+        job_id = args.get('job_id')
+        if job_id:
+            print ('args are', args)
+            job = self.jobsDAO.find_job(user_id, job_id)
+            print ('job is', job)
+            if job:
+                return jsonify(str(job.__dict__))
+            else:
+                abort(401)
+        else:
+            jobs_list = self.jobsDAO.find_job(user_id)
+            jobs_list = list([i.__dict__ for i in jobs_list])
+            return jsonify(str(jobs_list))
 
     @jwt_required()
     def post(self, user_id):
@@ -78,7 +80,6 @@ class JobAPI(Resource):
 
         args = self.reqparse.parse_args()
         print ('args are', args)
-
         job_to_update = args.get('job')
         print ('args are', args)
         job_id = args['job']['job_id']
@@ -88,28 +89,25 @@ class JobAPI(Resource):
             job = self.jobsDAO.find_job(user_id, job_id)
             # user = self.usersDAO.find_user(user_id)
             print ('Update was successful for', job.__dict__)
-            return jsonify(results=job.__dict__)
+            return jsonify(results=str(job.__dict__))
         else:
             abort(404)
 
-
-
-class JobDeletionAPI(Resource):
-
-    def __init__(self):
-        self.jobsDAO = JobRequestDAO(mongo)
-        self.usersDAO = UsersDAO(mongo)
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('job', type=dict, location='json')
-
     @jwt_required()
-    def delete(self, user_id, job_id):
+    def delete(self, user_id):
         user_id = str(user_id)
         if user_id != str(current_identity._get_current_object().id.encode('utf8'), encoding='utf-8'):
             abort(401)
 
-        delete_successful = self.jobsDAO.delete_one(user_id, job_id)
-        if delete_successful:
-            return {'result': True}
+        args = self.reqparse.parse_args()
+        job_id = args.get('job_id')
+        print ('args are in delete', args)
+        if job_id:
+            delete_successful = self.jobsDAO.delete_one(user_id, job_id)
+            print('Delete is ?', delete_successful)
+            if delete_successful:
+                return jsonify({"success": "Deleted succesful"})
+            else:
+                return jsonify({"success": "Job not found"})
         else:
             abort(404)

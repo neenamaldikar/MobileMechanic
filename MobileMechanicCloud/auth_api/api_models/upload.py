@@ -1,16 +1,19 @@
-from flask import jsonify, request
+from flask import jsonify, request, send_file
 from flask_jwt import jwt_required, current_identity
-from flask_restful import Resource, abort
+from flask_restful import Resource, abort, reqparse
 import os
 from extensions import mongo
 from database.job_request import JobRequestDAO
 from bson import Binary
 from gridfs import GridFS
 import tempfile
+import io
 
 class ImageUploadAPI(Resource):
     def __init__(self):
         self.jobsDAO = JobRequestDAO(mongo)
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('picture_id', type=str, location='args')
     #
     # assuming you already have a job id
     # TODO: add a check for job_id
@@ -46,4 +49,16 @@ class ImageUploadAPI(Resource):
     def get(self, user_id, job_id):
         user_id = str(user_id)
         if user_id == current_identity._get_current_object().id:
-            # if not
+            args = self.reqparse.parse_args()
+            picture_id = args.get('picture_id')
+            if picture_id:
+                image_data = self.jobsDAO.get_image(user_id, job_id, picture_id)
+                if image_data:
+                    print ('Got image data')
+                    return send_file(io.BytesIO(image_data), mimetype='image/png')
+                else:
+                    abort(401)
+            else:
+                abort(401)
+        else:
+            abort(401)

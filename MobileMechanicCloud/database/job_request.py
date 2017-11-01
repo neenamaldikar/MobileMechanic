@@ -3,10 +3,12 @@ from model import job_model
 from pymongo import errors
 import time
 from gridfs import GridFS
+import bson
 
 class JobRequestDAO:
     def __init__(self, mongo):
         self.db = mongo.db
+        self.fs = GridFS(self.db)
 
     def find_job(self, user_id, job_id=None):
         try:
@@ -63,11 +65,10 @@ class JobRequestDAO:
 
     def update_images(self, user_id, job_id, image_data, filename, content_type):
         try:
-            fs = GridFS(self.db)
-            image_id = fs.put(image_data, content_type=content_type, filename=filename)
+            image_id = self.fs.put(image_data, content_type=content_type, filename=filename)
             print("Pushing images to database")
             result = self.db.jobs.update_one({"user_id": user_id, "job_id": job_id},
-                                             {"$push": {"images": image_id}})
+                                             {"$push": {"images": str(image_id)}})
             if result.matched_count == 1:
                 return True
             else:
@@ -75,9 +76,18 @@ class JobRequestDAO:
         except errors.PyMongoError:
             return False
 
+    def get_image(self, user_id, job_id, image_id):
+        try:
+            image_ptr = self.fs.get(bson.objectid.ObjectId(image_id))
+            image_data = image_ptr.read()
+            image_ptr.close()
+            return image_data
+        except:
+            return None
+
     def delete_one(self, user_id, job_id):
         try:
-            result = self.db.users.delete_one({'user_id': user_id, 'job_id': job_id})
+            result = self.db.jobs.delete_one({'user_id': user_id, 'job_id': job_id})
             if result.deleted_count == 1:
                 return True
             else:
