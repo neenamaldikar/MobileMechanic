@@ -46,8 +46,9 @@ public class UserRepository {
                     Log.i(TAG, response.message());
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
-                        User x = new User("NEIL");
-
+                        String name = jObject.getString("first_name") + " " + jObject.getString("last_name");
+                        User x = new User(name);
+                        x.setEmail(jObject.getString("email"));
                         data.postValue(x);
                     } catch (JSONException e) {
                         e.printStackTrace();
