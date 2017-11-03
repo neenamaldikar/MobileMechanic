@@ -4,6 +4,7 @@ from pymongo import errors
 import time
 from gridfs import GridFS
 import bson
+import uuid
 
 class JobRequestDAO:
     def __init__(self, mongo):
@@ -21,7 +22,7 @@ class JobRequestDAO:
                     print ('No cursor data')
                     return None
                 else:
-                    return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'], cursor['options'], cursor['summary'], cursor['description'], cursor['images'])
+                    return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'], cursor['options'], cursor['summary'], cursor['description'], cursor['images'], cursor['status'])
             else:
                 cursor = self.db.jobs.find({'user_id': user_id})
                 data = list(cursor)
@@ -34,19 +35,26 @@ class JobRequestDAO:
                         output_list.append(job_model.JobRequest(user_id, i['job_id'],
                                         i['make'], i['model'], i['year'], i['options'],
                                         i['summary'], i['description'],
-                                        i['images']))
+                                        i['images'], i['status']))
                     return output_list
         except errors.OperationFailure:
             return None
 
     # generate a job id
-    def insert_job(self, user_id, make, model, year, options, summary, description):
+    def insert_job(self, user_id, make, model, year, options, summary, description, status):
         try:
-            unique_job_id = 'job_' + str(time.time())
+            unique_job_id = str(uuid.uuid4())
+            while True:
+                cursor = self.db.jobs.find_one({'user_id': user_id, 'job_id': unique_job_id})
+                if cursor:
+                    unique_job_id = str(uuid.uuid4())
+                else:
+                    break
             result = self.db.jobs.insert_one({'user_id': user_id, 'job_id': unique_job_id,
                                               'make': make, 'model': model, 'year': year,
                                               'options': options, 'summary': summary,
-                                              'description': description, 'images': []})
+                                              'description': description, 'images': [],
+                                              'status': status})
             return (result.acknowledged, unique_job_id)
             # return result.acknowledged
         except errors.PyMongoError:

@@ -55,7 +55,9 @@ class JobAPI(Resource):
         insertion_successful, job_id = self.jobsDAO.insert_job(user_id,
                                         job_inserted['make'], job_inserted['model'],
                                         job_inserted['year'], job_inserted['options'],
-                                        job_inserted['summary'], job_inserted['description'])
+                                        job_inserted['summary'],
+                                        job_inserted['description'],
+                                        job_inserted['status'])
         # print ("result )
         print ('Is the insertion succesful ? : ', insertion_successful)
         if insertion_successful:
