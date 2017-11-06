@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.user.UserProfileViewModel;
 
@@ -155,7 +156,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
         addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
         viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
-        viewModel.init("10154273638187653", mJWToken); // TODO get actual user ID and token
+
+        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken); 
 
         viewModel.getUser().observe(this, new Observer<User>() {
             @Override
