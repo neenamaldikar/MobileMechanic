@@ -49,6 +49,7 @@ public class UserRepository {
                         String name = jObject.getString("first_name") + " " + jObject.getString("last_name");
                         User x = new User(name);
                         x.setEmail(jObject.getString("email"));
+                        x.setBio(jObject.getString("city"));
                         data.postValue(x);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -56,9 +57,24 @@ public class UserRepository {
                 }
             }
         });
-
-        User x = new User("TEST");
-        data.setValue(x);
         return data;
+    }
+
+    public void setUser(String json, String userId, String authToken) {
+        RestClient.updateUser("", userId, json, authToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                } else {
+                    Log.i(TAG, response.message());
+                }
+            }
+        });
     }
 }

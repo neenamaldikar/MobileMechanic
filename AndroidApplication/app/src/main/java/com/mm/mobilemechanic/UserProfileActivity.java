@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
+import com.google.gson.JsonObject;
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.user.UserProfileViewModel;
 
@@ -46,9 +47,6 @@ public class UserProfileActivity extends AppCompatActivity {
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,6 +79,15 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    public String createJsonFromFields() {
+        JsonObject updated_values = new JsonObject();
+        JsonObject inner = new JsonObject();
+        inner.addProperty("city", mEditTextBio.getText().toString());
+        updated_values.add("updated_values", inner);
+
+        return updated_values.toString();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -89,7 +96,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
         switch (item.getItemId())
         {
-            case R.id.menu_save_profile:
+            case R.id.menu_save_profile:  // save button pressed
+                // TODO make Rest client PUT call
+
+                String updated_values = createJsonFromFields();
+
+                viewModel.setUser(updated_values, mJWToken);
                 showToast("Saving");
                 textChanged = false; // set to false to prevent the dialog box from showing
 
@@ -144,21 +156,15 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-
         ButterKnife.bind(this);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // getting initial information from the main activitiy and setting the first edit text view content
-
         mJWToken = getIntent().getExtras().getString("JWT");
 
-        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
         viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
-
-        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken); 
-
+        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken);
         viewModel.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
@@ -169,5 +175,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 mEditTextBio.setText(user.getBio());
             }
         });
+
+        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
     }
 }

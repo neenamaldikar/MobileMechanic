@@ -31,4 +31,8 @@ public class UserProfileViewModel extends ViewModel {
     public LiveData<User> getUser() {
         return user;
     }
+
+    public void setUser(String json, String authToken) {
+        userRepo.setUser(json, userId, authToken);
+    }
 }
