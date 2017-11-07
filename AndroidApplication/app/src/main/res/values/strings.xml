@@ -11,4 +11,13 @@
 
 
     <string name="test_rest_client_name">Test Rest Client</string>
+
+
+
+    <string-array name="gender_arrays">
+        <item>Not Specified</item>
+        <item>Male</item>
+        <item>Female</item>
+
+    </string-array>
 </resources>

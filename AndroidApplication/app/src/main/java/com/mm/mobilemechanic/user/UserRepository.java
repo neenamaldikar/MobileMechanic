@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.util.SortedList;
 import android.util.Log;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.mm.mobilemechanic.authorization.RestClient;
 
 import org.json.JSONException;
@@ -27,10 +30,35 @@ import okhttp3.Response;
 public class UserRepository {
     private String TAG = "UserRepository";
 
+    private String mGender;
+    private User mUser;
+
     public LiveData<User> getUser(String userId, String authToken) { // 10152521620162653
         // This is not an optimal implementation, we'll fix it below
         Log.i(TAG, userId + "  " + authToken);
         final MutableLiveData<User> data = new MutableLiveData<>();
+
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.d(TAG, "LoginActivity Response " + response.toString());
+
+                        try {
+
+                            mGender = object.getString("gender");
+                            mUser.setGender(mGender);
+                            data.postValue(mUser);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "gender");
+        request.setParameters(parameters);
+        request.executeAsync();
 
         RestClient.getUserInfo("", userId, authToken, new Callback() {
             @Override
@@ -47,10 +75,22 @@ public class UserRepository {
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
                         String name = jObject.getString("first_name") + " " + jObject.getString("last_name");
-                        User x = new User(name);
-                        x.setEmail(jObject.getString("email"));
-                        x.setBio(jObject.getString("city"));
-                        data.postValue(x);
+                        if(mUser == null) {
+                            mUser = new User(name);
+                            mUser.setEmail(jObject.getString("email"));
+                            mUser.setBio(jObject.getString("city"));
+                            mUser.setGender(mGender);
+                            data.postValue(mUser);
+                        }
+                        else{
+                            mUser.setName(name);
+                            mUser.setEmail(jObject.getString("email"));
+                            mUser.setBio(jObject.getString("city"));
+                            mUser.setGender(mGender);
+                            data.postValue(mUser);
+                        }
+
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

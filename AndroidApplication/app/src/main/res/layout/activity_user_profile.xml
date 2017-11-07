@@ -20,14 +20,22 @@
             android:src="@drawable/fbdefaultimage" />
 
         <LinearLayout
+            android:id="@+id/ll_profile_text_views"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/ll_profile_text_views"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_profile_name_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="Name" />
 
             <EditText
                 android:id="@+id/editText_profile_name"
@@ -35,15 +43,70 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textView_profile_label_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="Address" />
 
             <EditText
-                android:id="@+id/editText_profile_phone_number"
+                android:id="@+id/editText_profile_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Phone"
-                android:inputType="phone" />
+                android:hint="Address"
+                android:inputType="textMultiLine"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/editText_profile_additional_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="Additional information"
+                android:inputType="textMultiLine"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+        <View style="@style/Divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:paddingBottom="72dp"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_profile_label_private_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:text="Private Information" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="E-mail Address" />
 
             <EditText
                 android:id="@+id/editText_profile_email"
@@ -51,24 +114,40 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Email Address"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/textView_profile_label_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="Phone number" />
+
+            <EditText
+                android:id="@+id/editText_profile_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="phone"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/textView_profile_label_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="Gender" />
             <EditText
                 android:id="@+id/editText_profile_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Gender"
-                android:inputType="textPersonName" />
-
-            <EditText
-                android:id="@+id/editText_profile_bio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Bio"
-                android:inputType="textMultiLine" />
-
+                android:inputType="textPersonName"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </LinearLayout>

@@ -37,7 +37,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private boolean textChanged = false;
     private UserProfileViewModel viewModel;
     @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
-    @BindView(R.id.editText_profile_bio) EditText mEditTextBio;
+    @BindView(R.id.editText_profile_additional_info) EditText mEditTextBio;
     @BindView(R.id.editText_profile_email) EditText mEditTextemail;
     @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
     @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
@@ -176,6 +176,9 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+
         addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
     }
+
+
 }
