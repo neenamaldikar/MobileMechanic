@@ -37,7 +37,13 @@ public class UserProfileActivity extends AppCompatActivity {
     private boolean textChanged = false;
     private UserProfileViewModel viewModel;
     @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
+    @BindView(R.id.editText_profile_address) EditText mEditTextProfileAddress;
+    @BindView(R.id.editText_profile_city) EditText mEditTextProfileCity;
+    @BindView(R.id.editText_profile_state) EditText mEditTextProfileState;
+    @BindView(R.id.editText_profile_zipcode) EditText mEditTextProfileZipCode;
     @BindView(R.id.editText_profile_additional_info) EditText mEditTextBio;
+
+
     @BindView(R.id.editText_profile_email) EditText mEditTextemail;
     @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
     @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
@@ -82,7 +88,12 @@ public class UserProfileActivity extends AppCompatActivity {
     public String createJsonFromFields() {
         JsonObject updated_values = new JsonObject();
         JsonObject inner = new JsonObject();
-        inner.addProperty("city", mEditTextBio.getText().toString());
+
+        inner.addProperty("address_line1", mEditTextProfileAddress.getText().toString());
+        inner.addProperty("city", mEditTextProfileCity.getText().toString());
+        inner.addProperty("state", mEditTextProfileState.getText().toString());
+        inner.addProperty("zipcode", mEditTextProfileZipCode.getText().toString());
+
         updated_values.add("updated_values", inner);
 
         return updated_values.toString();
@@ -169,6 +180,11 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable User user) {
                 mEditTextProfileName.setText(user.getName());
+                mEditTextProfileAddress.setText(user.getAddress());
+                mEditTextProfileCity.setText(user.getCity());
+                mEditTextProfileState.setText(user.getState());
+                mEditTextProfileZipCode.setText(user.getZipCode());
+
                 mEditTextPhoneNumber.setText(user.getPhonenumber());
                 mEditTextemail.setText(user.getEmail());
                 mEditTextGender.setText(user.getGender());

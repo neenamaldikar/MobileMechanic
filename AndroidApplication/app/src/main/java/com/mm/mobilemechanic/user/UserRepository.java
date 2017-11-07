@@ -50,6 +50,7 @@ public class UserRepository {
                             mGender = object.getString("gender");
                             mUser.setGender(mGender);
                             data.postValue(mUser);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -77,15 +78,21 @@ public class UserRepository {
                         String name = jObject.getString("first_name") + " " + jObject.getString("last_name");
                         if(mUser == null) {
                             mUser = new User(name);
+                            mUser.setAddress(jObject.getString("address_line1"));
+                            mUser.setCity(jObject.getString("city"));
+                            mUser.setState(jObject.getString("state"));
+                            mUser.setZipCode(jObject.getString("zipcode"));
                             mUser.setEmail(jObject.getString("email"));
-                            mUser.setBio(jObject.getString("city"));
                             mUser.setGender(mGender);
                             data.postValue(mUser);
                         }
                         else{
                             mUser.setName(name);
+                            mUser.setAddress(jObject.getString("address_line1"));
+                            mUser.setCity(jObject.getString("city"));
+                            mUser.setState(jObject.getString("state"));
+                            mUser.setZipCode(jObject.getString("zipcode"));
                             mUser.setEmail(jObject.getString("email"));
-                            mUser.setBio(jObject.getString("city"));
                             mUser.setGender(mGender);
                             data.postValue(mUser);
                         }
