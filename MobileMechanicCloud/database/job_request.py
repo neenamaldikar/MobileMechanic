@@ -40,7 +40,7 @@ class JobRequestDAO:
         except errors.OperationFailure:
             return None
 
-    # generate a job id
+    # TODO: make the job insertion unique here
     def insert_job(self, user_id, make, model, year, options, summary, description, status):
         try:
             unique_job_id = str(uuid.uuid4())

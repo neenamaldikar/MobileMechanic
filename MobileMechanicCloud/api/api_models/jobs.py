@@ -17,6 +17,7 @@ class JobAPI(Resource):
         self.reqparse.add_argument('job', type=dict, location='json')
         self.reqparse.add_argument('job_id', type=str, location='args')
 
+    # TODO: Change api url to 'jobs' and make ? option for job_id parameter as well to 'GET' request
     @jwt_required()
     def get(self, user_id):
         user_id = str(user_id)
@@ -29,86 +30,77 @@ class JobAPI(Resource):
             job = self.jobsDAO.find_job(user_id, job_id)
             print ('job is', job)
             if job:
-                return jsonify(str(job.__dict__))
+                return jsonify(job.__dict__)
             else:
                 abort(401)
         else:
             jobs_list = self.jobsDAO.find_job(user_id)
             jobs_list = list([i.__dict__ for i in jobs_list])
-            return jsonify(str(jobs_list))
+            return jsonify(jobs_list)
 
+    # TODO: check to see whether data was not repeated
     @jwt_required()
     def post(self, user_id):
-        # TODO: check to see whether data was not repeated
         user_id = str(user_id)
-        print ('help is ', (current_identity.__dict__))
-        print ('Current object is', current_identity._get_current_object().id)
         if user_id != current_identity._get_current_object().id:
             abort(401)
-        # data = request.form.get('job')
-        # print ("data is ", data)
         args = self.reqparse.parse_args()
         job_inserted = args.get('job')
-        print ('args are', args)
+        if not job_inserted:
+            abort(401)
         # TODO: Enforce a already exists check, so that users use PUT to update instead
-        # try:
+        # TODO: Should the checks be instructive in what they should return to the user as an error
+        # TODO: add a status check to avoid malicious status inserts
+        # TODO: add a check to see if all options have been added
+        if not all(list(map(job_inserted.get, ['make', 'model', 'year', 'options', 'summary', 'description', 'status']))):
+            abort(401)
+        if not type(job_inserted['options']) is dict:
+            abort(401)
         insertion_successful, job_id = self.jobsDAO.insert_job(user_id,
                                         job_inserted['make'], job_inserted['model'],
                                         job_inserted['year'], job_inserted['options'],
                                         job_inserted['summary'],
                                         job_inserted['description'],
                                         job_inserted['status'])
-        # print ("result )
-        print ('Is the insertion succesful ? : ', insertion_successful)
         if insertion_successful:
             job = self.jobsDAO.find_job(user_id, job_id)
-            print ('Job got in output is', job)
             return jsonify(results=job.__dict__)
         # give job id in return
         else:
             abort(401)
 
-        # use put request to update the job description
-
+    # TODO: check the dictionary for malicious fields
     @jwt_required()
     def put(self, user_id):
         user_id = str(user_id)
-        print ('Got user id is', user_id)
         if user_id != str(current_identity._get_current_object().id.encode('utf8'), encoding='utf-8'):
-            print ('current_identity is curr', current_identity._get_current_object().id.encode('utf8'))
-            print ('user id is', user_id)
-            print ('Aborting because of current_identity issue')
             abort(401)
 
         args = self.reqparse.parse_args()
-        print ('args are', args)
-        job_to_update = args.get('job')
-        print ('args are', args)
-        job_id = args['job']['job_id']
-        updated_values = {str(k): str(v) for k, v in args['job']['updated_values'].items()}
+        job_data = args.get('job')
+        job_id = args.get('job_id')
+        if not job_data or not job_data.get('updated_values') or not job_id:
+            abort(401)
+        updated_values = {str(k): str(v) for k, v in job_data['updated_values'].items()}
         update_successful = self.jobsDAO.update_job(user_id, job_id, updated_values)
         if update_successful:
             job = self.jobsDAO.find_job(user_id, job_id)
-            # user = self.usersDAO.find_user(user_id)
-            print ('Update was successful for', job.__dict__)
-            return jsonify(results=str(job.__dict__))
+            return jsonify(results=job.__dict__)
         else:
             abort(404)
 
     @jwt_required()
     def delete(self, user_id):
         user_id = str(user_id)
-        if user_id != str(current_identity._get_current_object().id.encode('utf8'), encoding='utf-8'):
+        if user_id != current_identity._get_current_object().id:
             abort(401)
 
         args = self.reqparse.parse_args()
         job_id = args.get('job_id')
-        print ('args are in delete', args)
         if job_id:
             delete_successful = self.jobsDAO.delete_one(user_id, job_id)
-            print('Delete is ?', delete_successful)
             if delete_successful:
-                return jsonify({"success": "Deleted succesful"})
+                return jsonify({"success": "Deleted succesfully!"})
             else:
                 return jsonify({"success": "Job not found"})
         else:

@@ -1,12 +1,14 @@
+import os
 from flask import Flask
 from flask_pymongo import PyMongo
+from waitress import serve
 # to avoid circular dependencies in PyMongo, JWT and flask_restful
 from flask_jwt import JWT
 from extensions import mongo, api
-from auth_api.api_models.users import UserAPI
-from auth_api.api_models.jobs import JobAPI
-from auth_api.api_models.upload import ImageUploadAPI
-from auth_api.authentication import authenticate, identity
+from api.api_models.users import UserAPI
+from api.api_models.jobs import JobAPI
+from api.api_models.upload import ImageUploadAPI
+from api.authentication import authenticate, identity
 
 def initialize_app():
     app = Flask(__name__)
@@ -24,4 +26,5 @@ def initialize_app():
 
 if __name__ == '__main__':
     app = initialize_app()
-    app.run(host='0.0.0.0')
+    # app.run(host='0.0.0.0')
+    serve(app, port=os.environ.get('PORT', 8000), cleanup_interval=100)
