@@ -23,7 +23,7 @@ def authenticate(username, password):
 
 
 def is_appinfo_valid(token_app_id, token_application):
-    if str(token_app_id.encode('utf8'), encoding='utf-8') == os.getenv('FB_APP_ID') and str(token_application.encode('utf8'), encoding='utf-8') == os.getenv('FB_APP_NAME'):
+    if str(token_app_id.encode('utf8'), encoding='utf-8') == app.config.get('FB_APP_ID') and str(token_application.encode('utf8'), encoding='utf-8') == app.config.get('FB_APP_NAME'):
         return True
     else:
         return False
@@ -36,8 +36,8 @@ def get_info_from_token(username):
         return
 
     token_info = graph.debug_access_token(token=username,
-                                          app_id=os.getenv('FB_APP_ID'),
-                                          app_secret=os.getenv('FB_APP_SECRET'))
+                                          app_id=app.config.get('FB_APP_ID'),
+                                          app_secret=app.config.get('FB_APP_SECRET'))
 
     if token_info.get('data').get('is_valid'):
         token_app_id = token_info.get('data').get('app_id')
