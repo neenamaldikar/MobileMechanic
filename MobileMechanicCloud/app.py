@@ -28,4 +28,4 @@ if __name__ == '__main__':
     app = initialize_app()
     # app.run(host='0.0.0.0')
     print('Serving on port', os.environ.get('PORT'))
-    serve(app, port=os.environ.get('PORT', 8000), cleanup_interval=100)
+    serve(app, port=os.environ.get('PORT', 5000), cleanup_interval=100)

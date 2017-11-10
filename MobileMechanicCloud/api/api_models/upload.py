@@ -22,8 +22,10 @@ class ImageUploadAPI(Resource):
         user_id = str(user_id)
         if user_id == current_identity._get_current_object().id:
             f = request.files.get('imagefile')
+            if not f:
+                abort(401)
             if f.filename == '':
-                abort(404)
+                abort(401)
             content_type = f.content_type
             # with tempfile.NamedTemporaryFile() as fp:
             #     f.save(fp.name)
@@ -35,7 +37,7 @@ class ImageUploadAPI(Resource):
                 result = self.jobsDAO.find_job(user_id, job_id)
                 return jsonify(results=result.__dict__)
             else:
-                abort(404)
+                abort(401)
 
     # converts all images to JPEG as response
     @jwt_required()
@@ -47,7 +49,7 @@ class ImageUploadAPI(Resource):
             if picture_id:
                 image_data = self.jobsDAO.get_image(user_id, job_id, picture_id)
                 if image_data:
-                    pil_image = Image.open(io.BytesIO(image_data))
+                    pil_image = Image.open(io.BytesIO(image_data)).convert('RGB')
                     temp_img_io = io.BytesIO()
                     pil_image.save(temp_img_io, 'JPEG', quality=70)
                     temp_img_io.seek(0)
