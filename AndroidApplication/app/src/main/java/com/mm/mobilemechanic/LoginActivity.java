@@ -91,6 +91,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void onFailureJWT(final String errMessage) {
+        mProgress.dismiss();
+        LoginManager.getInstance().logOut();
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), errMessage, Toast.LENGTH_LONG).show();
+            }
+        }));
+    }
+
     public void onSuccessLaunchMainScreen(Bundle bundle) {
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -122,14 +132,15 @@ public class LoginActivity extends AppCompatActivity {
         getUserTokenCallback = new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+                // TODO
+                Log.e(TAG, e.getMessage());
+                onFailureJWT("Error retrieving user information, please try again later");
             }
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                    showToast("Error " + response.code());
-                    LoginManager.getInstance().logOut();
+                    onFailureJWT("Error" + response.code());
                 }
                 else {
                     Log.i(TAG, response.message());
