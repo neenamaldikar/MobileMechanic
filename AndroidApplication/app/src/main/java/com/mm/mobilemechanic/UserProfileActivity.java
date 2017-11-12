@@ -93,6 +93,7 @@ public class UserProfileActivity extends AppCompatActivity {
         inner.addProperty("city", mEditTextProfileCity.getText().toString());
         inner.addProperty("state", mEditTextProfileState.getText().toString());
         inner.addProperty("zipcode", mEditTextProfileZipCode.getText().toString());
+        inner.addProperty("phone_number", mEditTextPhoneNumber.getText().toString());
 
         updated_values.add("updated_values", inner);
 
@@ -108,11 +109,10 @@ public class UserProfileActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.menu_save_profile:  // save button pressed
-                // TODO make Rest client PUT call
-
+                // Saving the user information
                 String updated_values = createJsonFromFields();
-
                 viewModel.setUser(updated_values, mJWToken);
+
                 showToast("Saving");
                 textChanged = false; // set to false to prevent the dialog box from showing
 

@@ -41,8 +41,8 @@
                 android:id="@+id/editText_profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
                 android:ems="10"
+                android:focusable="false"
                 android:hint="Name"
                 android:inputType="textPersonName"
                 android:textSize="14sp" />
@@ -199,6 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:focusable="false"
                 android:hint="Email Address"
                 android:inputType="textEmailAddress"
                 android:textSize="14sp" />
