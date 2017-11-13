@@ -31,13 +31,15 @@ public class UserRepository {
     private String TAG = "UserRepository";
 
     private String mGender;
-    private User mUser;
+    private User mUser;     // TODO need to optimize the number of calls
 
     public LiveData<User> getUser(String userId, String authToken) { // 10152521620162653
         // This is not an optimal implementation, we'll fix it below
         Log.i(TAG, userId + "  " + authToken);
         final MutableLiveData<User> data = new MutableLiveData<>();
 
+
+        // Facebook request to get user info
         GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -46,7 +48,6 @@ public class UserRepository {
                         Log.d(TAG, "LoginActivity Response " + response.toString());
 
                         try {
-
                             mGender = object.getString("gender");
                             mUser.setGender(mGender);
                             data.postValue(mUser);
@@ -61,16 +62,17 @@ public class UserRepository {
         request.setParameters(parameters);
         request.executeAsync();
 
-        RestClient.getUserInfo("", userId, authToken, new Callback() {
+        RestClient.getUserInfo(userId, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                // TODO on failure what happens
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    // TODO on failure what happens
                 } else {
                     Log.i(TAG, response.message());
                     try {
@@ -89,11 +91,9 @@ public class UserRepository {
                         mUser.setPhonenumber(jObject.getString("phone_number"));
                         mUser.setGender(mGender);
                         data.postValue(mUser);
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        // TODO when setting user fails
                     }
                 }
             }
@@ -102,10 +102,10 @@ public class UserRepository {
     }
 
     public void setUser(String json, String userId, String authToken) {
-        RestClient.updateUser("", userId, json, authToken, new Callback() {
+        RestClient.updateUser(userId, json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                // TODO on failure what happens
             }
 
             @Override

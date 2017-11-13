@@ -21,7 +21,7 @@ public class RestClient {
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
 
-    public static String URL_ADDRESS = "192.168.86.22";
+    public static String URL_ADDRESS ="mobilemechanic.herokuapp.com"; // "192.168.86.22"; // http://mobilemechanic.herokuapp.com
 
     public static void GET(String url, Callback responseCallback) {
         Request request = new Request.Builder()
@@ -66,22 +66,22 @@ public class RestClient {
 
     //////////////////
 
-    public static void getUserJWT(String url, AccessToken fbToken, Callback responseCallback) {
+    public static void getUserJWT(AccessToken fbToken, Callback responseCallback) {
         JsonObject json = new JsonObject();
         json.addProperty("username", fbToken.getToken());
         json.addProperty("password", "none");
 
-        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/auth";
+        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/auth";
         RestClient.POST(url, json.toString(), responseCallback);
     }
 
-    public static void getUserInfo(String url, String userId, String authToken, Callback responseCallback) {
-        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+    public static void getUserInfo(String userId, String authToken, Callback responseCallback) {
+        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
         RestClient.GET(url, authToken, responseCallback);
     }
 
-    public static void updateUser(String url, String userId, String json, String authToken, Callback responseCallback) {
-        url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+    public static void updateUser(String userId, String json, String authToken, Callback responseCallback) {
+        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 

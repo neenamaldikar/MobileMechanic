@@ -5,21 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.WindowManager;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.mm.mobilemechanic.authorization.RestClient;
-
-import android.view.Menu;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +29,7 @@ import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 4/9/2017.
+ *
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 mFbToken = loginResult.getAccessToken();
                 mProgress.show();
-                RestClient.getUserJWT("", mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
+                RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
             }
 
             @Override
@@ -133,13 +130,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG +"1", e.getMessage());
                 onFailureJWT("Error retrieving user information, please try again later");
             }
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    Log.e(TAG + "2", "Code = " + response.code() + " " + response.message());
                     onFailureJWT("Error" + response.code());
                 }
                 else {
@@ -161,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
         mFbToken =  AccessToken.getCurrentAccessToken();
         if (mFbToken != null) {  // get the JWT directly and open the next screen
             mProgress.show();
-            RestClient.getUserJWT("", mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
+            RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
         }
 
 
