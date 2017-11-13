@@ -17,10 +17,11 @@ def initialize_app():
     mongo.init_app(app, config_prefix='MONGO')
     jwt = JWT(app, authenticate, identity)
     api_base_string = '/mobilemechanic/api/v1.0/'
+    api.add_resource(MechanicAPI, api_base_string + '')
     api.add_resource(UserAPI, api_base_string + 'users/<int:user_id>')
-    api.add_resource(JobAPI, api_base_string + 'users/<int:user_id>/job')
+    api.add_resource(JobAPI, api_base_string + 'users/<int:user_id>/jobs')
     api.add_resource(ImageUploadAPI,
-                     api_base_string + 'users/<int:user_id>/job/<job_id>/picture')
+                     api_base_string + 'users/<int:user_id>/jobs/<job_id>/picture')
     api.init_app(app)
     return app
 

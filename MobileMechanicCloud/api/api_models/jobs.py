@@ -4,9 +4,6 @@ from flask import jsonify, request
 from database.job_request import JobRequestDAO
 from database.user_request import UsersDAO
 from extensions import mongo
-from bson import Binary
-from gridfs import GridFS
-import tempfile
 
 class JobAPI(Resource):
 
@@ -17,7 +14,6 @@ class JobAPI(Resource):
         self.reqparse.add_argument('job', type=dict, location='json')
         self.reqparse.add_argument('job_id', type=str, location='args')
 
-    # TODO: Change api url to 'jobs' and make ? option for job_id parameter as well to 'GET' request
     @jwt_required()
     def get(self, user_id):
         user_id = str(user_id)
@@ -26,9 +22,7 @@ class JobAPI(Resource):
         args = self.reqparse.parse_args()
         job_id = args.get('job_id')
         if job_id:
-            print ('args are', args)
             job = self.jobsDAO.find_job(user_id, job_id)
-            print ('job is', job)
             if job:
                 return jsonify(job.__dict__)
             else:
@@ -38,7 +32,7 @@ class JobAPI(Resource):
             jobs_list = list([i.__dict__ for i in jobs_list])
             return jsonify(jobs_list)
 
-    # TODO: check to see whether data was not repeated
+    # TODO: Enforce a already exists check, so that users use PUT to update instead
     @jwt_required()
     def post(self, user_id):
         user_id = str(user_id)
@@ -48,10 +42,6 @@ class JobAPI(Resource):
         job_inserted = args.get('job')
         if not job_inserted:
             abort(401)
-        # TODO: Enforce a already exists check, so that users use PUT to update instead
-        # TODO: Should the checks be instructive in what they should return to the user as an error
-        # TODO: add a status check to avoid malicious status inserts
-        # TODO: add a check to see if all options have been added
         if not all(list(map(job_inserted.get, ['make', 'model', 'year', 'options', 'summary', 'description', 'status']))):
             abort(401)
         if not type(job_inserted['options']) is dict:
@@ -69,7 +59,7 @@ class JobAPI(Resource):
         else:
             abort(401)
 
-    # TODO: check the dictionary for malicious fields
+    # TODO: check the dictionary for malicious fields and for whether only true false values are inserted
     @jwt_required()
     def put(self, user_id):
         user_id = str(user_id)

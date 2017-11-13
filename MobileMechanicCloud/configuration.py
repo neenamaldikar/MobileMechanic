@@ -1,7 +1,3 @@
-# FB App details
-#APP_ID = '1894402924175386' # Neil: '811832542261786'
-#APP_SECRET = '5b26f12f47760bfed7fbf05467c3168c' #Neil: '55c624f94ba89d8be9f55ab601c6cf6c'
-#APP_NAME = 'MobileMechanic'
 import os
 import datetime
 
