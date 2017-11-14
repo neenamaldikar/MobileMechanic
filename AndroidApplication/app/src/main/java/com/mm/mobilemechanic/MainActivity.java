@@ -10,10 +10,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -41,6 +43,15 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
+
+    private void showToast(final String message) {
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        }));
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -136,31 +147,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void showJobInformation(Job job) {
-        // custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.activity_main_job_dialog);
-        dialog.setTitle("Job Information");
 
-        // set the custom dialog components - text, image and button
-        TextView text = (TextView) dialog.findViewById(R.id.textView_dialog_job_summary);
-        text.setText(job.getSummary());
-        TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
-        text1.setText("Description: \n" + job.getDescription());
-        TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
-        text2.setText("On Site Diagnostic = " + job.isOnSiteDiagnostic());
-        TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
-        text3.setText("Car in working condition = " + job.isCarInWorkingCondition());
-        TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
-        text4.setText("Repair can be done on-site = " + job.isRepairDoneOnSite());
-        TextView text5 = (TextView) dialog.findViewById(R.id.textView_dialog_carPickUpDropOff);
-        text5.setText("Car pick up and drop off = " + job.isCarPickUpAndDropOff());
-
-        TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
-        text6.setText("Parking available on-site = " + job.isParkingAvailable());
-
-        dialog.show();
-    }
 
 
 
@@ -193,17 +180,26 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
+    public void showPopup(View view) {
+
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
+        popup.show();
+    }
+
     public void createFakeJobs() {
 
         List<Job> jobLists = new ArrayList<>();
         jobLists.add(new Job(getResources().getString(R.string.facebook_app_id), "summary1", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary2", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary3", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary4", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary5", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("car window broken", "Need to repair front passenger seat window", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("car engine smoke", "Smoke is coming from the engine every time when driving on highway", false, true, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("Rear windshield broken", "Sealing around the rear windshield is gone and need to be re-applied", true, false, true, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("Exhaust pipe broken", "There is a crack in the exhaust pipe and it is making a loud noise", true, false, false, true, JobStatus.QUOTES_REQUESTED));
 
 
-        JobRequestsAdapter adapter = new JobRequestsAdapter(jobLists);
+        JobRequestsAdapter adapter = new JobRequestsAdapter(this, jobLists);
         RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);

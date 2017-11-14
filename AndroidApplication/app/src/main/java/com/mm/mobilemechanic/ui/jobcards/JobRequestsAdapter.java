@@ -1,6 +1,7 @@
 package com.mm.mobilemechanic.ui.jobcards;
 
-import android.content.Intent;
+import android.app.Activity;
+import android.app.Dialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,14 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mm.mobilemechanic.JobFormActivity;
 import com.mm.mobilemechanic.R;
 import com.mm.mobilemechanic.user.Job;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by ndw6152 on 10/13/2017.
@@ -25,9 +24,38 @@ import butterknife.OnClick;
 public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.JobCardsViewHolder> {
 
     private List<Job> mJobsList;
+    private Activity mActivity;
 
-    public JobRequestsAdapter(List<Job> jobsList) {
+    public JobRequestsAdapter(Activity context, List<Job> jobsList) {
         mJobsList = jobsList;
+        mActivity = context;
+    }
+
+
+    public void showJobInformation(Activity activity, Job job) {
+        // custom dialog
+        final Dialog dialog = new Dialog(activity);
+        dialog.setContentView(R.layout.activity_main_job_dialog);
+        dialog.setTitle("Job Information");
+
+        // set the custom dialog components - text, image and button
+        TextView text = (TextView) dialog.findViewById(R.id.textView_dialog_job_summary);
+        text.setText(job.getSummary());
+        TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
+        text1.setText("Description: \n" + job.getDescription());
+        TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
+        text2.setText("On Site Diagnostic = " + job.isOnSiteDiagnostic());
+        TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
+        text3.setText("Car in working condition = " + job.isCarInWorkingCondition());
+        TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
+        text4.setText("Repair can be done on-site = " + job.isRepairDoneOnSite());
+        TextView text5 = (TextView) dialog.findViewById(R.id.textView_dialog_carPickUpDropOff);
+        text5.setText("Car pick up and drop off = " + job.isCarPickUpAndDropOff());
+
+        TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
+        text6.setText("Parking available on-site = " + job.isParkingAvailable());
+
+        dialog.show();
     }
 
     @Override
@@ -39,7 +67,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
     @Override
     public void onBindViewHolder(JobCardsViewHolder holder, int position) {
-        Job job = mJobsList.get(position);
+        final Job job = mJobsList.get(position);
         holder.jobSummary.setText(job.getSummary());
         holder.numberOfQuotes.setText(5 + "");  // TODO get actual number of quotes
         holder.currentStatus.setText(job.getStatus().toString());
@@ -48,7 +76,8 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
             @Override
             public void onClick(View v) {
                 //implement onClick
-                System.out.println("Clicked");
+                System.out.println("Clicked " + job.getSummary());
+                showJobInformation(mActivity, job);
             }
         });
     }
