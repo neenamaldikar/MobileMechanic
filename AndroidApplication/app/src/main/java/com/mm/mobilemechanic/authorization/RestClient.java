@@ -71,17 +71,17 @@ public class RestClient {
         json.addProperty("username", fbToken.getToken());
         json.addProperty("password", "none");
 
-        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/auth";
+        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/auth";
         RestClient.POST(url, json.toString(), responseCallback);
     }
 
     public static void getUserInfo(String userId, String authToken, Callback responseCallback) {
-        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/users/" + userId;
         RestClient.GET(url, authToken, responseCallback);
     }
 
     public static void updateUser(String userId, String json, String authToken, Callback responseCallback) {
-        String url = "http://" + RestClient.URL_ADDRESS +":5000/mobilemechanic/api/v1.0/users/" + userId;
+        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/users/" + userId;
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 

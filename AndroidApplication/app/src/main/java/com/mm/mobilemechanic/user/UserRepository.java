@@ -48,10 +48,11 @@ public class UserRepository {
                         Log.d(TAG, "LoginActivity Response " + response.toString());
 
                         try {
-                            mGender = object.getString("gender");
-                            mUser.setGender(mGender);
-                            data.postValue(mUser);
-
+                            if(mUser != null) {
+                                mGender = object.getString("gender");
+                                mUser.setGender(mGender);
+                                data.postValue(mUser);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
