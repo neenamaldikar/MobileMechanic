@@ -11,4 +11,4 @@ class DevelopmentConfig:
     JWT_EXPIRATION_DELTA = datetime.timedelta(minutes=60)
     # if we work with multiple databases, we'll need to use the
     # configuration prefix for each of the databases
-    MONGO_URI = os.getenv('MONGO_URI')
+    MONGO_URI = os.getenv('MONGO_URI', '')

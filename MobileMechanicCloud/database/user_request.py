@@ -3,7 +3,7 @@ from model import user_model
 from pymongo import errors
 import time
 
-class UsersDAO:
+class UserDAO:
     def __init__(self, mongo):
         self.db = mongo.db
 

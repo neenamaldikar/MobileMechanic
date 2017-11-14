@@ -1,24 +1,24 @@
 import facebook
-from database.user_request import UsersDAO
+from database.user_request import UserDAO
 from extensions import mongo
 import os
 from flask import current_app
 # check safety of app usage
 
 def authenticate(username, password):
-    usersDAO = UsersDAO(mongo)
+    userDAO = UserDAO(mongo)
     profile, token_app_id, token_application = get_info_from_token(username)
     if profile is None:
         return
     if is_appinfo_valid(token_app_id, token_application) == False:
         return
 
-    user = usersDAO.find_user(profile.get('id'))
+    user = userDAO.find_user(profile.get('id'))
     print('id is', profile.get('id'))
     if user is None:
-        usersDAO.insert_user(profile.get('id'), profile.get('first_name'),
+        userDAO.insert_user(profile.get('id'), profile.get('first_name'),
                              profile.get('last_name'),profile.get('email'))
-        user = usersDAO.find_user(profile.get('id'))
+        user = userDAO.find_user(profile.get('id'))
 
     return user
 
@@ -52,6 +52,6 @@ def get_info_from_token(username):
     return profile, token_app_id, token_application
 
 def identity(payload):
-    usersDAO = UsersDAO(mongo)
-    current_user = usersDAO.find_user(payload['identity'])
+    userDAO = UserDAO(mongo)
+    current_user = userDAO.find_user(payload['identity'])
     return current_user

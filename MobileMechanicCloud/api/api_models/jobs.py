@@ -2,14 +2,14 @@ from flask_restful import Resource, reqparse, abort
 from flask_jwt import jwt_required, current_identity
 from flask import jsonify, request
 from database.job_request import JobRequestDAO
-from database.user_request import UsersDAO
+from database.user_request import UserDAO
 from extensions import mongo
 
 class JobAPI(Resource):
 
     def __init__(self):
         self.jobsDAO = JobRequestDAO(mongo)
-        self.usersDAO = UsersDAO(mongo)
+        self.userDAO = UserDAO(mongo)
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('job', type=dict, location='json')
         self.reqparse.add_argument('job_id', type=str, location='args')
