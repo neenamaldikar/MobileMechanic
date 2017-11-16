@@ -3,7 +3,7 @@ from model import user_model
 from pymongo import errors
 import time
 
-class UsersDAO:
+class UserDAO:
     def __init__(self, mongo):
         self.db = mongo.db
 
@@ -12,13 +12,12 @@ class UsersDAO:
             user = self.db.users.find_one({'user_id': user_id})
             if user is None:
                 return None
-            print ('User is ', user)
             return user_model.User(user['user_id'], user['first_name'],
                                    user['last_name'], user['email'], user['last_seen'],
                                    address_line1=user.get('address_line1'),
                                    address_line2=user.get('address_line2'),
                                    city=user.get('city'), state=user.get('state'),
-                                   zipcode=user.get('zipcode'), role=user.get('role'))
+                                   zipcode=user.get('zipcode'), phone_number=user.get('phone_number'))
         except errors.OperationFailure:
             return None
 
@@ -36,7 +35,6 @@ class UsersDAO:
         try:
             print ('Updating user with', updated_values)
             result = self.db.users.update_one({'user_id': user_id}, {'$set': updated_values})
-            print ("The result is", result)
             if result.matched_count == 1:
                 return True
             else:
