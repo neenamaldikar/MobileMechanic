@@ -1,3 +1,5 @@
+# TODO: Find an alternative to using the _get_current_object().id
+
 from flask_restful import Resource, reqparse, abort
 from flask_jwt import jwt_required, current_identity
 from flask import jsonify
@@ -18,11 +20,11 @@ class UserAPI(Resource):
             abort(401)
 
         user = self.userDAO.find_user(user_id)
-        if user is None:
+        if not user:
             abort(404)
+        return user.as_dict()
 
-        return jsonify(user.__dict__)
-
+    # add validations to the PUT request before the data being sent in can be used to update values
     @jwt_required()
     def put(self, user_id):
         user_id = str(user_id)
@@ -31,18 +33,19 @@ class UserAPI(Resource):
 
         args = self.reqparse.parse_args()
         if not args.get('updated_values'):
-            abort(401)
+            abort(400)
         new_values = {str(k): str(v) for k, v in args['updated_values'].items()}
         if any([i in new_values for i in ['user_id', 'email_address', 'first_name', 'last_name']]):
-            abort(401)
-        if any([i not in ['phone_number', 'address_line1', 'address_line2', 'city', 'state', 'zipcode'] for i in new_values]):
-            abort(401)
+            abort(405)
+        if any([i not in ['phone_number', 'address_line', 'city', 'state', 'zipcode'] for i in new_values]):
+            abort(400)
         update_successful = self.userDAO.update_user(user_id, new_values)
-        if update_successful:
-            user = self.userDAO.find_user(user_id)
-            return jsonify(results=user.__dict__)
-        else:
+        if not update_successful:
             abort(401)
+        user = self.userDAO.find_user(user_id)
+        if not user:
+            abort(404)
+        return user.as_dict()
 
     @jwt_required()
     def delete(self, user_id):
@@ -51,7 +54,6 @@ class UserAPI(Resource):
             abort(401)
 
         delete_successful = self.userDAO.delete_one(user_id)
-        if delete_successful:
-            return {'success': "Deleted successfully!"}
-        else:
+        if not delete_successful:
             abort(404)
+        return {'success': "User has been deleted successfully."}

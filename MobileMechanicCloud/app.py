@@ -7,6 +7,7 @@ from waitress import serve
 # to avoid circular dependencies in PyMongo, JWT and flask_restful
 from flask_jwt import JWT
 from extensions import mongo, api
+from configuration import LOGGING_JSON
 from api.api_models.users import UserAPI
 # from api.api_models.mechanics import MechanicAPI
 from api.api_models.jobs import JobAPI
@@ -30,6 +31,7 @@ def initialize_app():
 
 if __name__ == '__main__':
     app = initialize_app()
-    logging.config.dictConfig(app.config.get('LOGGING_JSON'))
+    logging.config.dictConfig(LOGGING_JSON)
     logging.info('Serving on port - ' + os.environ.get('PORT'))
+    logging.debug('Mongo URI used is ' + app.config.get('MONGO_URI'))
     serve(app, port=os.environ.get('PORT', 5000), cleanup_interval=100)
