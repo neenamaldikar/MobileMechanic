@@ -1,6 +1,5 @@
 package com.mm.mobilemechanic;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,14 +17,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
-import com.mm.mobilemechanic.ui.jobcards.JobRequestsAdapter;
-import com.mm.mobilemechanic.user.Job;
-import com.mm.mobilemechanic.user.JobStatus;
+import com.mm.mobilemechanic.job.JobRequestsAdapter;
+import com.mm.mobilemechanic.job.Job;
+import com.mm.mobilemechanic.job.JobStatus;
 import com.mm.mobilemechanic.user.User;
 
 import java.util.ArrayList;

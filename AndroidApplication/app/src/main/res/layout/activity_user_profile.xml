@@ -141,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:hint="Zip Code"
-                        android:inputType="textPersonName"
+                        android:inputType="number"
                         android:textSize="14sp" />
 
                 </LinearLayout>

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -19,9 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.mm.mobilemechanic.user.Job;
+import com.mm.mobilemechanic.job.Job;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by ndw6152 on 5/14/2017.
@@ -34,6 +38,11 @@ public class JobFormActivity extends AppCompatActivity {
     private boolean changesMade = false;
 
     private Job mJob;
+    @BindView(R.id.editText_job_summary) EditText mEditTextSummary;
+    @BindView(R.id.editText_job_description) EditText mEditTextDescription;
+    @BindView(R.id.editText_car_make) EditText mEditTextCarMake;
+    @BindView(R.id.editText_car_model) EditText mEditTextCarModel;
+    @BindView(R.id.editText_car_year) EditText mEditTextCarYear;
 
 
 
@@ -107,11 +116,12 @@ public class JobFormActivity extends AppCompatActivity {
 
     public void submitJobOnClick(View view) {
         Intent resultIntent = new Intent();
-        TextView summaryView = (TextView) findViewById(R.id.editText_job_summary);
-        mJob.setSummary("" + summaryView.getText());
+        mJob.setSummary(mEditTextSummary.getText().toString());
+        mJob.setDescription(mEditTextDescription.getText().toString());
+        mJob.setMake(mEditTextDescription.getText().toString());
+        mJob.setModel(mEditTextDescription.getText().toString());
+        mJob.setYear(Integer.parseInt(mEditTextDescription.getText().toString()));
 
-        TextView descriptionView = (TextView) findViewById(R.id.editText_job_description);
-        mJob.setDescription("" + descriptionView.getText());
         resultIntent.putExtra("newJob", "" + new Gson().toJson(mJob));
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
@@ -208,7 +218,7 @@ public class JobFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_job_form);
-
+        ButterKnife.bind(this);
         mJob = new Job();
 
         initializeSwitches();

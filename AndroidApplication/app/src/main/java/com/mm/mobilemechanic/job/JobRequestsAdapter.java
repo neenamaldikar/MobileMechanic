@@ -1,4 +1,4 @@
-package com.mm.mobilemechanic.ui.jobcards;
+package com.mm.mobilemechanic.job;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mm.mobilemechanic.R;
-import com.mm.mobilemechanic.user.Job;
 
 import java.util.List;
 
