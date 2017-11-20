@@ -89,7 +89,7 @@ public class UserProfileActivity extends AppCompatActivity {
         JsonObject updated_values = new JsonObject();
         JsonObject inner = new JsonObject();
 
-        inner.addProperty("address_line1", mEditTextProfileAddress.getText().toString());
+        inner.addProperty("address_line", mEditTextProfileAddress.getText().toString());
         inner.addProperty("city", mEditTextProfileCity.getText().toString());
         inner.addProperty("state", mEditTextProfileState.getText().toString());
         inner.addProperty("zipcode", mEditTextProfileZipCode.getText().toString());
