@@ -18,10 +18,15 @@ public class RestClient {
 
     private static String TAG = "RestClient";
     private static OkHttpClient client = new OkHttpClient();
-    static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
 
-    public static String URL_ADDRESS ="mobilemechanic.herokuapp.com"; // "192.168.86.22"; // http://mobilemechanic.herokuapp.com
+    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
+    private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
+    private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
+    private static String URI_JOB = "/job";
+
+
 
     public static void GET(String url, Callback responseCallback) {
         Request request = new Request.Builder()
@@ -71,17 +76,17 @@ public class RestClient {
         json.addProperty("username", fbToken.getToken());
         json.addProperty("password", "none");
 
-        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/auth";
+        String url = RestClient.URL_BASE + URI_AUTH;
         RestClient.POST(url, json.toString(), responseCallback);
     }
 
     public static void getUserInfo(String userId, String authToken, Callback responseCallback) {
-        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/users/" + userId;
+        String url = RestClient.URL_BASE + URI_USER + userId;
         RestClient.GET(url, authToken, responseCallback);
     }
 
     public static void updateUser(String userId, String json, String authToken, Callback responseCallback) {
-        String url = "http://" + RestClient.URL_ADDRESS +"/mobilemechanic/api/v1.0/users/" + userId;
+        String url = RestClient.URL_BASE + URI_USER + userId;
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 
