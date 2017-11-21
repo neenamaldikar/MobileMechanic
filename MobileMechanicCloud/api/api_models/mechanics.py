@@ -38,7 +38,10 @@ class MechanicAPI(Resource):
         new_values = {str(k): (str(v) if type(v) == str else v) for k, v in args['updated_values'].items()}
         if any([i == 'user_id' for i in new_values]):
             logging.debug('"user_id" not provided by mechanic.')
-            abort(405, 'The request was sent in without a "user_id" field.')
+            abort(405, description='The request was sent in without a "user_id" field.')
+        if not all([(len(i) == 5 and i.isdigit()) for i in new_values['serving_zipcodes']]):
+            logging.debug('"serving_zipcodes" may not have properly formatted zipcodes inserted.')
+            abort(400, description='The request was sent in with invalid zipcodes in the "serving_zipcodes" field.')
         if any([i not in ['phone_number', 'address_line', 'city', 'state', 'zipcode', 'rate',
                           'rating', 'reviews', 'serving_zipcodes'] for i in new_values]):
             logging.debug('Mechanic has not added a few fields.')
