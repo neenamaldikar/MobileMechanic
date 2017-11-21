@@ -18,7 +18,8 @@ class MechanicDAO:
                                    address_line=mechanic.get('address_line'),
                                    city=mechanic.get('city'), state=mechanic.get('state'),
                                    zipcode=mechanic.get('zipcode'), rate=mechanic.get('rate'),
-                                   rating=mechanic.get('rating'), reviews=mechanic.get('reviews'))
+                                   rating=mechanic.get('rating'), reviews=mechanic.get('reviews'),
+                                   serving_zipcodes=mechanic.get('serving_zipcodes'))
         except:
             return None
 

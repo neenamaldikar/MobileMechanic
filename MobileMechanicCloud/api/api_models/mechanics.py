@@ -40,7 +40,7 @@ class MechanicAPI(Resource):
             logging.debug('"user_id" not provided by mechanic.')
             abort(405, 'The request was sent in without a "user_id" field.')
         if any([i not in ['phone_number', 'address_line', 'city', 'state', 'zipcode', 'rate',
-                          'rating', 'reviews'] for i in new_values]):
+                          'rating', 'reviews', 'serving_zipcodes'] for i in new_values]):
             logging.debug('Mechanic has not added a few fields.')
             abort(400, description='The request is missing a few fields. Please check your request body once again.')
 
