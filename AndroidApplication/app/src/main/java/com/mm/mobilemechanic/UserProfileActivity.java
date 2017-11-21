@@ -1,9 +1,12 @@
 package com.mm.mobilemechanic;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -15,22 +18,41 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
+import com.google.gson.JsonObject;
+import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.user.UserProfileViewModel;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by ndw6152 on 4/12/2017.
  *
  */
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity {
     private String TAG = "ProfileScreen";
     private boolean textChanged = false;
+    private UserProfileViewModel viewModel;
+    @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
+    @BindView(R.id.editText_profile_address) EditText mEditTextProfileAddress;
+    @BindView(R.id.editText_profile_city) EditText mEditTextProfileCity;
+    @BindView(R.id.editText_profile_state) EditText mEditTextProfileState;
+    @BindView(R.id.editText_profile_zipcode) EditText mEditTextProfileZipCode;
+    @BindView(R.id.editText_profile_additional_info) EditText mEditTextBio;
+
+
+    @BindView(R.id.editText_profile_email) EditText mEditTextemail;
+    @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
+    @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
+
+    private String mJWToken;
 
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,6 +85,21 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+    public String createJsonFromFields() {
+        JsonObject updated_values = new JsonObject();
+        JsonObject inner = new JsonObject();
+
+        inner.addProperty("address_line", mEditTextProfileAddress.getText().toString());
+        inner.addProperty("city", mEditTextProfileCity.getText().toString());
+        inner.addProperty("state", mEditTextProfileState.getText().toString());
+        inner.addProperty("zipcode", mEditTextProfileZipCode.getText().toString());
+        inner.addProperty("phone_number", mEditTextPhoneNumber.getText().toString());
+
+        updated_values.add("updated_values", inner);
+
+        return updated_values.toString();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -71,7 +108,11 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         switch (item.getItemId())
         {
-            case R.id.menu_save_profile:
+            case R.id.menu_save_profile:  // save button pressed
+                // Saving the user information
+                String updated_values = createJsonFromFields();
+                viewModel.setUser(updated_values, mJWToken);
+
                 showToast("Saving");
                 textChanged = false; // set to false to prevent the dialog box from showing
 
@@ -114,8 +155,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         };
 
-
-
         // loop to add the listener to all edittext box
         for( int i = 0; i < profileEditTextViews.getChildCount(); i++ ) {
             if( profileEditTextViews.getChildAt(i) instanceof EditText) {
@@ -127,17 +166,35 @@ public class ProfileEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_edit);
-
-        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
+        setContentView(R.layout.activity_user_profile);
+        ButterKnife.bind(this);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // getting initial information from the main activitiy and setting the first edit text view content
-        Intent in = getIntent();
-        Bundle b = in.getExtras();
-        EditText nameView = (EditText) findViewById(R.id.editText_profile_name);
-        nameView.setText(b.getString("key1"));
+        mJWToken = getIntent().getExtras().getString("JWT");
+
+        viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
+        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken);
+        viewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                mEditTextProfileName.setText(user.getName());
+                mEditTextProfileAddress.setText(user.getAddress());
+                mEditTextProfileCity.setText(user.getCity());
+                mEditTextProfileState.setText(user.getState());
+                mEditTextProfileZipCode.setText(user.getZipCode());
+
+                mEditTextPhoneNumber.setText(user.getPhonenumber());
+                mEditTextemail.setText(user.getEmail());
+                mEditTextGender.setText(user.getGender());
+                mEditTextBio.setText(user.getBio());
+            }
+        });
+
+
+        addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
     }
+
+
 }

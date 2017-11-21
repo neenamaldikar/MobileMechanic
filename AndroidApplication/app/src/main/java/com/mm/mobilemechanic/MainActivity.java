@@ -10,16 +10,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,14 +31,27 @@ import com.mm.mobilemechanic.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
     private User mCustomer;
+    private String mJWTtoken;
 
-    private static final int FROM_PROFILE_EDIT_SCREEN = 123;
+    private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
+
+    private void showToast(final String message) {
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        }));
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -95,16 +106,15 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.nav_profile:
-                intent = new Intent(this, ProfileEditActivity.class);
-
+                intent = new Intent(this, UserProfileActivity.class);
                 Bundle b = new Bundle();
-                b.putString("key1", mCustomer.getName());
+                b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
-                startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);  // starting the intent with special id that will be called back
+                startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
                 break;
             case R.id.nav_history:
                 //intent = new Intent(this, RestClientActivity.class);
-                //startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);
+                //startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);
 
                 break;
             case R.id.nav_payment:
@@ -137,31 +147,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void showJobInformation(Job job) {
-        // custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.activity_main_job_dialog);
-        dialog.setTitle("Job Information");
 
-        // set the custom dialog components - text, image and button
-        TextView text = (TextView) dialog.findViewById(R.id.textView_dialog_job_summary);
-        text.setText(job.getSummary());
-        TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
-        text1.setText("Description: \n" + job.getDescription());
-        TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
-        text2.setText("On Site Diagnostic = " + job.isOnSiteDiagnostic());
-        TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
-        text3.setText("Car in working condition = " + job.isCarInWorkingCondition());
-        TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
-        text4.setText("Repair can be done on-site = " + job.isRepairDoneOnSite());
-        TextView text5 = (TextView) dialog.findViewById(R.id.textView_dialog_carPickUpDropOff);
-        text5.setText("Car pick up and drop off = " + job.isCarPickUpAndDropOff());
-
-        TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
-        text6.setText("Parking available on-site = " + job.isParkingAvailable());
-
-        dialog.show();
-    }
 
 
 
@@ -170,8 +156,8 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             switch(requestCode) {
-                case (FROM_PROFILE_EDIT_SCREEN):
-                    Bundle b = data.getExtras();
+                case (FROM_USER_PROFILE_SCREEN):
+                    System.out.println("came from user profile activity");
                     break;
                 case (FROM_NEW_JOB_SCREEN):
                     String jsonMyObject = "";
@@ -181,42 +167,49 @@ public class MainActivity extends AppCompatActivity
                     }
                     Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
                     newJob.getSummary();
-
                     break;
             }
         }
     }
 
-
+    @OnClick(R.id.button_create_new_job)
     public void createNewJobOnClick(View view) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
-
     }
 
+
+
+    public void showPopup(View view) {
+
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
+        popup.show();
+    }
 
     public void createFakeJobs() {
 
         List<Job> jobLists = new ArrayList<>();
-        jobLists.add(new Job("summary1", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary2", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary3", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary4", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary5", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job(getResources().getString(R.string.facebook_app_id), "summary1", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("car window broken", "Need to repair front passenger seat window", true, false, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("car engine smoke", "Smoke is coming from the engine every time when driving on highway", false, true, false, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("Rear windshield broken", "Sealing around the rear windshield is gone and need to be re-applied", true, false, true, false, JobStatus.QUOTES_REQUESTED));
+        jobLists.add(new Job("Exhaust pipe broken", "There is a crack in the exhaust pipe and it is making a loud noise", true, false, false, true, JobStatus.QUOTES_REQUESTED));
 
 
-        JobRequestsAdapter adapter = new JobRequestsAdapter(jobLists);
+        JobRequestsAdapter adapter = new JobRequestsAdapter(this, jobLists);
         RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -231,8 +224,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        String jwtoken = getIntent().getExtras().getString("token");
-        Log.i(TAG, jwtoken);
+        mJWTtoken = getIntent().getExtras().getString("JWT");
+        Log.i(TAG, mJWTtoken);
 
         mCustomer = new User("TEST_customer1");
 

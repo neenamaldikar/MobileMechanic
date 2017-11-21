@@ -7,8 +7,20 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="facebook_app_id">811832542261786</string>
+    <!--testApp fb id-->
+    <!--<string name="facebook_app_id">811832542261786</string>-->
+    <string name="facebook_app_id">851675724996702</string>
+
 
 
     <string name="test_rest_client_name">Test Rest Client</string>
+
+
+
+    <string-array name="gender_arrays">
+        <item>Not Specified</item>
+        <item>Male</item>
+        <item>Female</item>
+
+    </string-array>
 </resources>
