@@ -24,7 +24,7 @@ public class RestClient {
     private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
     private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
-    private static String URI_JOB = "/job";
+    private static String URI_JOB = "/jobs";
 
 
 
@@ -88,6 +88,14 @@ public class RestClient {
     public static void updateUser(String userId, String json, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId;
         RestClient.PUT(url, authToken, json, responseCallback);
+    }
+
+
+    ////////////////////
+
+    public static void createJob(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
+        RestClient.POST(url, authToken, json, responseCallback);
     }
 
 }

@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/ll_create_job"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -59,8 +60,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number"
-            android:hint="Enter car year" />
+            android:hint="Enter car year"
+            android:inputType="number" />
 
         <TextView
             android:id="@+id/textView56"
@@ -97,8 +98,8 @@
             android:id="@+id/switch_parking_available"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="Parking available for mechanic" />
+            android:text="Parking available for mechanic"
+            android:visibility="invisible" />
 
         <HorizontalScrollView
             android:layout_width="wrap_content"
@@ -137,7 +138,6 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:onClick="submitJobOnClick"
                 android:text="Submit" />
 
             <Button
@@ -153,7 +153,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="32dp"/>
+            android:layout_height="32dp" />
     </LinearLayout>
 
 

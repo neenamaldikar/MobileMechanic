@@ -136,7 +136,6 @@ public class UserProfileActivity extends AppCompatActivity {
     // TODO: need to figure out a way to only pop up dialog box when a change occur and not after i set the information
     public void addOnTextChangedListenerToAllEditText(@android.support.annotation.IdRes int layoutId) {
         LinearLayout profileEditTextViews = (LinearLayout) findViewById(layoutId);
-
         // listener to update a flag that a text box was edited
         TextWatcher tw = new TextWatcher() {
             @Override
@@ -157,8 +156,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
         // loop to add the listener to all edittext box
         for( int i = 0; i < profileEditTextViews.getChildCount(); i++ ) {
-            if( profileEditTextViews.getChildAt(i) instanceof EditText) {
-                ((EditText) profileEditTextViews.getChildAt(i)).addTextChangedListener(tw);
+            if(profileEditTextViews.getChildAt(i) instanceof EditText) {
+                final EditText editText = ((EditText) profileEditTextViews.getChildAt(i));
+                editText.addTextChangedListener(tw);
             }
         }
     }

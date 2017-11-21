@@ -174,6 +174,9 @@ public class MainActivity extends AppCompatActivity
     public void createNewJobOnClick(View view) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
+        Bundle b = new Bundle();
+        b.putString("JWT", mJWTtoken);
+        intent.putExtras(b);
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
     }
 
