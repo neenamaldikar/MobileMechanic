@@ -18,7 +18,7 @@
             android:layout_margin="16dp"
             android:clickable="true"
             android:contentDescription="User profile picture"
-            android:src="@drawable/fbdefaultimage" />
+            android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
         <LinearLayout
             android:id="@+id/ll_profile_text_views"
