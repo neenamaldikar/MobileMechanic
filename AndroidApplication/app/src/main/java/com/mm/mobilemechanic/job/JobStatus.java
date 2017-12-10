@@ -1,4 +1,4 @@
-package com.mm.mobilemechanic.user;
+package com.mm.mobilemechanic.job;
 
 /**
  * Created by ndw6152 on 10/17/2017.
