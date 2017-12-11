@@ -2,6 +2,7 @@ package com.mm.mobilemechanic.user;
 
 /**
  * Created by ndw6152 on 4/15/2017.
+ *
  */
 
 public class User {
@@ -11,6 +12,10 @@ public class User {
     private String mEmail;
     private String mGender;
     private String mBio;
+    private String mAddress;
+    private String mCity;
+    private String mState;
+    private String mZipCode;
 
     public User(String name) {
         mName = name;
@@ -54,5 +59,37 @@ public class User {
 
     public void setBio(String bio) {
         this.mBio = bio;
+    }
+
+    public String getAddress() {
+        return mAddress;
+    }
+
+    public void setAddress(String address) {
+        this.mAddress = address;
+    }
+
+    public String getCity() {
+        return mCity;
+    }
+
+    public void setCity(String city) {
+        this.mCity = city;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
+    public void setState(String state) {
+        this.mState = state;
+    }
+
+    public String getZipCode() {
+        return mZipCode;
+    }
+
+    public void setZipCode(String zipcode) {
+        this.mZipCode = zipcode;
     }
 }

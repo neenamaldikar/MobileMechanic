@@ -9,19 +9,36 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
 import com.google.gson.Gson;
-import com.mm.mobilemechanic.user.Job;
+import com.google.gson.JsonObject;
+import com.mm.mobilemechanic.authorization.RestClient;
+import com.mm.mobilemechanic.job.Job;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 5/14/2017.
@@ -32,11 +49,26 @@ public class JobFormActivity extends AppCompatActivity {
     private final int CHOOSING_IMAGE_FROM_GALLERY = 1000;
 
     private boolean changesMade = false;
+    private String mJWToken;
 
     private Job mJob;
+    @BindView(R.id.editText_job_summary) EditText mEditTextSummary;
+    @BindView(R.id.editText_job_description) EditText mEditTextDescription;
+    @BindView(R.id.editText_car_make) EditText mEditTextCarMake;
+    @BindView(R.id.editText_car_model) EditText mEditTextCarModel;
+    @BindView(R.id.editText_car_year) EditText mEditTextCarYear;
+
+    private int fieldsCount = 5;
 
 
+    private void showToast(final String message) {
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        }));
 
+    }
     private ImageView createImageViewsWhenChosen(Uri imageUri) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
         ImageView imgView = new ImageView(this);
@@ -105,16 +137,77 @@ public class JobFormActivity extends AppCompatActivity {
 
     }
 
-    public void submitJobOnClick(View view) {
-        Intent resultIntent = new Intent();
-        TextView summaryView = (TextView) findViewById(R.id.editText_job_summary);
-        mJob.setSummary("" + summaryView.getText());
+    public String createJsonFromFields(Job job) {
+        JsonObject updated_values = new JsonObject();
+        JsonObject inner = new JsonObject();
+        inner.addProperty("make", job.getMake());
+        inner.addProperty("model", job.getModel());
+        inner.addProperty("year", job.getYear());
+        inner.addProperty("summary", job.getSummary());
+        inner.addProperty("description", job.getDescription());
 
-        TextView descriptionView = (TextView) findViewById(R.id.editText_job_description);
-        mJob.setDescription("" + descriptionView.getText());
-        resultIntent.putExtra("newJob", "" + new Gson().toJson(mJob));
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
+        JsonObject options = new JsonObject();
+        options.addProperty("onsite_diagnostic", job.isOnSiteDiagnostic());
+        options.addProperty("working", job.isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.isRepairDoneOnSite());
+        options.addProperty("pickup_dropoff", job.isCarPickUpAndDropOff());
+
+        inner.addProperty("status", "Submitted");
+        inner.add("options", options);
+        updated_values.add("job", inner);
+        return updated_values.toString();
+    }
+
+    public void sendJob(String json, String userId, String authToken) {
+
+        RestClient.createJob(userId, json, authToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                } else {
+
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, jObject.toString());
+                        Log.i(TAG, jObject.getString("job_id"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newJob", "" + new Gson().toJson(mJob));
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    finish();
+                }
+            }
+        });
+    }
+
+    @OnClick(R.id.button_submit_job)
+    public void submitJobOnClick(View view) {
+
+        if(fieldsCount == 0) {
+            mJob.setSummary(mEditTextSummary.getText().toString());
+            mJob.setDescription(mEditTextDescription.getText().toString());
+            mJob.setMake(mEditTextCarMake.getText().toString());
+            mJob.setModel(mEditTextCarModel.getText().toString());
+            if(!mEditTextCarYear.getText().toString().equals("")) {
+                mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
+            }
+            String jobPayload = createJsonFromFields(mJob);
+            sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+        }
+        else {
+            showToast("Missing required fields");
+        }
+
+
     }
 
 
@@ -199,6 +292,40 @@ public class JobFormActivity extends AppCompatActivity {
         });
     }
 
+
+    public void addListenerToEditTexts() {
+        LinearLayout jobEditTextViews = (LinearLayout) findViewById(R.id.ll_create_job);
+        for( int i = 0; i < jobEditTextViews.getChildCount(); i++ ) {
+            if(jobEditTextViews.getChildAt(i) instanceof EditText) {
+                final EditText editText = ((EditText) jobEditTextViews.getChildAt(i));
+                editText.setError("Field cannot be empty");
+                editText.addTextChangedListener(new TextWatcher() {
+                    int prevSize;
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        prevSize = editText.getText().toString().length();
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if(editText.getText().toString().isEmpty()) {
+                            editText.setError("Field cannot be empty");
+                            fieldsCount++;
+                        }
+                        else {
+                            if(prevSize == 0) {
+                                fieldsCount--;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
     @Override
     public void onBackPressed() {
         launchUnsavedChangesDialogBox();
@@ -208,10 +335,13 @@ public class JobFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_job_form);
-
+        ButterKnife.bind(this);
         mJob = new Job();
 
+        mJWToken = getIntent().getExtras().getString("JWT");
+
         initializeSwitches();
+        addListenerToEditTexts();
 
     }
 

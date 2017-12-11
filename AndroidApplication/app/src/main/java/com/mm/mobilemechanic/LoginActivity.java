@@ -1,22 +1,21 @@
 package com.mm.mobilemechanic;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-import android.view.Menu;
+import com.mm.mobilemechanic.authorization.RestClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +29,7 @@ import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 4/9/2017.
+ *
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -37,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     private String TAG = "LoginScreen";
     private CallbackManager mFBcallbackManager;
     private Callback getUserTokenCallback;
+    private AccessToken mFbToken;
+
+    private ProgressDialog mProgress;
 
     private void showToast(final String message) {
         runOnUiThread (new Thread(new Runnable() {
@@ -67,34 +70,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(mFBcallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // Facebook Email address
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.d(TAG, "LoginActivity Response " + response.toString());
-
-                                try {
-                                    String name = object.getString("name");
-                                    Log.d(TAG, "Name = " + name);
-                                    String gender = object.getString("gender");
-                                    Log.d(TAG, "Gender = " + gender);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, name, gender, work");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-                //// RestClient.getUserJWToken(token, "", getUserTokenCallback);  //TODO uncomment when python service is running
-                Bundle bundle = new Bundle();
-                bundle.putString("token", "FakeToken");
-                onSuccessLaunchMainScreen(bundle);
-                ////
+                mFbToken = loginResult.getAccessToken();
+                mProgress.show();
+                RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
             }
 
             @Override
@@ -110,10 +88,22 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void onFailureJWT(final String errMessage) {
+        mProgress.dismiss();
+        LoginManager.getInstance().logOut();
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), errMessage, Toast.LENGTH_LONG).show();
+            }
+        }));
+    }
+
     public void onSuccessLaunchMainScreen(Bundle bundle) {
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+        mProgress.dismiss();
         finish();
     }
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,20 +121,23 @@ public class LoginActivity extends AppCompatActivity {
         initFacebookLoginButton();
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        AccessToken token = AccessToken.getCurrentAccessToken();
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Fetching user info");
+        mProgress.setIndeterminate(true);
+
 
         getUserTokenCallback = new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+                // TODO
+                Log.e(TAG +"1", e.getMessage());
+                onFailureJWT("Error retrieving user information, please try again later");
             }
-
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                    showToast("Error " + response.code());
-                    LoginManager.getInstance().logOut();
+                    Log.e(TAG + "2", "Code = " + response.code() + " " + response.message());
+                    onFailureJWT("Error" + response.code());
                 }
                 else {
                     Log.i(TAG, response.message());
@@ -152,26 +145,21 @@ public class LoginActivity extends AppCompatActivity {
 
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, "Json object after successful login is " + jObject.toString());
                         String jwtToken = jObject.getString("access_token");
-
-                        bundle.putString("token", jwtToken);
+                        bundle.putString("JWT", "JWT " + jwtToken);
+                        onSuccessLaunchMainScreen(bundle);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    onSuccessLaunchMainScreen(bundle);
                 }
             }
         };
 
-        if (token != null) {  // get the JWT directly and open the next screen
-            Toast.makeText(getApplicationContext(), "Token still valid", Toast.LENGTH_SHORT).show();
-
-            //// RestClient.getUserJWToken(token, "", getUserTokenCallback);  //TODO uncomment when python service is running
-            Bundle bundle = new Bundle();
-            bundle.putString("token", "FakeToken");
-            onSuccessLaunchMainScreen(bundle);
-            ////
+        mFbToken =  AccessToken.getCurrentAccessToken();
+        if (mFbToken != null) {  // get the JWT directly and open the next screen
+            mProgress.show();
+            RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
         }
 
 

@@ -1,5 +1,7 @@
 package com.mm.mobilemechanic.authorization;
 
+import android.util.Log;
+
 import com.facebook.AccessToken;
 import com.google.gson.JsonObject;
 
@@ -18,32 +20,93 @@ public class RestClient {
 
     private static String TAG = "RestClient";
     private static OkHttpClient client = new OkHttpClient();
-    static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
 
-    public static void get(String url, Callback responseCallback) {
+//    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
+    private static String URL_BASE = "http://192.168.56.1:5000";
+    private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
+    private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
+    private static String URI_JOB = "/jobs";
+    private static String URI_TOKEN = "/token";
+
+
+
+    public static void GET(String url, Callback responseCallback) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
         client.newCall(request).enqueue(responseCallback);
     }
 
-    public static void post(final String url, String postBody, Callback responseCallback) {
+    public static void GET(String url, String authToken, Callback responseCallback) {
         Request request = new Request.Builder()
                 .url(url)
-                .post(RequestBody.create(JSON, postBody))
+                .header("Authorization", authToken)
                 .build();
         client.newCall(request).enqueue(responseCallback);
     }
 
-    public static void getUserJWToken(AccessToken fbToken, String backEndURL, Callback responseCallback) {
+    public static void PUT(String url, String authToken, String json, Callback responseCallback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", authToken)
+                .put(RequestBody.create(JSON, json))
+                .build();
+        client.newCall(request).enqueue(responseCallback);
+    }
+
+    public static void POST(final String url, String json, Callback responseCallback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .post(RequestBody.create(JSON, json))
+                .build();
+        client.newCall(request).enqueue(responseCallback);
+    }
+
+    public static void POST(final String url, String authToken, String json, Callback responseCallback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", authToken)
+                .post(RequestBody.create(JSON, json))
+                .build();
+        client.newCall(request).enqueue(responseCallback);
+        Log.d("mainActivityLog", "POST call is now made ...");
+    }
+
+    //////////////////
+
+    public static void getUserJWT(AccessToken fbToken, Callback responseCallback) {
         JsonObject json = new JsonObject();
         json.addProperty("username", fbToken.getToken());
         json.addProperty("password", "none");
 
-        String url = "http://192.168.1.4:5000/mobilemechanic/api/v1.0/auth";
-        RestClient.post(url, json.toString(), responseCallback);
+        String url = RestClient.URL_BASE + URI_AUTH;
+        RestClient.POST(url, json.toString(), responseCallback);
+    }
+
+    public static void getUserInfo(String userId, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId;
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
+    public static void updateUser(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId;
+        RestClient.PUT(url, authToken, json, responseCallback);
     }
 
 
+    ////////////////////
+
+    public static void createJob(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
+        RestClient.POST(url, authToken, json, responseCallback);
+    }
+
+    public static void createToken(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_TOKEN;
+        Log.d("mainActivityLog", "Create token function is called ... " + url);
+        RestClient.POST(url, authToken, json, responseCallback);
+    }
 }
 
