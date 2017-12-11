@@ -11,6 +11,10 @@ from extensions import mongo
 from configuration import LOGGING_JSON
 import logging.config
 logging.config.dictConfig(LOGGING_JSON)
+from pyfcm import FCMNotification
+import pdb
+push_service = FCMNotification(api_key="AAAAhsujFZI:APA91bHf7jR3Unw8M9PAXj9hoIp_Sj2_098fxYJ2KJ92atv5Z1jLjvRMq8ng4rijfKRIfCxZbjeXXk5sSAklqwpGzYm3wHXpKbiNW8lri2bJOkEH4vm0GGHfVR4tVkJLTqqdSDslES86")
+
 
 class JobAPI(Resource):
 
@@ -67,6 +71,14 @@ class JobAPI(Resource):
         job = self.jobsDAO.find_job(user_id, job_id)
         if not job:
             abort(404)
+        # now since job is successful, send a notification to the mechanic whose nearby
+        # get the list of all avaialable mechanics
+        registration_ids = ['1', '2', '3']
+        message_title = "Mechanic update"
+        message_body = "Hello Suhas, this is a reminder to service your vehicle."
+        # pdb.set_trace()
+        result = push_service.notify_multiple_devices(registration_id=registration_id, message_title=message_title, message_body=message_body)
+        print('Notification result is', result)
         return job.as_dict()
 
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted

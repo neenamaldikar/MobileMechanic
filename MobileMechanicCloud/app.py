@@ -12,6 +12,7 @@ from api.api_models.users import UserAPI
 from api.api_models.jobs import JobAPI
 from api.api_models.upload import ImageUploadAPI
 from api.api_models.mechanics import MechanicAPI
+from api.api_models.tokens import TokenAPI
 from api.authentication import authenticate, identity
 
 def initialize_app():
@@ -26,6 +27,7 @@ def initialize_app():
     api.add_resource(ImageUploadAPI,
                      api_base_string + 'users/<int:user_id>/jobs/<job_id>/picture')
     api.add_resource(MechanicAPI, api_base_string + 'users/<int:user_id>/mechanic')
+    api.add_resource(TokenAPI, api_base_string + 'users/<int:user_id>/token')
     api.init_app(app)
     return app
 
@@ -34,4 +36,4 @@ if __name__ == '__main__':
     logging.config.dictConfig(LOGGING_JSON)
     logging.info('Serving on port - ' + os.environ.get('PORT'))
     logging.debug('Mongo URI used is ' + app.config.get('MONGO_URI'))
-    serve(app, port=os.environ.get('PORT', 5000), cleanup_interval=100)
+    serve(app, host='192.168.56.1' ,port=os.environ.get('PORT', 5000), cleanup_interval=100)

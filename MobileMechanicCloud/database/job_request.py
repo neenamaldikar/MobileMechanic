@@ -43,6 +43,7 @@ class JobRequestDAO:
             return None
 
     # TODO: make the job insertion unique here
+    # TODO: add validations for the options passed in the options field
     def insert_job(self, user_id, make, model, year, options, summary, description, status):
         try:
             unique_job_id = str(uuid.uuid4())
