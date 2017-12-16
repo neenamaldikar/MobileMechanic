@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newToken", "Token sent successfully!");
                     setResult(Activity.RESULT_OK, resultIntent);
-                    finish();
+//                    finish();
                 }
             }
         });
