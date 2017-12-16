@@ -36,4 +36,4 @@ if __name__ == '__main__':
     logging.config.dictConfig(LOGGING_JSON)
     logging.info('Serving on port - ' + os.environ.get('PORT'))
     logging.debug('Mongo URI used is ' + app.config.get('MONGO_URI'))
-    serve(app, host='192.168.56.1', port=os.environ.get('PORT', 5000), cleanup_interval=100)
+    serve(app, host='0.0.0.0', port=os.environ.get('PORT', 5000), cleanup_interval=100)
