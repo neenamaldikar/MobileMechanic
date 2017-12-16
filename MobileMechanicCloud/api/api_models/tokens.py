@@ -45,7 +45,17 @@ class TokenAPI(Resource):
         if not len([i for i in token_inserted.keys() if i in ['user_id', 'fcmtoken']]) == 2:
             logging.debug('tokenData missing a few parameters ...')
             abort(401)
-        insertion_successful = self.tokenDAO.insert_token(user_id, token_inserted['fcmtoken'])
-        if not insertion_successful:
-            abort(401)
-        return Token(user_id, token_inserted['fcmtoken']).as_dict()
+        if not self.tokenDAO.find_user(user_id):
+            logging.debug('User not found, adding new token')
+            insertion_successful = self.tokenDAO.insert_token(user_id, token_inserted['fcmtoken'])
+            if not insertion_successful:
+                abort(401)
+            return Token(user_id, token_inserted['fcmtoken']).as_dict()
+        else:
+            # update token for existing user
+            logging.debug('Updating token for existing user : ' + str(user_id))
+            update_successful = self.tokenDAO.update_token(user_id, token_inserted['fcmtoken'])
+            if not update_successful:
+                abort(401)
+            return Token(user_id, token_inserted['fcmtoken']).as_dict()
+        abort(405)

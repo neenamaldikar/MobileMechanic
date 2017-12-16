@@ -7,6 +7,7 @@ from flask_jwt import jwt_required, current_identity
 from flask import jsonify, request
 from database.job_request import JobRequestDAO
 from database.user_request import UserDAO
+from database.mechanic_request import MechanicDAO
 from extensions import mongo
 from configuration import LOGGING_JSON
 import logging.config
@@ -21,6 +22,7 @@ class JobAPI(Resource):
     def __init__(self):
         self.jobsDAO = JobRequestDAO(mongo)
         self.userDAO = UserDAO(mongo)
+        self.mechanicDAO = MechanicDAO(mongo)
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('job', type=dict, location='json')
         self.reqparse.add_argument('job_id', type=str, location='args')
@@ -73,12 +75,19 @@ class JobAPI(Resource):
             abort(404)
         # now since job is successful, send a notification to the mechanic whose nearby
         # get the list of all avaialable mechanics
-        registration_ids = ['1', '2', '3']
-        message_title = "Mechanic update"
-        message_body = "Hello Suhas, this is a reminder to service your vehicle."
-        # pdb.set_trace()
-        result = push_service.notify_multiple_devices(registration_id=registration_id, message_title=message_title, message_body=message_body)
-        print('Notification result is', result)
+        # TODO: the relevant field is job location
+        registration_ids = self.mechanicDAO.get_relevant_mechanic_tokens(job_inserted['model'], job_inserted['summary'])
+        logging.debug("Got registration ids for job -> " + str(registration_ids))
+        for registration_id in registration_ids:
+            message_title = "Customers need your help"
+            # TODO: replace fellow mechanic with the name of the mechanic
+            message_body = "Hello fellow mechanic, there is a " + job_inserted['model'] + " nearby who wants your help."
+            # pdb.set_trace()
+            logging.debug("Sending notification to " + registration_id)
+            result = push_service.notify_single_device(registration_id=registration_id,
+                                                       message_title=message_title,
+                                                       message_body=message_body)
+            logging.debug('Notification result is ' + str(result))
         return job.as_dict()
 
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted
