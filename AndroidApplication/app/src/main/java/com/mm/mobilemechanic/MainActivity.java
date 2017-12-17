@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity
         JsonObject token_json = new JsonObject();
         token_json.addProperty("fcmtoken", token);
         // for now hardcode the user id
-        token_json.addProperty("user_id", "10210107822868170");  // which user the token is associated with
+        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
         // print the token
         JsonObject final_token_json = new JsonObject();
         final_token_json.add("tokenData", token_json);
