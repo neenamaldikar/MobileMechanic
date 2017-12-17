@@ -43,13 +43,13 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
         text1.setText("Description: \n" + job.getDescription());
         TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
-        text2.setText("On Site Diagnostic = " + job.isOnSiteDiagnostic());
+        text2.setText("On Site Diagnostic = " + job.getJobOptions().isOnSiteDiagnostic());
         TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
-        text3.setText("Car in working condition = " + job.isCarInWorkingCondition());
+        text3.setText("Car in working condition = " + job.getJobOptions().isCarInWorkingCondition());
         TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
-        text4.setText("Repair can be done on-site = " + job.isRepairDoneOnSite());
+        text4.setText("Repair can be done on-site = " + job.getJobOptions().isRepairCanBeDoneOnSite());
         TextView text5 = (TextView) dialog.findViewById(R.id.textView_dialog_carPickUpDropOff);
-        text5.setText("Car pick up and drop off = " + job.isCarPickUpAndDropOff());
+        text5.setText("Car pick up and drop off = " + job.getJobOptions().isCarPickUpAndDropOff());
 
         TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
         text6.setText("Parking available on-site = " + job.isParkingAvailable());

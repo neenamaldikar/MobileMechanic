@@ -10,7 +10,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- *
  * Created by ndw6152 on 5/9/2017.
  */
 
@@ -21,11 +20,10 @@ public class RestClient {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
 
-    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
-    private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
+    private static String URL_BASE = "http://mobilemechanic.herokuapp.com";
+    private static String URI_AUTH = "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";
-
 
 
     public static void GET(String url, Callback responseCallback) {
@@ -90,13 +88,16 @@ public class RestClient {
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 
-
-    ////////////////////
-
     public static void createJob(String userId, String json, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
         RestClient.POST(url, authToken, json, responseCallback);
     }
+
+    public static void getUserJobs(String userId, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
 
 }
 
