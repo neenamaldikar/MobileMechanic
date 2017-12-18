@@ -9,8 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Job {
 
-    @SerializedName("status")
-    private JobStatus status;
+
 
     @SerializedName("summary")
     private String summary;
@@ -27,28 +26,21 @@ public class Job {
     @SerializedName("year")
     private int year;
 
-
     @SerializedName("options")
     private JobOptions jobOptions;
 
+    @SerializedName("status")
+    private JobStatus status;
 
-    private boolean onSiteDiagnostic = false;
-    private boolean carInWorkingCondition = false;
-    private boolean repairCanBeDoneOnSite = false;
-    private boolean carPickUpAndDropOff = false;
-    private boolean parkingAvailable = false;
 
     public Job() {
-
+        this.jobOptions = new JobOptions();
     }
 
-    public Job (String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
+    public Job (String summary, String description, JobOptions jobOptions, JobStatus status) {
         this.summary = summary;
         this.description = description;
-        this.onSiteDiagnostic = onSiteDiagnostic;
-        this.carInWorkingCondition = carInWorkingCondition;
-        this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
-        this.carPickUpAndDropOff = carPickUpAndDropOff;
+        this.jobOptions = jobOptions;
         this.status = status;
     }
 
@@ -75,44 +67,7 @@ public class Job {
         this.description = description;
     }
 
-    public boolean isOnSiteDiagnostic() {
-        return onSiteDiagnostic;
-    }
 
-    public void setOnSiteDiagnostic(boolean onSiteDiagnostic) {
-        this.onSiteDiagnostic = onSiteDiagnostic;
-    }
-
-    public boolean isCarInWorkingCondition() {
-        return carInWorkingCondition;
-    }
-
-    public void setCarInWorkingCondition(boolean carInWorkingCondition) {
-        this.carInWorkingCondition = carInWorkingCondition;
-    }
-
-    public boolean isRepairDoneOnSite() {
-        return repairCanBeDoneOnSite;
-    }
-
-    public void setRepairCanBeDoneOnSite(boolean repairCanBeDoneOnSite) {
-        this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
-    }
-
-    public boolean isCarPickUpAndDropOff() {
-        return carPickUpAndDropOff;
-    }
-
-    public void setCarPickUpAndDropOff(boolean carPickUpAndDropOff) {
-        this.carPickUpAndDropOff = carPickUpAndDropOff;
-    }
-
-    public boolean isParkingAvailable() {
-        return parkingAvailable;
-    }
-    public void setParkingAvailable(boolean parkingAvailable) {
-        this.parkingAvailable = parkingAvailable;
-    }
 
     public String getMake() {
         return make;
@@ -145,7 +100,6 @@ public class Job {
     public void setJobOptions(JobOptions jobOptions) {
         this.jobOptions = jobOptions;
     }
-
 
     public class JobOptions{
 

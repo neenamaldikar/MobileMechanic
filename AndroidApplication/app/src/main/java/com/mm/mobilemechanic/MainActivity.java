@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity
     private void getJobs() {
 
         String jwtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, jwtoken);
-
         Utility.showSimpleProgressDialog(MainActivity.this);
 
         RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
