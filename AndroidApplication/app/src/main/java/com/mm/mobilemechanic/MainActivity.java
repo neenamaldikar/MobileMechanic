@@ -1,6 +1,5 @@
 package com.mm.mobilemechanic;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,37 +9,130 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
-import com.mm.mobilemechanic.ui.jobcards.JobRequestsAdapter;
-import com.mm.mobilemechanic.user.Job;
-import com.mm.mobilemechanic.user.JobStatus;
-import com.mm.mobilemechanic.user.User;
 
+import com.google.gson.reflect.TypeToken;
+import com.mm.mobilemechanic.authorization.RestClient;
+
+import com.mm.mobilemechanic.job.Job;
+import com.mm.mobilemechanic.job.JobRequestsAdapter;
+import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.util.Utility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
     private User mCustomer;
-
-    private static final int FROM_PROFILE_EDIT_SCREEN = 123;
+    private String mJWTtoken;
+    List<Job> jobLists;
+    private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
+    JobRequestsAdapter adapter;
+
+    private void showToast(final String message) {
+        runOnUiThread(new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        }));
+
+    }
+
+    private void getJobs() {
+
+        String jwtoken = getIntent().getExtras().getString("JWT");
+        Log.i(TAG, jwtoken);
+
+        Utility.showSimpleProgressDialog(MainActivity.this);
+
+        RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+
+                    LoginManager.getInstance().logOut();
+                } else {
+                    Log.i(TAG, response.message());
+
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        Log.i(TAG, jsonArray.toString());
+                        jobLists.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            Type collectionType = new TypeToken<Job>() {
+                            }.getType();
+                            Job job = (Job) new Gson()
+                                    .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
+
+
+                            jobLists.add(job);
+
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+        });
+    }
+
+
+    private void initUI() {
+        jobLists = new ArrayList<Job>();
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv_main_homescreen_jobs_table);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new JobRequestsAdapter(this, jobLists);
+        rv.setAdapter(adapter);
+    }
 
     @Override
     public void onBackPressed() {
@@ -74,8 +166,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.menu_stuff:
                 handleOption1();
                 return true;
@@ -92,19 +183,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         Intent intent;
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.nav_profile:
-                intent = new Intent(this, ProfileEditActivity.class);
-
+                intent = new Intent(this, UserProfileActivity.class);
                 Bundle b = new Bundle();
-                b.putString("key1", mCustomer.getName());
+                b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
-                startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);  // starting the intent with special id that will be called back
+                startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
                 break;
             case R.id.nav_history:
                 //intent = new Intent(this, RestClientActivity.class);
-                //startActivityForResult(intent, FROM_PROFILE_EDIT_SCREEN);
+                //startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);
 
                 break;
             case R.id.nav_payment:
@@ -137,41 +226,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void showJobInformation(Job job) {
-        // custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.activity_main_job_dialog);
-        dialog.setTitle("Job Information");
-
-        // set the custom dialog components - text, image and button
-        TextView text = (TextView) dialog.findViewById(R.id.textView_dialog_job_summary);
-        text.setText(job.getSummary());
-        TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
-        text1.setText("Description: \n" + job.getDescription());
-        TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
-        text2.setText("On Site Diagnostic = " + job.isOnSiteDiagnostic());
-        TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
-        text3.setText("Car in working condition = " + job.isCarInWorkingCondition());
-        TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
-        text4.setText("Repair can be done on-site = " + job.isRepairDoneOnSite());
-        TextView text5 = (TextView) dialog.findViewById(R.id.textView_dialog_carPickUpDropOff);
-        text5.setText("Car pick up and drop off = " + job.isCarPickUpAndDropOff());
-
-        TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
-        text6.setText("Parking available on-site = " + job.isParkingAvailable());
-
-        dialog.show();
-    }
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch(requestCode) {
-                case (FROM_PROFILE_EDIT_SCREEN):
-                    Bundle b = data.getExtras();
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case (FROM_USER_PROFILE_SCREEN):
+                    System.out.println("came from user profile activity");
                     break;
                 case (FROM_NEW_JOB_SCREEN):
                     String jsonMyObject = "";
@@ -179,44 +240,39 @@ public class MainActivity extends AppCompatActivity
                     if (extras != null) {
                         jsonMyObject = extras.getString("newJob");
                     }
+
                     Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
                     newJob.getSummary();
-
                     break;
             }
         }
     }
 
-
+    @OnClick(R.id.button_create_new_job)
     public void createNewJobOnClick(View view) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
+        Bundle b = new Bundle();
+        b.putString("JWT", mJWTtoken);
+        intent.putExtras(b);
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
-
     }
 
 
-    public void createFakeJobs() {
+    public void showPopup(View view) {
 
-        List<Job> jobLists = new ArrayList<>();
-        jobLists.add(new Job("summary1", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary2", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary3", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary4", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("summary5", "description", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-
-
-        JobRequestsAdapter adapter = new JobRequestsAdapter(jobLists);
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
+        popup.show();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -231,16 +287,21 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        String jwtoken = getIntent().getExtras().getString("token");
-        Log.i(TAG, jwtoken);
+        mJWTtoken = getIntent().getExtras().getString("JWT");
+        Log.i(TAG, mJWTtoken);
 
         mCustomer = new User("TEST_customer1");
 
 
+        //     createFakeJobs();
+        initUI();
 
-
-        createFakeJobs();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        getJobs();
+    }
 }
