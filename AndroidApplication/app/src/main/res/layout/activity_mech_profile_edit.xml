@@ -21,24 +21,22 @@
             android:src="@drawable/ic_menu_manage" />
 
         <LinearLayout
+            android:id="@+id/ll_mech_profile_text_views"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/ll_mech_profile_text_views"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
 
-
-
             <EditText
-                android:id="@+id/editText_mech_res_address"
+                android:id="@+id/editText_mech_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Residential Address"
-                android:inputType="textMultiLine" />
+                android:hint="Phone Number"
+                android:inputType="phone" />
 
             <EditText
                 android:id="@+id/editText_mech_work_address"
@@ -48,21 +46,39 @@
                 android:hint="Mechanic Shop Address"
                 android:inputType="textMultiLine" />
 
-            <EditText
-                android:id="@+id/editText_mech_expertise"
+
+            <Spinner
+                android:id="@+id/spinner_mech_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Expertise"
-                android:inputType="textMultiLine" />
+               />
+
+            <Spinner
+                android:layout_marginTop="10dp"
+                android:id="@+id/spinner_mech_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+               />
+
 
             <EditText
-                android:id="@+id/editText_mech_summary"
+                android:id="@+id/editText_mech_zipcode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Summary"
-                android:inputType="textMultiLine" />
+                android:hint="Zipcode"
+                android:inputType="number" />
+
+
+            <EditText
+                android:id="@+id/editText_mech_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Rate"
+                android:inputType="numberDecimal" />
 
 
         </LinearLayout>

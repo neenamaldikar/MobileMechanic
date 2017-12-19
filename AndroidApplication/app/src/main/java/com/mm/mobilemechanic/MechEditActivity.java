@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import butterknife.BindView;
+
 /**
  * Created by ndw6152 on 4/15/2017.
  *
@@ -21,6 +23,33 @@ public class MechEditActivity extends AppCompatActivity {
     private String TAG = "MechincScreen";
     private boolean textChanged = false;
 
+    @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
+    @BindView(R.id.editText_profile_address) EditText mEditTextProfileAddress;
+    @BindView(R.id.editText_profile_city) EditText mEditTextProfileCity;
+    @BindView(R.id.editText_profile_state) EditText mEditTextProfileState;
+    @BindView(R.id.editText_profile_zipcode) EditText mEditTextProfileZipCode;
+    @BindView(R.id.editText_profile_additional_info) EditText mEditTextBio;
+
+
+    @BindView(R.id.editText_profile_email) EditText mEditTextemail;
+    @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
+    @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mech_profile_edit);
+
+
+        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
+
+
+        // adding the done button at the top left
+        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    }
 
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -112,18 +141,5 @@ public class MechEditActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mech_profile_edit);
 
-
-        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
-
-
-        // adding the done button at the top left
-        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-    }
 }
