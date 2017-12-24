@@ -24,6 +24,7 @@ public class RestClient {
     private static String URI_AUTH = "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";
+    private static String URI_MECHANIC = "/mechanic";
 
 
     public static void GET(String url, Callback responseCallback) {
@@ -45,6 +46,7 @@ public class RestClient {
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", authToken)
+                .header("Content-Type", "application/json")
                 .put(RequestBody.create(JSON, json))
                 .build();
         client.newCall(request).enqueue(responseCallback);
@@ -95,6 +97,16 @@ public class RestClient {
 
     public static void getUserJobs(String userId, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
+    public static void createMechanic(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_MECHANIC;
+        RestClient.PUT(url, authToken, json, responseCallback);
+    }
+
+    public static void getMechanic(String userId,  String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_MECHANIC;
         RestClient.GET(url, authToken, responseCallback);
     }
 

@@ -1,46 +1,88 @@
 package com.mm.mobilemechanic;
 
+import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.mm.mobilemechanic.user.Mechanic;
+import com.mm.mobilemechanic.user.MechanicViewModel;
+import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.user.UserProfileViewModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by ndw6152 on 4/15/2017.
- *
  */
 
 public class MechEditActivity extends AppCompatActivity {
     private String TAG = "MechincScreen";
     private boolean textChanged = false;
 
-    @BindView(R.id.editText_profile_name) EditText mEditTextProfileName;
-    @BindView(R.id.editText_profile_address) EditText mEditTextProfileAddress;
-    @BindView(R.id.editText_profile_city) EditText mEditTextProfileCity;
-    @BindView(R.id.editText_profile_state) EditText mEditTextProfileState;
-    @BindView(R.id.editText_profile_zipcode) EditText mEditTextProfileZipCode;
-    @BindView(R.id.editText_profile_additional_info) EditText mEditTextBio;
+    @BindView(R.id.editText_mech_phone)
+    EditText mEditTextMechPhone;
+    @BindView(R.id.editText_mech_work_address)
+    EditText mEditTextMechAddress;
+    @BindView(R.id.editText_mech_rate)
+    EditText mEditTextMechRate;
+    @BindView(R.id.editText_mech_zipcode)
+    EditText mEditTextMechZipcode;
+    @BindView(R.id.editText_mech_work_city)
+    EditText mEditTextMechCity;
+    @BindView(R.id.editText_mech_work_state)
+    EditText mEditTextMechState;
 
-
-    @BindView(R.id.editText_profile_email) EditText mEditTextemail;
-    @BindView(R.id.editText_profile_gender) EditText mEditTextGender;
-    @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
-
+    private MechanicViewModel viewModel;
+    private String mJWToken;
+    private GoogleApiClient mGoogleApiClient;
+    String strAddress = "";
+    List<String> mStateArrayList = new ArrayList<>();
+    List<String> mCityArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mech_profile_edit);
-
+        ButterKnife.bind(this);
 
         addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
 
@@ -48,6 +90,8 @@ public class MechEditActivity extends AppCompatActivity {
         // adding the done button at the top left
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        initUI();
 
     }
 
@@ -63,9 +107,40 @@ public class MechEditActivity extends AppCompatActivity {
         return true;
     }
 
+    public String createJsonFromFields() {
+        JsonObject updated_values = new JsonObject();
+        JsonObject inner = new JsonObject();
+
+        inner.addProperty("phone_number", mEditTextMechPhone.getText().toString());
+        inner.addProperty("address_line", mEditTextMechAddress.getText().toString());
+
+        inner.addProperty("city", mEditTextMechCity.getText().toString());
+        inner.addProperty("state", mEditTextMechState.getText().toString());
+        inner.addProperty("zipcode", mEditTextMechZipcode.getText().toString());
+        inner.addProperty("rate", mEditTextMechRate.getText().toString());
+
+        inner.addProperty("rating", "0");
+        JsonArray mJsonReviews = new JsonArray();
+        mJsonReviews.add("Great mechanic");
+        mJsonReviews.add("Gets the job done!");
+
+        inner.add("reviews", mJsonReviews);
+
+        JsonArray mJsonZipcodes = new JsonArray();
+        mJsonZipcodes.add("76013");
+        mJsonZipcodes.add("76017");
+
+        inner.add("serving_zipcodes", mJsonZipcodes);
+
+
+        updated_values.add("updated_values", inner);
+
+        return updated_values.toString();
+    }
+
 
     public void actionOnCloseButtonPressed() {
-        if(textChanged) {
+        if (textChanged) {
             new AlertDialog.Builder(this)
                     .setTitle("Unsaved Changes")
                     .setMessage("Are you sure you want to discard these changes?")
@@ -82,8 +157,7 @@ public class MechEditActivity extends AppCompatActivity {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
-        }
-        else {
+        } else {
             finish();
         }
     }
@@ -94,10 +168,17 @@ public class MechEditActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.menu_save_profile:
+                String updated_values = createJsonFromFields();
+                viewModel.setMechanic(updated_values, mJWToken);
+
                 showToast("Saving");
+                textChanged = false; // set to false to prevent the dialog box from showing
+
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -133,12 +214,39 @@ public class MechEditActivity extends AppCompatActivity {
         };
 
         // loop to add the listener to all edittext box
-        for( int i = 0; i < mechEditTextViews.getChildCount(); i++ ) {
-            if( mechEditTextViews.getChildAt(i) instanceof EditText) {
+        for (int i = 0; i < mechEditTextViews.getChildCount(); i++) {
+            if (mechEditTextViews.getChildAt(i) instanceof EditText) {
                 ((EditText) mechEditTextViews.getChildAt(i)).addTextChangedListener(tw);
             }
         }
     }
+
+    private void initUI() {
+
+        mJWToken = getIntent().getExtras().getString("JWT");
+
+        viewModel = ViewModelProviders.of(this).get(MechanicViewModel.class);
+        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken);
+        viewModel.getMechanic().observe(this, new Observer<Mechanic>() {
+            @Override
+            public void onChanged(@Nullable Mechanic mechanic) {
+
+                if (mechanic != null) {
+                    mEditTextMechPhone.setText(mechanic.getPhonenumber());
+                    mEditTextMechAddress.setText(mechanic.getAddress());
+                    mEditTextMechZipcode.setText(mechanic.getZipCode());
+                    mEditTextMechRate.setText(mechanic.getmRate());
+                    mEditTextMechState.setText(mechanic.getState());
+                    mEditTextMechCity.setText(mechanic.getCity());
+                }
+
+            }
+        });
+
+
+        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
+    }
+
 
 
 

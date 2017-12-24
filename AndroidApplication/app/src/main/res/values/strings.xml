@@ -10,6 +10,7 @@
     <!--testApp fb id-->
     <!--<string name="facebook_app_id">811832542261786</string>-->
     <string name="facebook_app_id">851675724996702</string>
+    <string name="GOOGLE_API_KEY">AIzaSyC4Prnt1pyNLy86MmYTWL1xVbba1nqTCa0</string>
 
 
 

@@ -47,20 +47,33 @@
                 android:inputType="textMultiLine" />
 
 
-            <Spinner
-                android:id="@+id/spinner_mech_state"
+            <EditText
+                android:id="@+id/editText_mech_work_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-               />
+                android:hint="City"
+                android:inputType="textMultiLine" />
 
-            <Spinner
-                android:layout_marginTop="10dp"
-                android:id="@+id/spinner_mech_city"
+            <EditText
+                android:id="@+id/editText_mech_work_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-               />
+                android:hint="State"
+                android:inputType="textMultiLine" />
+
+
+
+
+
+           <!-- <fragment
+                android:id="@+id/place_autocomplete_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                />-->
+
 
 
             <EditText
@@ -68,6 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:maxLength="35801"
                 android:hint="Zipcode"
                 android:inputType="number" />
 

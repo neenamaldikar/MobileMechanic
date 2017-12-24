@@ -183,10 +183,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         Intent intent;
+        Bundle b;
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-                Bundle b = new Bundle();
+              b   = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
@@ -201,6 +202,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_sign_up_mech:
                 intent = new Intent(this, MechEditActivity.class);
+                 b = new Bundle();
+                b.putString("JWT", mJWTtoken);
+                intent.putExtras(b);
                 startActivity(intent);
                 break;
             case R.id.nav_sign_out:

@@ -7,8 +7,9 @@ package com.mm.mobilemechanic.user;
 public class Mechanic extends User {
     private String mResidentialAddress;
     private String mMechAddress;
-    private String mExpertise;
-    private String mSummary;
+
+
+    private String mRate;
 
     public Mechanic(String name) {
         super(name);
@@ -31,19 +32,12 @@ public class Mechanic extends User {
         this.mMechAddress = mMechAddress;
     }
 
-    public String getmExpertise() {
-        return mExpertise;
+    public String getmRate() {
+        return mRate;
     }
 
-    public void setmExpertise(String mExpertise) {
-        this.mExpertise = mExpertise;
+    public void setmRate(String mRate) {
+        this.mRate = mRate;
     }
 
-    public String getmSummary() {
-        return mSummary;
-    }
-
-    public void setmSummary(String mSummary) {
-        this.mSummary = mSummary;
-    }
 }
