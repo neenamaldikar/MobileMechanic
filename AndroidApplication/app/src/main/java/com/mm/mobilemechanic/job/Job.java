@@ -115,7 +115,7 @@ public class Job {
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;
 
-        private boolean parkingAvailable = false;
+        private boolean parkingAvailable = false;  // TODO will add field
 
 
         public boolean isOnSiteDiagnostic() {
