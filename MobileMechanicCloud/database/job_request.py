@@ -1,10 +1,13 @@
-from extensions import mongo
-from model import job_model
-from pymongo import errors
 import time
-from gridfs import GridFS
 import bson
 import uuid
+from gridfs import GridFS
+from extensions import mongo
+from model import job_model
+from configuration import LOGGING_JSON
+import logging.config
+logging.config.dictConfig(LOGGING_JSON)
+
 
 class JobRequestDAO:
     def __init__(self, mongo):
@@ -14,33 +17,33 @@ class JobRequestDAO:
     def find_job(self, user_id, job_id=None):
         try:
             if job_id:
-                print ('Trying for a job find with user', user_id)
-                # input('Tried for a quick wait')
+                logging.debug('Finding jobs listed for user' + user_id)
                 cursor = self.db.jobs.find_one({'user_id': user_id, 'job_id': job_id})
                 # should there be a check for each option?
                 if not cursor:
-                    print ('No cursor data')
+                    logging.debug('No cursor data')
                     return None
                 else:
-                    return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'], cursor['options'], cursor['summary'], cursor['description'], cursor['images'], cursor['status'])
-            else:
-                cursor = self.db.jobs.find({'user_id': user_id})
-                data = list(cursor)
-                print('Cursor data is', data)
-                if not cursor:
-                    print('No cursor data')
-                else:
-                    output_list = []
-                    for i in data:
-                        output_list.append(job_model.JobRequest(user_id, i['job_id'],
-                                        i['make'], i['model'], i['year'], i['options'],
-                                        i['summary'], i['description'],
-                                        i['images'], i['status']))
-                    return output_list
-        except errors.OperationFailure:
+                    return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'],
+                                                cursor['options'], cursor['summary'], cursor['description'],
+                                                cursor['images'], cursor['status'])
+            cursor = self.db.jobs.find({'user_id': user_id})
+            data = list(cursor)
+            logging.debug('Cursor data is', data)
+            if not cursor:
+                logging.debug('No cursor data')
+            output_list = []
+            for i in data:
+                output_list.append(job_model.JobRequest(user_id, i['job_id'], i['make'], i['model'], i['year'],
+                                                        i['options'], i['summary'], i['description'],
+                                                        i['images'], i['status']))
+            return output_list
+        except:
+            logging.debug('Exception in find request')
             return None
 
     # TODO: make the job insertion unique here
+    # TODO: add validations for the options passed in the options field
     def insert_job(self, user_id, make, model, year, options, summary, description, status):
         try:
             unique_job_id = str(uuid.uuid4())
@@ -56,8 +59,7 @@ class JobRequestDAO:
                                               'description': description, 'images': [],
                                               'status': status})
             return (result.acknowledged, unique_job_id)
-            # return result.acknowledged
-        except errors.PyMongoError:
+        except:
             return False
 
     def update_job(self, user_id, job_id, updated_values):
@@ -68,15 +70,15 @@ class JobRequestDAO:
                 return True
             else:
                 return False
-        except errors.PyMongoError:
+        except:
             return False
 
     def update_images(self, user_id, job_id, image_data, filename, content_type):
         try:
             image_id = self.fs.put(image_data, content_type=content_type, filename=filename)
-            print("Pushing images to database")
-            result = self.db.jobs.update_one({"user_id": user_id, "job_id": job_id},
-                                             {"$push": {"images": str(image_id)}})
+            logging.info('Pushing images to database')
+            result = self.db.jobs.update_one({'user_id': user_id, 'job_id': job_id},
+                                             {'$push': {'images': str(image_id)}})
             if result.matched_count == 1:
                 return True
             else:
@@ -100,5 +102,5 @@ class JobRequestDAO:
                 return True
             else:
                 return False
-        except errors.PyMongoError:
+        except:
             return False

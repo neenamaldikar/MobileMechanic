@@ -1,5 +1,7 @@
 package com.mm.mobilemechanic.authorization;
 
+import android.util.Log;
+
 import com.facebook.AccessToken;
 import com.google.gson.JsonObject;
 
@@ -20,12 +22,13 @@ public class RestClient {
     private static OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
-
+    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
 //    private static String URL_BASE = "http://192.168.56.1:5000";
-    private static String URL_BASE = "http://mobilemechanic.herokuapp.com";
-    private static String URI_AUTH = "/mobilemechanic/api/v1.0/auth";
+    private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";
+    private static String URI_TOKEN = "/token";
+
 
 
     public static void GET(String url, Callback responseCallback) {
@@ -67,6 +70,8 @@ public class RestClient {
                 .post(RequestBody.create(JSON, json))
                 .build();
         client.newCall(request).enqueue(responseCallback);
+        Log.d("mainActivityLog", "POST call is now made ...");
+
     }
 
     //////////////////
@@ -78,6 +83,7 @@ public class RestClient {
 
         String url = RestClient.URL_BASE + URI_AUTH;
         RestClient.POST(url, json.toString(), responseCallback);
+
     }
 
     public static void getUserInfo(String userId, String authToken, Callback responseCallback) {
@@ -98,8 +104,14 @@ public class RestClient {
     public static void getUserJobs(String userId, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
         RestClient.GET(url, authToken, responseCallback);
+
     }
+    ////////////////////
 
-
+    public static void createToken(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_TOKEN;
+        Log.d("mainActivityLog", "Create token function is called ... " + url);
+        RestClient.POST(url, authToken, json, responseCallback);
+    }
 }
 

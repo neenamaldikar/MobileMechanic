@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "578942080402",
+    "firebase_url": "https://mobilemechanic-f3dce.firebaseio.com",
+    "project_id": "mobilemechanic-f3dce",
+    "storage_bucket": "mobilemechanic-f3dce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578942080402:android:ebf0d96f95e6ed28",
+        "android_client_info": {
+          "package_name": "com.mobilemechanic.pushnotificationtestapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578942080402-uvo5r66s4j5p4ap88ejlv9ejcepkeqc1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobilemechanic.pushnotificationtestapp",
+            "certificate_hash": "4999b9802bc89981063f1fcf438e6b99078694d5"
+          }
+        },
+        {
+          "client_id": "578942080402-095bgsm8ne0ihld65ruqd91ueqv5a6kc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVRJPcJZQNdt7X_4VK-eJjzLqbHscSA-g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578942080402-095bgsm8ne0ihld65ruqd91ueqv5a6kc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578942080402:android:787278b341e46bc4",
+        "android_client_info": {
+          "package_name": "com.mm.mobilemechanic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578942080402-a06kue5ejao692f9h74ecnab26j093lj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mm.mobilemechanic",
+            "certificate_hash": "5d5ec04535c678358955c4fb2269da9742704eb6"
+          }
+        },
+        {
+          "client_id": "578942080402-095bgsm8ne0ihld65ruqd91ueqv5a6kc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVRJPcJZQNdt7X_4VK-eJjzLqbHscSA-g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578942080402-095bgsm8ne0ihld65ruqd91ueqv5a6kc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

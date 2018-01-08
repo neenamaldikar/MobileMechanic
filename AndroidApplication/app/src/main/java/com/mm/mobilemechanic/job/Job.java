@@ -1,5 +1,4 @@
 package com.mm.mobilemechanic.job;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -8,9 +7,6 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Job {
-
-
-
     @SerializedName("summary")
     private String summary;
 
@@ -157,11 +153,7 @@ public class Job {
         public void setParkingAvailable(boolean parkingAvailable) {
             this.parkingAvailable = parkingAvailable;
         }
-
-
-
     }
-
 
     /*{
         "description": "tube",

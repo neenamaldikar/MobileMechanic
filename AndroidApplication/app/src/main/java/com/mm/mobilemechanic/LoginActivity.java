@@ -130,6 +130,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO
+                Log.e(TAG +"1", e.getMessage());
+
                 onFailureJWT("Error retrieving user information, please try again later");
             }
             @Override
@@ -144,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, "Json object after successful login is " + jObject.toString());
                         String jwtToken = jObject.getString("access_token");
                         bundle.putString("JWT", "JWT " + jwtToken);
                         onSuccessLaunchMainScreen(bundle);

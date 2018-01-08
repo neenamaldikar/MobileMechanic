@@ -94,15 +94,6 @@ public class RestClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Log.i(TAG, "running main");
         runPOST();
-
-
-
-
-
-
-
-
-
     }
 }
 
