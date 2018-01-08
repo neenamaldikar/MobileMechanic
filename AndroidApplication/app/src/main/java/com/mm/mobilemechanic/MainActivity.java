@@ -49,18 +49,15 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
-    private User mCustomer;
     private String mJWTtoken;
-
-    List<Job> jobLists;
-
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
-    JobRequestsAdapter adapter;
+
+    private List<Job> jobLists;
+    private JobRequestsAdapter adapter;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -124,9 +121,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-
     private void initUI() {
-        jobLists = new ArrayList<Job>();
+        jobLists = new ArrayList<>();
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new JobRequestsAdapter(this, jobLists);
@@ -323,20 +319,14 @@ public class MainActivity extends AppCompatActivity
         mJWTtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, mJWTtoken);
 
-        mCustomer = new User("TEST_customer1");
-
         // creation of notifications
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create channel to show notifications.
-//            String channelId  = "tempChannel12345678";
-//            String channelName = "tempChannelAlphaBeta";
-            NotificationManager notificationManager =
-                    getSystemService(NotificationManager.class);
-//            notificationManager.
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        if(notificationManager != null) {
             notificationManager.getActiveNotifications();
-//            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
-//                    channelName, NotificationManager.IMPORTANCE_LOW));
-//        }
+        }
+        else {
+            Log.e(TAG, "notification manager is null");
+        }
 
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
