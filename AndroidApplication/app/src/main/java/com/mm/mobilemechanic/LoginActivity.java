@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 // TODO
                 Log.e(TAG +"1", e.getMessage());
+
                 onFailureJWT("Error retrieving user information, please try again later");
             }
             @Override

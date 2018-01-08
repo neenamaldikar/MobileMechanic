@@ -84,7 +84,7 @@ public class UserRepository {
                         }
 
                         mUser.setName(name);
-                        mUser.setAddress(jObject.getString("address_line1"));
+                        mUser.setAddress(jObject.getString("address_line"));
                         mUser.setCity(jObject.getString("city"));
                         mUser.setState(jObject.getString("state"));
                         mUser.setZipCode(jObject.getString("zipcode"));

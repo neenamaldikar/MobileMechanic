@@ -26,6 +26,7 @@
             android:label="@string/title_main"
             android:theme="@style/AppTheme.NoActionBar" />
 
+
         <activity
             android:name="com.mm.mobilemechanic.UserProfileActivity"
             android:label="@string/title_profile_edit" />

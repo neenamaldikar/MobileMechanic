@@ -53,7 +53,10 @@
         android:id="@+id/rv_main_homescreen_jobs_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="72dp">
+        android:nestedScrollingEnabled="true"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="180dp"
+        >
 
     </android.support.v7.widget.RecyclerView>
 

@@ -1,15 +1,11 @@
 package com.mm.mobilemechanic;
 
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,20 +19,27 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
-import com.mm.mobilemechanic.job.JobRequestsAdapter;
 import com.mm.mobilemechanic.job.Job;
-import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.job.JobRequestsAdapter;
 import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.util.Utility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +49,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -59,17 +56,83 @@ public class MainActivity extends AppCompatActivity
     private User mCustomer;
     private String mJWTtoken;
 
+    List<Job> jobLists;
+
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
+    JobRequestsAdapter adapter;
 
     private void showToast(final String message) {
-        runOnUiThread (new Thread(new Runnable() {
+        runOnUiThread(new Thread(new Runnable() {
             public void run() {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         }));
 
     }
+
+    private void getJobs() {
+
+        String jwtoken = getIntent().getExtras().getString("JWT");
+        Utility.showSimpleProgressDialog(MainActivity.this);
+
+        RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+
+                    LoginManager.getInstance().logOut();
+                } else {
+                    Log.i(TAG, response.message());
+
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        Log.i(TAG, jsonArray.toString());
+                        jobLists.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            Type collectionType = new TypeToken<Job>() {
+                            }.getType();
+                            Job job = (Job) new Gson().fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
+                            jobLists.add(job);
+
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+        });
+    }
+
+
+    private void initUI() {
+        jobLists = new ArrayList<Job>();
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv_main_homescreen_jobs_table);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new JobRequestsAdapter(this, jobLists);
+        rv.setAdapter(adapter);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -84,7 +147,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        getMenuInflater().inflate(R.menu.activity_main_logo, menu);
         return true;
     }
 
@@ -103,8 +166,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.menu_stuff:
                 handleOption1();
                 return true;
@@ -121,8 +183,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         Intent intent;
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
                 Bundle b = new Bundle();
@@ -170,6 +231,7 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             switch(requestCode) {
+
                 case (FROM_USER_PROFILE_SCREEN):
                     System.out.println("came from user profile activity");
                     break;
@@ -179,6 +241,7 @@ public class MainActivity extends AppCompatActivity
                     if (extras != null) {
                         jsonMyObject = extras.getString("newJob");
                     }
+
                     Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
                     newJob.getSummary();
                     break;
@@ -198,28 +261,12 @@ public class MainActivity extends AppCompatActivity
 
 
     public void showPopup(View view) {
-
         PopupMenu popup = new PopupMenu(this, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         popup.show();
     }
 
-    public void createFakeJobs() {
-
-        List<Job> jobLists = new ArrayList<>();
-        jobLists.add(new Job(getResources().getString(R.string.facebook_app_id), "summary1", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("car window broken", "Need to repair front passenger seat window", true, false, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("car engine smoke", "Smoke is coming from the engine every time when driving on highway", false, true, false, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("Rear windshield broken", "Sealing around the rear windshield is gone and need to be re-applied", true, false, true, false, JobStatus.QUOTES_REQUESTED));
-        jobLists.add(new Job("Exhaust pipe broken", "There is a crack in the exhaust pipe and it is making a loud noise", true, false, false, true, JobStatus.QUOTES_REQUESTED));
-
-
-        JobRequestsAdapter adapter = new JobRequestsAdapter(this, jobLists);
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_main_homescreen_jobs_table);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-    }
 
     public void sendToken(String json, String userId, String authToken) {
 
@@ -252,6 +299,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,6 +370,15 @@ public class MainActivity extends AppCompatActivity
         Log.d("mainActivityLog", "The token json is " + final_token_json);
         sendToken(final_token_json.toString(), Profile.getCurrentProfile().getId(), mJWTtoken);
 
-        createFakeJobs();
+        initUI();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getJobs();
     }
 }
+
