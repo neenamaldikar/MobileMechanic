@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity
     private void getJobs() {
 
         String jwtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, jwtoken);
-
         Utility.showSimpleProgressDialog(MainActivity.this);
 
         RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        getMenuInflater().inflate(R.menu.activity_main_logo, menu);
         return true;
     }
 
