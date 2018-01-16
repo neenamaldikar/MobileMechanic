@@ -112,7 +112,8 @@ class JobAPI(Resource):
             logging.debug('Could not find a job of that given id.')
             abort(404)
 
-        updated_values = {str(k): str(v) for k, v in job_data['updated_values'].items()}
+        #updated_values = {str(k): str(v) for k, v in job_data['updated_values'].items()}
+        updated_values = job_data.get('updated_values')
         update_successful = self.jobsDAO.update_job(user_id, job_id, updated_values)
         if not update_successful:
             abort(404)

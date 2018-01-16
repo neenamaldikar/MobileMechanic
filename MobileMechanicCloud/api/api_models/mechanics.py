@@ -35,7 +35,8 @@ class MechanicAPI(Resource):
         if not args.get('updated_values'):
             logging.debug('Cannot find updated values.')
             abort(400, description='The request is missing a few fields. Please check your request body once again.')
-        new_values = {str(k): (str(v) if type(v) == str else v) for k, v in args['updated_values'].items()}
+        #new_values = {str(k): (str(v) if type(v) == str else v) for k, v in args['updated_values'].items()}
+        new_values = args.get('updated_values')
         if any([i == 'user_id' for i in new_values]):
             logging.debug('"user_id" not provided by mechanic.')
             abort(405, description='The request was sent in without a "user_id" field.')
