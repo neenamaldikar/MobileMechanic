@@ -41,7 +41,6 @@ class TokenDAO:
     def update_token(self, user_id, token):
         try:
             result = self.db.userTokens.update_one({'user_id': user_id}, {'$set': {'token': token}})
-            logging.debug('Token update result is ' + str(result.inserted_id))
             return result.acknowledged
-        except:
+        except Exception as ex:
             return False
