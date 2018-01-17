@@ -15,8 +15,9 @@ from api.api_models.mechanics import MechanicAPI
 from api.api_models.tokens import TokenAPI
 from api.authentication import authenticate, identity
 
+
 def initialize_app():
-    app = Flask(__name__)
+    app = Flask(os.getenv('MONGO_DBNAME', 'app'))
     app.config.from_object('configuration.DevelopmentConfig')
     # config_prefix is used incase we want to add more databases
     mongo.init_app(app, config_prefix='MONGO')
@@ -36,4 +37,5 @@ if __name__ == '__main__':
     logging.config.dictConfig(LOGGING_JSON)
     logging.info('Serving on port - ' + os.environ.get('PORT'))
     logging.debug('Mongo URI used is ' + app.config.get('MONGO_URI'))
+
     serve(app, host='0.0.0.0', port=os.environ.get('PORT', 5000), cleanup_interval=100)
