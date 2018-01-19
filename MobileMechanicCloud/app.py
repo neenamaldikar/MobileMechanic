@@ -17,7 +17,7 @@ from api.authentication import authenticate, identity
 
 
 def initialize_app():
-    app = Flask(os.getenv('MONGO_DBNAME', 'app'))
+    app = Flask(os.getenv('MONGO_DBNAME', 'MobileMechanic'))
     app.config.from_object('configuration.DevelopmentConfig')
     # config_prefix is used incase we want to add more databases
     mongo.init_app(app, config_prefix='MONGO')
