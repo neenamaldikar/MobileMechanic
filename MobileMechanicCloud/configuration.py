@@ -1,7 +1,6 @@
 import os
 import datetime
 import sys
-import logging.config
 
 LOGGING_JSON = {
     'version': 1,
@@ -15,7 +14,7 @@ LOGGING_JSON = {
         'console': {
             'level':'DEBUG',
             'class':'logging.StreamHandler',
-            'stream': sys.stderr,
+            'stream': sys.stdout,
             'formatter': 'standard'
         }
     },
@@ -28,7 +27,7 @@ LOGGING_JSON = {
 }
 
 # test the loggers over here
-logging.config.dictConfig(LOGGING_JSON)
+# logging.config.dictConfig(LOGGING_JSON)
 
 class DevelopmentConfig:
     DEBUG = True
