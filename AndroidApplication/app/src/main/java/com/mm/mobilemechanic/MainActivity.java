@@ -1,6 +1,8 @@
 package com.mm.mobilemechanic;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -29,6 +32,7 @@ import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
 import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.user.Mechanic;
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-              b   = new Bundle();
+                b = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_sign_up_mech:
                 intent = new Intent(this, MechEditActivity.class);
-                 b = new Bundle();
+                b = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivity(intent);
@@ -262,13 +266,14 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
     }
 
-
-    public void showPopup(View view) {
-
-        PopupMenu popup = new PopupMenu(this, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
-        popup.show();
+    public void editJobOnClick(View view, Job job) {
+        Intent intent;
+        intent = new Intent(this, JobFormActivity.class);
+        Bundle b = new Bundle();
+        b.putString("JWT", mJWTtoken);
+        b.putSerializable("Job", job);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 
 
@@ -307,5 +312,58 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         getJobs();
+    }
+
+    public void downloadImage(String jobId, String pictureId, final ImageView iv) {
+        RestClient.getJobImage(Profile.getCurrentProfile().getId(), mJWTtoken, jobId, pictureId, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    // TODO on failure what happens
+                } else {
+                    Log.i(TAG, response.message());
+                    try {
+
+
+                        Thread thread = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                byte[] data = new byte[0];
+                                try {
+                                    data = response.body().bytes();
+                                    final Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            iv.setImageBitmap(bmp);
+                                        }
+                                    });
+
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        thread.start();
+                        //   Log.i(TAG, jObject.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // TODO when setting user fails
+                    }
+                }
+            }
+        });
+
+
     }
 }

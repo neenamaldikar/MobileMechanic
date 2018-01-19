@@ -67,6 +67,7 @@ public class MechanicRepository {
                         mMechanic.setState(jObject.getString("state"));
                         mMechanic.setZipCode(jObject.getString("zipcode"));
                         mMechanic.setmRate(jObject.getString("rate"));
+                        mMechanic.setmRating(jObject.getString("rating"));
                         mMechanic.setPhonenumber(jObject.getString("phone_number"));
 
                         data.postValue(mMechanic);

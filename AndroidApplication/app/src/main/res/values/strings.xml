@@ -6,6 +6,10 @@
     <string name="title_mech_profile_edit">Sign up as Mechanic</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="text_choosepicture">Choose Image From</string>
+    <string name="text_gallary">Gallery</string>
+    <string name="text_camera">Camera</string>
+    <string name="title_select_image">Select Image</string>
 
     <!--testApp fb id-->
     <!--<string name="facebook_app_id">811832542261786</string>-->

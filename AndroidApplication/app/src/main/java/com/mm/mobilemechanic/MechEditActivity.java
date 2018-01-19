@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,12 +72,15 @@ public class MechEditActivity extends AppCompatActivity {
     @BindView(R.id.editText_mech_work_state)
     EditText mEditTextMechState;
 
+    @BindView(R.id.rating_mech_rating)
+    RatingBar mRatingMechRating;
+
+
     private MechanicViewModel viewModel;
     private String mJWToken;
     private GoogleApiClient mGoogleApiClient;
-    String strAddress = "";
-    List<String> mStateArrayList = new ArrayList<>();
-    List<String> mCityArrayList = new ArrayList<>();
+
+    private int fieldsCount = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +88,15 @@ public class MechEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mech_profile_edit);
         ButterKnife.bind(this);
 
-        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
-
 
         // adding the done button at the top left
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initUI();
+        addListenerToEditTexts();
+        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
+
 
     }
 
@@ -170,15 +175,20 @@ public class MechEditActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_save_profile:
-                String updated_values = createJsonFromFields();
-                viewModel.setMechanic(updated_values, mJWToken);
 
-                showToast("Saving");
-                textChanged = false; // set to false to prevent the dialog box from showing
+                if (fieldsCount == 0) {
+                    String updated_values = createJsonFromFields();
+                    viewModel.setMechanic(updated_values, mJWToken);
+                    showToast("Saving");
+                    textChanged = false; // set to false to prevent the dialog box from showing
+                    Intent resultIntent = new Intent();
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    finish();
+                } else {
+                    showToast("Missing required fields");
+                }
 
-                Intent resultIntent = new Intent();
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,16 +248,50 @@ public class MechEditActivity extends AppCompatActivity {
                     mEditTextMechRate.setText(mechanic.getmRate());
                     mEditTextMechState.setText(mechanic.getState());
                     mEditTextMechCity.setText(mechanic.getCity());
+                    //mRatingMechRating.setRating(Integer.parseInt(mechanic.getmRating()));
+                  //  mRatingMechRating.setRating(3);
+
                 }
 
             }
         });
 
 
-        addOnTextChangedListenerToAllEditText(R.id.ll_mech_profile_text_views);
     }
 
+    public void addListenerToEditTexts() {
+        LinearLayout mechEditTextViews = (LinearLayout) findViewById(R.id.ll_mech_profile_text_views);
+        for (int i = 0; i < mechEditTextViews.getChildCount(); i++) {
+            if (mechEditTextViews.getChildAt(i) instanceof EditText) {
+                final EditText editText = ((EditText) mechEditTextViews.getChildAt(i));
+                //   editText.setError("Field cannot be empty");
+                editText.addTextChangedListener(new TextWatcher() {
+                    int prevSize;
 
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        prevSize = editText.getText().toString().length();
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (editText.getText().toString().isEmpty()) {
+                            editText.setError("Field cannot be empty");
+                            fieldsCount++;
+                        } else {
+                            if (prevSize == 0) {
+                                fieldsCount--;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
 
 
 }

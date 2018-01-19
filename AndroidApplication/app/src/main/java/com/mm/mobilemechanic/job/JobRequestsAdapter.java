@@ -3,21 +3,38 @@ package com.mm.mobilemechanic.job;
 import android.app.Activity;
 import android.app.Dialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.Profile;
+import com.mm.mobilemechanic.JobAddImagesActivity;
+import com.mm.mobilemechanic.MainActivity;
 import com.mm.mobilemechanic.R;
+import com.mm.mobilemechanic.authorization.RestClient;
+import com.mm.mobilemechanic.user.Mechanic;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 10/13/2017.
- *
  */
 
 public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.JobCardsViewHolder> {
@@ -54,8 +71,18 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
         text6.setText("Parking available on-site = " + job.isParkingAvailable());
 
+        ImageView imageView = (ImageView) dialog.findViewById(R.id.imageview_dialog_jobimage);
+
+        if (job.getImages().length != 0) {
+            if (mActivity instanceof MainActivity) {
+                ((MainActivity) mActivity).downloadImage(job.getJob_id(), job.getImages()[0], imageView);
+            }
+        }
         dialog.show();
+
+
     }
+
 
     @Override
     public JobCardsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -79,6 +106,16 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
                 showJobInformation(mActivity, job);
             }
         });
+        holder.imageButton.setFocusable(true);
+        holder.imageButton.setOnClickListener(new View.OnClickListener() {
+            // TODO open summary and job req info
+            @Override
+            public void onClick(View v) {
+                showPopup(v, job);
+            }
+        });
+
+        //5a58fc37b4c7370004114f63
     }
 
     @Override
@@ -87,22 +124,51 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     }
 
     class JobCardsViewHolder extends RecyclerView.ViewHolder {
-        View hexColor;
+        ImageView hexColor;
         TextView jobSummary;
         TextView numberOfQuotes;
         TextView currentStatus;
         CardView cardView;
-
-
+        ImageButton imageButton;
 
         public JobCardsViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
-            hexColor = (View) itemView.findViewById(R.id.view_hex_color);
+            hexColor = (ImageView) itemView.findViewById(R.id.view_hex_color);
             jobSummary = (TextView) itemView.findViewById(R.id.textView_job_summary);
             numberOfQuotes = (TextView) itemView.findViewById(R.id.textView_number_of_quotes);
             currentStatus = (TextView) itemView.findViewById(R.id.textView_status);
+            imageButton = (ImageButton) itemView.findViewById(R.id.imageButton);
         }
     }
+
+    public void showPopup(final View view, final Job job) {
+
+        PopupMenu popup = new PopupMenu(mActivity, view);
+        MenuInflater inflater = popup.getMenuInflater();
+
+
+        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_card_delete:
+
+                        return true;
+                    case R.id.menu_card_edit:
+                        if (mActivity instanceof MainActivity) {
+                            ((MainActivity) mActivity).editJobOnClick(view, job);
+                        }
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popup.show();
+    }
+
+
 }
