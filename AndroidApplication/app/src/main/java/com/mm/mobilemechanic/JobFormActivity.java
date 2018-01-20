@@ -19,15 +19,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
+
 import com.mm.mobilemechanic.util.Utility;
+
+import com.mm.mobilemechanic.job.JobStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,14 +85,12 @@ public class JobFormActivity extends AppCompatActivity {
 
     private int fieldsCount = 5;
 
-
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
             public void run() {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         }));
-
     }
 
     private ImageView createImageViewsWhenChosen(Uri imageUri) {
@@ -161,24 +162,15 @@ public class JobFormActivity extends AppCompatActivity {
     }
 
     public String createJsonFromFields(Job job) {
-        JsonObject updated_values = new JsonObject();
-        JsonObject inner = new JsonObject();
-        inner.addProperty("make", job.getMake());
-        inner.addProperty("model", job.getModel());
-        inner.addProperty("year", job.getYear());
-        inner.addProperty("summary", job.getSummary());
-        inner.addProperty("description", job.getDescription());
+        job.setStatus(JobStatus.SUBMITTED);
 
-        JsonObject options = new JsonObject();
-        options.addProperty("onsite_diagnostic", job.isOnSiteDiagnostic());
-        options.addProperty("working", job.isCarInWorkingCondition());
-        options.addProperty("onsite_repair", job.isRepairDoneOnSite());
-        options.addProperty("pickup_dropoff", job.isCarPickUpAndDropOff());
+        Gson gson = new Gson();
+        JsonObject jobRequestJSON = new JsonObject();
+        JsonParser parser = new JsonParser();
+        JsonObject jobJson = parser.parse(gson.toJson(job)).getAsJsonObject();
+        jobRequestJSON.add("job", jobJson);
 
-        inner.addProperty("status", "Submitted");
-        inner.add("options", options);
-        updated_values.add("job", inner);
-        return updated_values.toString();
+        return jobRequestJSON.toString();
     }
 
     public String updateJsonFromFields(Job job) {
@@ -197,10 +189,10 @@ public class JobFormActivity extends AppCompatActivity {
         updated_values.addProperty("description", job.getDescription());
 
         JsonObject options = new JsonObject();
-        options.addProperty("onsite_diagnostic", job.isOnSiteDiagnostic());
-        options.addProperty("working", job.isCarInWorkingCondition());
-        options.addProperty("onsite_repair", job.isRepairDoneOnSite());
-        options.addProperty("pickup_dropoff", job.isCarPickUpAndDropOff());
+        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
+        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         updated_values.addProperty("status", "Submitted");
         updated_values.add("options", options);
@@ -296,7 +288,6 @@ public class JobFormActivity extends AppCompatActivity {
             if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
-
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);
                 sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
@@ -304,7 +295,6 @@ public class JobFormActivity extends AppCompatActivity {
                 String jobPayload = updateJsonFromFields(mJob);
                 updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
             }
-
         } else {
             showToast("Missing required fields");
         }
@@ -345,7 +335,7 @@ public class JobFormActivity extends AppCompatActivity {
         Switch switchOnSiteDiagnostic = (Switch) findViewById(R.id.switch_on_site_diagnostic);
         switchOnSiteDiagnostic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mJob.setOnSiteDiagnostic(isChecked);
+                mJob.getJobOptions().setOnSiteDiagnostic(isChecked);
                 changesMade = true;
             }
         });
@@ -353,7 +343,7 @@ public class JobFormActivity extends AppCompatActivity {
         Switch switchCarInWorkingCondition = (Switch) findViewById(R.id.switch_car_in_working_condition);
         switchCarInWorkingCondition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mJob.setCarInWorkingCondition(isChecked);
+                mJob.getJobOptions().setCarInWorkingCondition(isChecked);
                 changesMade = true;
             }
         });
@@ -361,7 +351,7 @@ public class JobFormActivity extends AppCompatActivity {
         Switch switchRepairCanBeDoneOnSite = (Switch) findViewById(R.id.switch_repair_done_on_site);
         switchRepairCanBeDoneOnSite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mJob.setRepairCanBeDoneOnSite(isChecked);
+                mJob.getJobOptions().setRepairCanBeDoneOnSite(isChecked);
                 changesMade = true;
             }
         });
@@ -370,7 +360,7 @@ public class JobFormActivity extends AppCompatActivity {
         final Switch switchParkingAvailable = (Switch) findViewById(R.id.switch_parking_available);
         switchCarPickUpDropOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mJob.setCarPickUpAndDropOff(isChecked);
+                mJob.getJobOptions().setCarPickUpAndDropOff(isChecked);
                 changesMade = true;
                 if (isChecked) {
                     switchParkingAvailable.setVisibility(View.VISIBLE);
@@ -378,14 +368,14 @@ public class JobFormActivity extends AppCompatActivity {
                 } else {
                     switchParkingAvailable.setVisibility(View.INVISIBLE);
                     switchParkingAvailable.setChecked(false);
-                    mJob.setParkingAvailable(false);
+                    mJob.getJobOptions().setParkingAvailable(false);
                 }
             }
         });
 
         switchParkingAvailable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mJob.setParkingAvailable(isChecked);
+                mJob.getJobOptions().setParkingAvailable(isChecked);
                 changesMade = true;
             }
         });
@@ -453,7 +443,6 @@ public class JobFormActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void setJobData() {
         initializeSwitches();

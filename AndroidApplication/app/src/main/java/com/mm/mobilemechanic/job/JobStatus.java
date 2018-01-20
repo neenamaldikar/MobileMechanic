@@ -1,9 +1,9 @@
 package com.mm.mobilemechanic.job;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by ndw6152 on 10/17/2017.
+ *
  */
 
 public enum JobStatus {
@@ -21,13 +21,11 @@ public enum JobStatus {
     @SerializedName("Submitted")
     SUBMITTED("Submitted");
 
-
     private final String name;
 
     JobStatus(final String name) {
         this.name = name;
     }
-
 
     public String toString() {
         return this.name;

@@ -1,5 +1,4 @@
 package com.mm.mobilemechanic.job;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -7,6 +6,7 @@ import java.io.Serializable;
 /**
  * Created by ndw6152 on 5/22/2017.
  */
+
 
 public class Job implements Serializable {
 
@@ -31,31 +31,21 @@ public class Job implements Serializable {
     @SerializedName("year")
     private int year;
 
-
     @SerializedName("images")
     private String[] images;
 
     @SerializedName("options")
     private JobOptions jobOptions;
 
-
-    private boolean onSiteDiagnostic = false;
-    private boolean carInWorkingCondition = false;
-    private boolean repairCanBeDoneOnSite = false;
-    private boolean carPickUpAndDropOff = false;
-    private boolean parkingAvailable = false;
-
     public Job() {
-
+        this.jobOptions = new JobOptions();
     }
 
-    public Job(String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
+
+    public Job (String summary, String description, JobOptions jobOptions, JobStatus status) {
         this.summary = summary;
         this.description = description;
-        this.onSiteDiagnostic = onSiteDiagnostic;
-        this.carInWorkingCondition = carInWorkingCondition;
-        this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
-        this.carPickUpAndDropOff = carPickUpAndDropOff;
+        this.jobOptions = jobOptions;
         this.status = status;
     }
 
@@ -81,46 +71,6 @@ public class Job implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isOnSiteDiagnostic() {
-        return onSiteDiagnostic;
-    }
-
-    public void setOnSiteDiagnostic(boolean onSiteDiagnostic) {
-        this.onSiteDiagnostic = onSiteDiagnostic;
-    }
-
-    public boolean isCarInWorkingCondition() {
-        return carInWorkingCondition;
-    }
-
-    public void setCarInWorkingCondition(boolean carInWorkingCondition) {
-        this.carInWorkingCondition = carInWorkingCondition;
-    }
-
-    public boolean isRepairDoneOnSite() {
-        return repairCanBeDoneOnSite;
-    }
-
-    public void setRepairCanBeDoneOnSite(boolean repairCanBeDoneOnSite) {
-        this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
-    }
-
-    public boolean isCarPickUpAndDropOff() {
-        return carPickUpAndDropOff;
-    }
-
-    public void setCarPickUpAndDropOff(boolean carPickUpAndDropOff) {
-        this.carPickUpAndDropOff = carPickUpAndDropOff;
-    }
-
-    public boolean isParkingAvailable() {
-        return parkingAvailable;
-    }
-
-    public void setParkingAvailable(boolean parkingAvailable) {
-        this.parkingAvailable = parkingAvailable;
     }
 
     public String getMake() {
@@ -173,7 +123,6 @@ public class Job implements Serializable {
 
 
     public class JobOptions implements Serializable {
-
         @SerializedName("onsite_diagnostic")
         private boolean onSiteDiagnostic = false;
 
@@ -186,7 +135,7 @@ public class Job implements Serializable {
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;
 
-        private boolean parkingAvailable = false;
+        private boolean parkingAvailable = false;  // TODO will add field
 
 
         public boolean isOnSiteDiagnostic() {
@@ -228,10 +177,7 @@ public class Job implements Serializable {
         public void setParkingAvailable(boolean parkingAvailable) {
             this.parkingAvailable = parkingAvailable;
         }
-
-
     }
-
 
     /*{
         "description": "tube",

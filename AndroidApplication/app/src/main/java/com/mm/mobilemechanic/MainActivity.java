@@ -1,5 +1,7 @@
 package com.mm.mobilemechanic;
 
+import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,13 +26,15 @@ import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
-
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
-
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
+
 import com.mm.mobilemechanic.job.JobStatus;
 import com.mm.mobilemechanic.user.Mechanic;
 import com.mm.mobilemechanic.user.User;
@@ -51,16 +55,15 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
-    private User mCustomer;
     private String mJWTtoken;
-    List<Job> jobLists;
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
-    JobRequestsAdapter adapter;
+
+    private List<Job> jobLists;
+    private JobRequestsAdapter adapter;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -74,8 +77,6 @@ public class MainActivity extends AppCompatActivity
     private void getJobs() {
 
         String jwtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, jwtoken);
-
         Utility.showSimpleProgressDialog(MainActivity.this);
 
         RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
@@ -103,10 +104,7 @@ public class MainActivity extends AppCompatActivity
                         for (int i = 0; i < jsonArray.length(); i++) {
                             Type collectionType = new TypeToken<Job>() {
                             }.getType();
-                            Job job = (Job) new Gson()
-                                    .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
-
-
+                            Job job = (Job) new Gson().fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
                             jobLists.add(job);
 
                         }
@@ -129,14 +127,14 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-
     private void initUI() {
-        jobLists = new ArrayList<Job>();
+        jobLists = new ArrayList<>();
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new JobRequestsAdapter(this, jobLists);
         rv.setAdapter(adapter);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        getMenuInflater().inflate(R.menu.activity_main_logo, menu);
         return true;
     }
 
@@ -237,8 +235,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
+        if(resultCode == RESULT_OK) {
+            switch(requestCode) {
+
                 case (FROM_USER_PROFILE_SCREEN):
                     System.out.println("came from user profile activity");
                     break;
@@ -266,6 +265,7 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
     }
 
+
     public void editJobOnClick(View view, Job job) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
@@ -274,6 +274,39 @@ public class MainActivity extends AppCompatActivity
         b.putSerializable("Job", job);
         intent.putExtras(b);
         startActivity(intent);
+    }
+
+
+    public void sendToken(String json, String userId, String authToken) {
+
+        RestClient.createToken(userId, json, authToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("mainActivityLog", "Received response from server ...");
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                } else {
+
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, jObject.toString());
+                        Log.i(TAG, jObject.getString("token"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newToken", "Token sent successfully!");
+                    setResult(Activity.RESULT_OK, resultIntent);
+//                    finish();
+                }
+            }
+        });
     }
 
 
@@ -299,13 +332,50 @@ public class MainActivity extends AppCompatActivity
         mJWTtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, mJWTtoken);
 
-        mCustomer = new User("TEST_customer1");
+        // creation of notifications
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        if(notificationManager != null) {
+            notificationManager.getActiveNotifications();
+        }
+        else {
+            Log.e(TAG, "notification manager is null");
+        }
 
+        // Handle possible data accompanying notification message.
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("Key value for add. data", "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic("someInterestingTopic");
+        // [END subscribe_topics]
+        // Log and toast
+        String msg = "Subscription has started";
+        Log.d("Subscription started", msg);
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-        //     createFakeJobs();
+        String token = FirebaseInstanceId.getInstance().getToken();
+        // log and toast
+        Log.d("mainActivityLog", "In main activity the token is " + token);
+        Toast.makeText(MainActivity.this, "the token in main activity is " + token, Toast.LENGTH_SHORT).show();
+        // added code to insert into a seperate temporary collection containing users and their tokens only
+        JsonObject token_json = new JsonObject();
+        token_json.addProperty("fcmtoken", token);
+        // for now hardcode the user id
+        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
+        // print the token
+        JsonObject final_token_json = new JsonObject();
+        final_token_json.add("tokenData", token_json);
+        Log.d("mainActivityLog", "The token json is " + final_token_json);
+        sendToken(final_token_json.toString(), Profile.getCurrentProfile().getId(), mJWTtoken);
+
         initUI();
-
     }
+
 
     @Override
     protected void onResume() {
@@ -367,3 +437,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 }
+
