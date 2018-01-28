@@ -26,7 +26,8 @@ class JobRequestDAO:
                 else:
                     return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'],
                                                 cursor['options'], cursor['summary'], cursor['description'],
-                                                cursor['images'], cursor['status'])
+                                                cursor['images'], cursor['status'], cursor['address_line'],
+                                                cursor['city'], cursor['state'], cursor['zipcode'])
             if user_id:
                 cursor = self.db.jobs.find({'user_id': user_id})
 
