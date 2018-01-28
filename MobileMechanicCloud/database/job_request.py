@@ -14,7 +14,7 @@ class JobRequestDAO:
         self.db = mongo.db
         self.fs = GridFS(self.db)
 
-    def find_job(self, user_id, job_id=None):
+    def find_job(self, user_id=None, job_id=None, zipcodes=None):
         try:
             if job_id:
                 logging.debug('Finding jobs listed for user' + user_id)
@@ -27,14 +27,19 @@ class JobRequestDAO:
                     return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'],
                                                 cursor['options'], cursor['summary'], cursor['description'],
                                                 cursor['images'], cursor['status'])
-            cursor = self.db.jobs.find({'user_id': user_id})
+            if user_id:
+                cursor = self.db.jobs.find({'user_id': user_id})
+
+            if zipcodes:
+                cursor = self.db.jobs.find({"zipcode": {"$in": zipcodes}})
+
             data = list(cursor)
             logging.debug('Cursor data is', data)
             if not cursor:
                 logging.debug('No cursor data')
             output_list = []
             for i in data:
-                output_list.append(job_model.JobRequest(user_id, i['job_id'], i['make'], i['model'], i['year'],
+                output_list.append(job_model.JobRequest(i['user_id'], i['job_id'], i['make'], i['model'], i['year'],
                                                         i['options'], i['summary'], i['description'],
                                                         i['images'], i['status']))
             return output_list
@@ -44,7 +49,8 @@ class JobRequestDAO:
 
     # TODO: make the job insertion unique here
     # TODO: add validations for the options passed in the options field
-    def insert_job(self, user_id, make, model, year, options, summary, description, status):
+    def insert_job(self, user_id, make, model, year, options, summary, description,
+                   status, address_line, city, state, zipcode):
         try:
             unique_job_id = str(uuid.uuid4())
             while True:
@@ -57,7 +63,8 @@ class JobRequestDAO:
                                               'make': make, 'model': model, 'year': year,
                                               'options': options, 'summary': summary,
                                               'description': description, 'images': [],
-                                              'status': status})
+                                              'status': status, 'address_line': address_line,
+                                              'city': city, 'state': state, 'zipcode': zipcode})
             return (result.acknowledged, unique_job_id)
         except:
             return False
