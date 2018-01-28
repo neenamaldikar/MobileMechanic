@@ -41,7 +41,8 @@ class JobRequestDAO:
             for i in data:
                 output_list.append(job_model.JobRequest(i['user_id'], i['job_id'], i['make'], i['model'], i['year'],
                                                         i['options'], i['summary'], i['description'],
-                                                        i['images'], i['status']))
+                                                        i['images'], i['status'], i['address_line'], i['city'],
+                                                        i['state'], i['zipcode']))
             return output_list
         except:
             logging.debug('Exception in find request')
