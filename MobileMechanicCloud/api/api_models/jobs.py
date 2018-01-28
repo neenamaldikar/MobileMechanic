@@ -41,7 +41,12 @@ class JobAPI(Resource):
                 return job.as_dict()
             abort(401)
         else:
-            jobs_list = self.jobsDAO.find_job(user_id)
+            mechanic = self.mechanicDAO.find_mechanic(user_id)
+            if mechanic is None:
+                jobs_list = self.jobsDAO.find_job(user_id)
+            else:
+                jobs_list=self.jobsDAO.find_job(mechanic.serving_zipcodes)
+
             return jsonify([i.as_dict() for i in jobs_list])
 
     @jwt_required()
@@ -55,28 +60,34 @@ class JobAPI(Resource):
         # if there is a problem with the inserted job format
         if not job_inserted:
             logging.debug('"job" key missing in inserted job.')
-            abort(401)
+            abort(400)
         if not all(list(map(job_inserted.get, ['make', 'model', 'year', 'options', 'summary', 'description', 'status']))):
             logging.debug('Job missing a few parameters.')
-            abort(401)
+            abort(400)
         if not type(job_inserted['options']) is dict:
             logging.debug('"options" field is not dict')
-            abort(401)
+            abort(400)
+        if any([i not in ['address_line', 'city', 'state', 'zipcode'] for i in job_inserted]):
+            abort(400)
+
         insertion_successful, job_id = self.jobsDAO.insert_job(user_id,
                                         job_inserted['make'], job_inserted['model'],
                                         job_inserted['year'], job_inserted['options'],
-                                        job_inserted['summary'],
-                                        job_inserted['description'],
-                                        job_inserted['status'])
+                                        job_inserted['summary'],job_inserted['description'],
+                                        job_inserted['status'], job_inserted['address_line'],
+                                        job_inserted['city'], job_inserted['state'],
+                                        job_inserted['zipcode'])
         if not insertion_successful:
-            abort(401)
+            abort(500)
         job = self.jobsDAO.find_job(user_id, job_id)
         if not job:
             abort(404)
-        # now since job is successful, send a notification to the mechanic whose nearby
+
+        # SENDING NOTIFICATIONS:
+        # Since job is successful, send a notification to the mechanic whose nearby
         # get the list of all avaialable mechanics
-        # TODO: the relevant field is job location
-        registration_ids = self.mechanicDAO.get_relevant_mechanic_tokens(job_inserted['model'], job_inserted['summary'])
+        # TODO: implement sending notifications as Asynchronous process
+        registration_ids = self.mechanicDAO.get_relevant_mechanic_tokens(job_inserted['zipcode'])
         logging.debug("Got registration ids for job -> " + str(registration_ids))
         for registration_id in registration_ids:
             message_title = "Customers need your help"
@@ -88,6 +99,7 @@ class JobAPI(Resource):
                                                        message_title=message_title,
                                                        message_body=message_body)
             logging.debug('Notification result is ' + str(result))
+
         return job.as_dict()
 
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted

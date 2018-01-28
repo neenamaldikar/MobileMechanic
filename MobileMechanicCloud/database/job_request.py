@@ -42,6 +42,23 @@ class JobRequestDAO:
             logging.debug('Exception in find request')
             return None
 
+    def find_job(self, zipcodes):
+        try:
+            cursor = self.db.jobs.find({"zipcode": {"$in": zipcodes}})
+            data = list(cursor)
+            logging.debug('Cursor data is', data)
+            if not cursor:
+                logging.debug('No cursor data')
+            output_list = []
+            for i in data:
+                output_list.append(job_model.JobRequest(i['user_id'], i['job_id'], i['make'], i['model'], i['year'],
+                                                        i['options'], i['summary'], i['description'],
+                                                        i['images'], i['status']))
+            return output_list
+        except:
+            logging.debug('Exception in find request')
+            return None
+
     # TODO: make the job insertion unique here
     # TODO: add validations for the options passed in the options field
     def insert_job(self, user_id, make, model, year, options, summary, description, status):
