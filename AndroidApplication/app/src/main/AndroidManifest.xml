@@ -40,7 +40,7 @@
             android:name="com.mm.mobilemechanic.authorization.RestClientActivity"
             android:label="@string/test_rest_client_name" />
 
-        <service android:name=".MyFirebaseInstanceIDService">
+        <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
