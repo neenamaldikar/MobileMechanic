@@ -32,7 +32,6 @@ import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
 import com.mm.mobilemechanic.job.JobStatus;
-import com.mm.mobilemechanic.user.Mechanic;
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-                b = new Bundle();
+                 b = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
@@ -237,8 +236,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
+        if(resultCode == RESULT_OK) {
+            switch(requestCode) {
+
                 case (FROM_USER_PROFILE_SCREEN):
                     System.out.println("came from user profile activity");
                     break;
@@ -277,6 +277,39 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public void sendToken(String json, String userId, String authToken) {
+
+        RestClient.createToken(userId, json, authToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("mainActivityLog", "Received response from server ...");
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                } else {
+
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, jObject.toString());
+                        Log.i(TAG, jObject.getString("token"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newToken", "Token sent successfully!");
+                    setResult(Activity.RESULT_OK, resultIntent);
+//                    finish();
+                }
+            }
+        });
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -299,13 +332,51 @@ public class MainActivity extends AppCompatActivity
         mJWTtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, mJWTtoken);
 
-        mCustomer = new User("TEST_customer1");
+        // creation of notifications
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        if(notificationManager != null) {
+            notificationManager.getActiveNotifications();
+        }
+        else {
+            Log.e(TAG, "notification manager is null");
+        }
 
+        // Handle possible data accompanying notification message.
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("Key value for add. data", "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic("someInterestingTopic");
+        // [END subscribe_topics]
+        // Log and toast
+        String msg = "Subscription has started";
+        Log.d("Subscription started", msg);
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-        //     createFakeJobs();
+        String token = FirebaseInstanceId.getInstance().getToken();
+        // log and toast
+        Log.d("mainActivityLog", "In main activity the token is " + token);
+        Toast.makeText(MainActivity.this, "the token in main activity is " + token, Toast.LENGTH_SHORT).show();
+        // added code to insert into a seperate temporary collection containing users and their tokens only
+        JsonObject token_json = new JsonObject();
+        token_json.addProperty("fcmtoken", token);
+        // for now hardcode the user id
+        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
+        // print the token
+        JsonObject final_token_json = new JsonObject();
+        final_token_json.add("tokenData", token_json);
+        Log.d("mainActivityLog", "The token json is " + final_token_json);
+        sendToken(final_token_json.toString(), Profile.getCurrentProfile().getId(), mJWTtoken);
+
         initUI();
 
     }
+
 
     @Override
     protected void onResume() {
@@ -367,3 +438,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 }
+

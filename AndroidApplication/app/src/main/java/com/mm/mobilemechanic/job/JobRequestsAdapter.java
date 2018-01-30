@@ -69,7 +69,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         text5.setText("Car pick up and drop off = " + job.getJobOptions().isCarPickUpAndDropOff());
 
         TextView text6 = (TextView) dialog.findViewById(R.id.textView_dialog_parkingAvailable);
-        text6.setText("Parking available on-site = " + job.isParkingAvailable());
+        text6.setText("Parking available on-site = " + job.getJobOptions().isParkingAvailable());
 
         ImageView imageView = (ImageView) dialog.findViewById(R.id.imageview_dialog_jobimage);
 

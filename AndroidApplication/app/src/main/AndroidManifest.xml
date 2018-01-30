@@ -45,7 +45,7 @@
 
         <activity
             android:name="com.mm.mobilemechanic.MainActivity"
-
+            android:label="@string/title_main"
             android:theme="@style/AppTheme.NoActionBar" />
 
 
@@ -54,7 +54,7 @@
             android:label="@string/title_profile_edit" />
         <activity
             android:name="com.mm.mobilemechanic.MechEditActivity"
-            android:label="@string/title_select_image" />
+            android:label="@string/title_profile_edit" />
 
         <activity
             android:name="com.mm.mobilemechanic.JobFormActivity"
@@ -67,6 +67,23 @@
         <activity
             android:name="com.mm.mobilemechanic.JobAddImageActivity"
             android:label="Add Image" />
+
+        <!-- [START firebase_service] -->
+        <service
+            android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- [END firebase_service] -->
+        <!-- [START firebase_iid_service] -->
+        <service
+            android:name=".MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- [END firebase_iid_service] -->
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

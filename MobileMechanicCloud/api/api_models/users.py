@@ -34,7 +34,8 @@ class UserAPI(Resource):
         args = self.reqparse.parse_args()
         if not args.get('updated_values'):
             abort(400)
-        new_values = {str(k): str(v) for k, v in args['updated_values'].items()}
+        #new_values = {str(k): str(v) for k, v in args['updated_values'].items()}
+        new_values = args.get('updated_values')
         if any([i in new_values for i in ['user_id', 'email_address', 'first_name', 'last_name']]):
             abort(405)
         if any([i not in ['phone_number', 'address_line', 'city', 'state', 'zipcode'] for i in new_values]):
