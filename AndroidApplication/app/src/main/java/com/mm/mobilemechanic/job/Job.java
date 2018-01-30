@@ -22,6 +22,18 @@ public class Job {
     @SerializedName("year")
     private int year;
 
+    @SerializedName("address_line")
+    private String address;
+
+    @SerializedName("city")
+    private String city;
+
+    @SerializedName("state")
+    private String state;
+
+    @SerializedName("zipcode")
+    private int zipCode;
+
     @SerializedName("options")
     private JobOptions jobOptions;
 
@@ -50,7 +62,6 @@ public class Job {
     public String getSummary() {
         return summary;
     }
-
     public void setSummary(String summary) {
         this.summary = summary;
     }
@@ -58,17 +69,13 @@ public class Job {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
-
-
     public String getMake() {
         return make;
     }
-
     public void setMake(String make) {
         this.make = make;
     }
@@ -76,7 +83,6 @@ public class Job {
     public String getModel() {
         return model;
     }
-
     public void setModel(String model) {
         this.model = model;
     }
@@ -84,11 +90,37 @@ public class Job {
     public int getYear() {
         return year;
     }
-
     public void setYear(int year) {
         this.year = year;
     }
 
+    public String getCity() {
+        return city;
+    }
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setZipCode(int zipCode) {
+        this.zipCode = zipCode;
+    }
+    public int getZipCode() {
+        return zipCode;
+    }
     public JobOptions getJobOptions() {
         return jobOptions;
     }

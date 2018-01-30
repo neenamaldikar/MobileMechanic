@@ -43,6 +43,7 @@ import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 5/14/2017.
+ *
  */
 
 public class JobFormActivity extends AppCompatActivity {
@@ -64,7 +65,17 @@ public class JobFormActivity extends AppCompatActivity {
     @BindView(R.id.editText_car_year)
     EditText mEditTextCarYear;
 
-    private int fieldsCount = 5;
+    @BindView(R.id.editText_job_address)
+    EditText mEditTextJobAddress;
+    @BindView(R.id.editText_job_city)
+    EditText mEditTextJobCity;
+    @BindView(R.id.editText_job_state)
+    EditText mEditTextJobState;
+    @BindView(R.id.editText_job_zipcode)
+    EditText mEditTextJobZipCode;
+
+
+    private int fieldsCount = 9;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -195,6 +206,12 @@ public class JobFormActivity extends AppCompatActivity {
             if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
+
+            mJob.setAddress(mEditTextJobAddress.getText().toString());
+            mJob.setCity(mEditTextJobCity.getText().toString());
+            mJob.setState(mEditTextJobState.getText().toString());
+            mJob.setZipCode(Integer.parseInt(mEditTextJobZipCode.getText().toString()));
+
             String jobPayload = createJsonFromFields(mJob);
             sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
         } else {
@@ -284,36 +301,50 @@ public class JobFormActivity extends AppCompatActivity {
     }
 
 
-    public void addListenerToEditTexts() {
-        LinearLayout jobEditTextViews = (LinearLayout) findViewById(R.id.ll_create_job);
-        for (int i = 0; i < jobEditTextViews.getChildCount(); i++) {
-            if (jobEditTextViews.getChildAt(i) instanceof EditText) {
-                final EditText editText = ((EditText) jobEditTextViews.getChildAt(i));
-                editText.setError("Field cannot be empty");
-                editText.addTextChangedListener(new TextWatcher() {
-                    int prevSize;
 
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        prevSize = editText.getText().toString().length();
-                    }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    }
+    public void addListenerToEditTextHelper(View childrenView) {
+        if (childrenView instanceof EditText) {
+            final EditText editText = ((EditText) childrenView);
+            editText.setError("Field cannot be empty");
+            TextWatcher textWatcher = new TextWatcher() {
+                int prevSize;
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        if (editText.getText().toString().isEmpty()) {
-                            editText.setError("Field cannot be empty");
-                            fieldsCount++;
-                        } else {
-                            if (prevSize == 0) {
-                                fieldsCount--;
-                            }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    prevSize = editText.getText().toString().length();
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (editText.getText().toString().isEmpty()) {
+                        editText.setError("Field cannot be empty");
+                        fieldsCount++;
+                    } else {
+                        if (prevSize == 0) {
+                            fieldsCount--;
                         }
                     }
-                });
+                }
+            };
+            editText.addTextChangedListener(textWatcher);
+        }
+    }
+
+    public void addListenerToEditTexts(LinearLayout linearLayout) {
+        for (int i = 0; i < linearLayout.getChildCount(); i++) {
+            if (linearLayout.getChildAt(i) instanceof EditText) {
+                addListenerToEditTextHelper(linearLayout.getChildAt(i));
+            }
+            if (linearLayout.getChildAt(i) instanceof LinearLayout) {
+                LinearLayout innerLayout = (LinearLayout) linearLayout.getChildAt(i);
+                for (int j = 0; j < innerLayout.getChildCount(); j++) {
+                    addListenerToEditTextHelper(innerLayout.getChildAt(j));
+                }
             }
         }
     }
@@ -334,8 +365,8 @@ public class JobFormActivity extends AppCompatActivity {
         mJWToken = getIntent().getExtras().getString("JWT");
 
         initializeSwitches();
-        addListenerToEditTexts();
-
+        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_create_job));
+        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_job_location));
     }
 
 
