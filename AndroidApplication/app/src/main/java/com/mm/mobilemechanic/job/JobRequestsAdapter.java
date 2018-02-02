@@ -143,6 +143,9 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         }
     }
 
+
+
+
     public void showPopup(final View view, final Job job) {
 
         PopupMenu popup = new PopupMenu(mActivity, view);
@@ -172,3 +175,4 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
 
 }
+

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,18 +19,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
+
+import com.mm.mobilemechanic.job.JobStatus;
+
+import com.mm.mobilemechanic.util.Utility;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -52,23 +62,40 @@ public class JobFormActivity extends AppCompatActivity {
     private String mJWToken;
 
     private Job mJob;
-    @BindView(R.id.editText_job_summary) EditText mEditTextSummary;
-    @BindView(R.id.editText_job_description) EditText mEditTextDescription;
-    @BindView(R.id.editText_car_make) EditText mEditTextCarMake;
-    @BindView(R.id.editText_car_model) EditText mEditTextCarModel;
-    @BindView(R.id.editText_car_year) EditText mEditTextCarYear;
+    @BindView(R.id.editText_job_summary)
+    EditText mEditTextSummary;
+    @BindView(R.id.editText_job_description)
+    EditText mEditTextDescription;
+    @BindView(R.id.editText_car_make)
+    EditText mEditTextCarMake;
+    @BindView(R.id.editText_car_model)
+    EditText mEditTextCarModel;
+    @BindView(R.id.editText_car_year)
+    EditText mEditTextCarYear;
+
+    @BindView(R.id.switch_car_in_working_condition)
+    Switch mSwitchCarWorkingCondition;
+    @BindView(R.id.switch_car_pick_up_drop_off)
+    Switch mSwitchCarPickUp;
+    @BindView(R.id.switch_on_site_diagnostic)
+    Switch mSwitchOnsiteDiagnostic;
+    @BindView(R.id.switch_repair_done_on_site)
+    Switch mSwitchOnsiteRepair;
+    @BindView(R.id.switch_parking_available)
+    Switch mSwitchParkingAvailable;
+
+
 
     private int fieldsCount = 5;
 
-
     private void showToast(final String message) {
-        runOnUiThread (new Thread(new Runnable() {
+        runOnUiThread(new Thread(new Runnable() {
             public void run() {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         }));
-
     }
+
     private ImageView createImageViewsWhenChosen(Uri imageUri) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
         ImageView imgView = new ImageView(this);
@@ -103,8 +130,7 @@ public class JobFormActivity extends AppCompatActivity {
                         ImageView imgView = createImageViewsWhenChosen(imageUri);
                         linearLayoutImages.addView(imgView);
 
-                    }
-                    else {
+                    } else {
                         if (data.getClipData() != null) {
                             ClipData mClipData = data.getClipData();
                             ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
@@ -123,6 +149,7 @@ public class JobFormActivity extends AppCompatActivity {
             }
         }
     }
+
 
     public void ChoosePicturesFromGalleryOnClick(View view) {
         changesMade = true;
@@ -190,7 +217,7 @@ public class JobFormActivity extends AppCompatActivity {
 
 
     public void sendJob(String json, String userId, String authToken) {
-
+        Utility.showSimpleProgressDialog(this);
         RestClient.createJob(userId, json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -265,14 +292,17 @@ public class JobFormActivity extends AppCompatActivity {
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
 
-        if(fieldsCount == 0) {
+        if (fieldsCount == 0) {
             mJob.setSummary(mEditTextSummary.getText().toString());
             mJob.setDescription(mEditTextDescription.getText().toString());
             mJob.setMake(mEditTextCarMake.getText().toString());
             mJob.setModel(mEditTextCarModel.getText().toString());
-            if(!mEditTextCarYear.getText().toString().equals("")) {
+            if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
+
+            String jobPayload = createJsonFromFields(mJob);
+            sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
 
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);
@@ -281,6 +311,7 @@ public class JobFormActivity extends AppCompatActivity {
                 String jobPayload = updateJsonFromFields(mJob);
                 updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
             }
+
 
         } else {
             showToast("Missing required fields");
@@ -291,7 +322,7 @@ public class JobFormActivity extends AppCompatActivity {
 
 
     private void launchUnsavedChangesDialogBox() {
-        if(changesMade) {
+        if (changesMade) {
             new AlertDialog.Builder(this)
                     .setTitle("Unsaved Changes")
                     .setMessage("Are you sure you want to discard these changes?")
@@ -307,8 +338,7 @@ public class JobFormActivity extends AppCompatActivity {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
-        }
-        else{
+        } else {
             finish();
         }
 
@@ -317,7 +347,6 @@ public class JobFormActivity extends AppCompatActivity {
     public void cancelJobOnClick(View view) {
         launchUnsavedChangesDialogBox();
     }
-
 
 
     private void initializeSwitches() {
@@ -351,11 +380,10 @@ public class JobFormActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mJob.getJobOptions().setCarPickUpAndDropOff(isChecked);
                 changesMade = true;
-                if(isChecked) {
+                if (isChecked) {
                     switchParkingAvailable.setVisibility(View.VISIBLE);
 
-                }
-                else {
+                } else {
                     switchParkingAvailable.setVisibility(View.INVISIBLE);
                     switchParkingAvailable.setChecked(false);
                     mJob.getJobOptions().setParkingAvailable(false);
@@ -374,14 +402,15 @@ public class JobFormActivity extends AppCompatActivity {
 
     public void addListenerToEditTexts() {
         LinearLayout jobEditTextViews = (LinearLayout) findViewById(R.id.ll_create_job);
-        for( int i = 0; i < jobEditTextViews.getChildCount(); i++ ) {
-            if(jobEditTextViews.getChildAt(i) instanceof EditText) {
+        for (int i = 0; i < jobEditTextViews.getChildCount(); i++) {
+            if (jobEditTextViews.getChildAt(i) instanceof EditText) {
                 final EditText editText = ((EditText) jobEditTextViews.getChildAt(i));
                 if (mJob.getSummary() == null)
                     editText.setError("Field cannot be empty");
 
                 editText.addTextChangedListener(new TextWatcher() {
                     int prevSize;
+
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                         prevSize = editText.getText().toString().length();
@@ -393,12 +422,11 @@ public class JobFormActivity extends AppCompatActivity {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if(editText.getText().toString().isEmpty()) {
+                        if (editText.getText().toString().isEmpty()) {
                             editText.setError("Field cannot be empty");
                             fieldsCount++;
-                        }
-                        else {
-                            if(prevSize == 0) {
+                        } else {
+                            if (prevSize == 0) {
                                 fieldsCount--;
                             }
                         }
@@ -407,19 +435,21 @@ public class JobFormActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         launchUnsavedChangesDialogBox();
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_job_form);
         ButterKnife.bind(this);
         mJob = new Job();
-
         mJWToken = getIntent().getExtras().getString("JWT");
+        mJob = (Job) getIntent().getExtras().getSerializable("Job");
 
         if (mJob != null)
             setJobData();
@@ -428,8 +458,9 @@ public class JobFormActivity extends AppCompatActivity {
             initializeSwitches();
             addListenerToEditTexts();
 
-    }
+        }
 
+    }
 
 
     private void setJobData() {
@@ -447,5 +478,6 @@ public class JobFormActivity extends AppCompatActivity {
         mSwitchOnsiteRepair.setChecked(mJob.getJobOptions().isRepairCanBeDoneOnSite());
         mSwitchParkingAvailable.setChecked(mJob.getJobOptions().isParkingAvailable());
     }
+
 
 }

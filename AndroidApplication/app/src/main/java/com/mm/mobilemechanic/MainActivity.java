@@ -1,5 +1,7 @@
 package com.mm.mobilemechanic;
 
+import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,14 +26,19 @@ import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
-
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
 
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
+
 import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.user.Mechanic;
+
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -50,8 +57,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
     private User mCustomer;
@@ -59,7 +65,9 @@ public class MainActivity extends AppCompatActivity
     List<Job> jobLists;
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
-    JobRequestsAdapter adapter;
+
+    private List<Job> jobLists;
+    private JobRequestsAdapter adapter;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -266,6 +274,14 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, FROM_NEW_JOB_SCREEN);
     }
 
+
+
+    public void showPopup(View view) {
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
+        popup.show();
+    }
     public void editJobOnClick(View view, Job job) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
@@ -374,7 +390,6 @@ public class MainActivity extends AppCompatActivity
         sendToken(final_token_json.toString(), Profile.getCurrentProfile().getId(), mJWTtoken);
 
         initUI();
-
     }
 
 
