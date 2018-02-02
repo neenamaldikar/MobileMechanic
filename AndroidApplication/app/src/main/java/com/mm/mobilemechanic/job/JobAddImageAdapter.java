@@ -26,6 +26,7 @@ public class JobAddImageAdapter extends RecyclerView.Adapter<JobAddImageAdapter.
 
     private List<Uri> mImageList;
     private Activity mActivity;
+    int mPosition = 0;
 
 
     public JobAddImageAdapter(Activity context, List<Uri> imageList) {
@@ -42,21 +43,37 @@ public class JobAddImageAdapter extends RecyclerView.Adapter<JobAddImageAdapter.
     }
 
     @Override
-    public void onBindViewHolder(final JobCardsViewHolder holder, final int position) {
-
+    public void onBindViewHolder(final JobCardsViewHolder holder, int position) {
+        mPosition = position;
         holder.imageView_job_image.setOnClickListener(new View.OnClickListener() {  // TODO open summary and job req info
             @Override
             public void onClick(View v) {
 
 
                 if (mActivity instanceof JobAddImagesActivity) {
-                    ((JobAddImagesActivity) mActivity).recyclerViewListClicked(v, position);
+                    ((JobAddImagesActivity) mActivity).recyclerViewListClicked(v, mPosition);
                 }
-
 
 
             }
         });
+
+        holder.imageView_job_image_delete.setVisibility(View.GONE);
+
+        holder.imageView_job_image_delete.setOnClickListener(new View.OnClickListener() {  // TODO open summary and job req info
+            @Override
+            public void onClick(View v) {
+
+
+                if (mActivity instanceof JobAddImagesActivity) {
+                    ((JobAddImagesActivity) mActivity).deleteImage(mPosition);
+                }
+
+
+            }
+        });
+
+
     }
 
     @Override
@@ -65,7 +82,7 @@ public class JobAddImageAdapter extends RecyclerView.Adapter<JobAddImageAdapter.
     }
 
     class JobCardsViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView_job_image;
+        ImageView imageView_job_image, imageView_job_image_delete;
         CardView cardView;
 
 
@@ -74,6 +91,9 @@ public class JobAddImageAdapter extends RecyclerView.Adapter<JobAddImageAdapter.
             ButterKnife.bind(this, itemView);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             imageView_job_image = (ImageView) itemView.findViewById(R.id.imageView_job_image);
+
+            imageView_job_image_delete = (ImageView) itemView.findViewById(R.id.imageView_job_image_delete);
+            imageView_job_image_delete.setVisibility(View.GONE);
 
         }
     }

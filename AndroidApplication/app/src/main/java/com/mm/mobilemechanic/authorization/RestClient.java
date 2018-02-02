@@ -115,6 +115,18 @@ public class RestClient {
 
     }
 
+    public static void DELETE(final String url, String authToken, Callback responseCallback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", authToken)
+                .delete()
+                .build();
+        client.newCall(request).enqueue(responseCallback);
+        Log.d("mainActivityLog", "DELETE call is now made ...");
+
+    }
+
+
     //////////////////
 
     public static void getUserJWT(AccessToken fbToken, Callback responseCallback) {
@@ -183,5 +195,11 @@ public class RestClient {
         Log.d("mainActivityLog", "Create token function is called ... " + url);
         RestClient.POST(url, authToken, json, responseCallback);
     }
+
+    public static void deleteJob(String userId,String jobId, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB+"?job_id="+jobId;
+        RestClient.DELETE(url, authToken, responseCallback);
+    }
+
 }
 

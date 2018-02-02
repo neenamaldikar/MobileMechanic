@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,27 +18,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
-
-import com.mm.mobilemechanic.job.JobStatus;
-
 import com.mm.mobilemechanic.util.Utility;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -85,8 +76,8 @@ public class JobFormActivity extends AppCompatActivity {
     Switch mSwitchParkingAvailable;
 
 
+    private int fieldsCount = 6;
 
-    private int fieldsCount = 5;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -94,6 +85,7 @@ public class JobFormActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         }));
+
     }
 
     private ImageView createImageViewsWhenChosen(Uri imageUri) {
@@ -106,7 +98,7 @@ public class JobFormActivity extends AppCompatActivity {
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), v.getWindowId()+"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), v.getWindowId() + "", Toast.LENGTH_SHORT).show();
             }
         });
         return imgView;
@@ -115,17 +107,17 @@ public class JobFormActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch(requestCode) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
                 case CHOOSING_IMAGE_FROM_GALLERY:
                     // When an Image is picked
                     // Get the Image from data
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     ArrayList<String> imagesEncodedList = new ArrayList<String>();
 
-                    LinearLayout linearLayoutImages = (LinearLayout)findViewById(R.id.ll_images_from_gallery);
+                    LinearLayout linearLayoutImages = (LinearLayout) findViewById(R.id.ll_images_from_gallery);
 
-                    if(data.getData()!= null){
+                    if (data.getData() != null) {
                         Uri imageUri = data.getData();
                         ImageView imgView = createImageViewsWhenChosen(imageUri);
                         linearLayoutImages.addView(imgView);
@@ -150,7 +142,6 @@ public class JobFormActivity extends AppCompatActivity {
         }
     }
 
-
     public void ChoosePicturesFromGalleryOnClick(View view) {
         changesMade = true;
         Intent imageIntent = new Intent();
@@ -174,12 +165,20 @@ public class JobFormActivity extends AppCompatActivity {
         inner.addProperty("description", job.getDescription());
 
         JsonObject options = new JsonObject();
-        options.addProperty("onsite_diagnostic", job.isOnSiteDiagnostic());
-        options.addProperty("working", job.isCarInWorkingCondition());
-        options.addProperty("onsite_repair", job.isRepairDoneOnSite());
-        options.addProperty("pickup_dropoff", job.isCarPickUpAndDropOff());
+        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
+        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         inner.addProperty("status", "Submitted");
+
+        inner.addProperty("address_line", "888 NE Caden Ave");
+        inner.addProperty("city", "Hillsboro");
+        inner.addProperty("state", "OR");
+
+        inner.addProperty("zipcode", "97124");
+
+
         inner.add("options", options);
         updated_values.add("job", inner);
         return updated_values.toString();
@@ -201,10 +200,10 @@ public class JobFormActivity extends AppCompatActivity {
         updated_values.addProperty("description", job.getDescription());
 
         JsonObject options = new JsonObject();
-        options.addProperty("onsite_diagnostic", job.isOnSiteDiagnostic());
-        options.addProperty("working", job.isCarInWorkingCondition());
-        options.addProperty("onsite_repair", job.isRepairDoneOnSite());
-        options.addProperty("pickup_dropoff", job.isCarPickUpAndDropOff());
+        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
+        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
+                options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         updated_values.addProperty("status", "Submitted");
         updated_values.add("options", options);
@@ -243,6 +242,7 @@ public class JobFormActivity extends AppCompatActivity {
                     }
                     Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
                     resultIntent.putExtra("newJob", jobid);
+                    resultIntent.putExtra("newJobFlag", "yes");
                     resultIntent.putExtra("JWT", mJWToken);
                     //  setResult(Activity.RESULT_OK, resultIntent);
                     startActivity(resultIntent);
@@ -254,7 +254,7 @@ public class JobFormActivity extends AppCompatActivity {
 
     public void updateJob(String json, String userId, String authToken) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.updateJob(userId,mJob.getJob_id(), json, authToken, new Callback() {
+        RestClient.updateJob(userId, mJob.getJob_id(), json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -280,6 +280,7 @@ public class JobFormActivity extends AppCompatActivity {
                     Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
                     resultIntent.putExtra("newJob", jobid);
                     resultIntent.putExtra("JWT", mJWToken);
+                    resultIntent.putExtra("newJobFlag", "no");
                     //  setResult(Activity.RESULT_OK, resultIntent);
                     startActivity(resultIntent);
                     finish();
@@ -300,9 +301,6 @@ public class JobFormActivity extends AppCompatActivity {
             if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
-
-            String jobPayload = createJsonFromFields(mJob);
-            sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
 
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);
@@ -448,6 +446,7 @@ public class JobFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_job_form);
         ButterKnife.bind(this);
         mJob = new Job();
+
         mJWToken = getIntent().getExtras().getString("JWT");
         mJob = (Job) getIntent().getExtras().getSerializable("Job");
 
@@ -478,6 +477,5 @@ public class JobFormActivity extends AppCompatActivity {
         mSwitchOnsiteRepair.setChecked(mJob.getJobOptions().isRepairCanBeDoneOnSite());
         mSwitchParkingAvailable.setChecked(mJob.getJobOptions().isParkingAvailable());
     }
-
 
 }

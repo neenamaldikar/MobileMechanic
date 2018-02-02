@@ -92,7 +92,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     }
 
     @Override
-    public void onBindViewHolder(JobCardsViewHolder holder, int position) {
+    public void onBindViewHolder(JobCardsViewHolder holder, final int position) {
         final Job job = mJobsList.get(position);
         holder.jobSummary.setText(job.getSummary());
         holder.numberOfQuotes.setText(5 + "");  // TODO get actual number of quotes
@@ -111,7 +111,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
             // TODO open summary and job req info
             @Override
             public void onClick(View v) {
-                showPopup(v, job);
+                showPopup(v, job,position);
             }
         });
 
@@ -144,11 +144,9 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     }
 
 
+    public void showPopup(final View view, final Job job, final int position) {
 
-
-    public void showPopup(final View view, final Job job) {
-
-        PopupMenu popup = new PopupMenu(mActivity, view);
+        final PopupMenu popup = new PopupMenu(mActivity, view);
         MenuInflater inflater = popup.getMenuInflater();
 
 
@@ -157,14 +155,19 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_card_delete:
-
-                        return true;
                     case R.id.menu_card_edit:
                         if (mActivity instanceof MainActivity) {
                             ((MainActivity) mActivity).editJobOnClick(view, job);
                         }
+
                         return true;
+                    case R.id.menu_card_delete:
+                        if (mActivity instanceof MainActivity) {
+                            ((MainActivity) mActivity).deleteJob(job.getJob_id(), position);
+                        }
+                        return true;
+
+
                     default:
                         return false;
                 }

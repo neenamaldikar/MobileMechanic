@@ -12,8 +12,6 @@ import java.io.Serializable;
 
 public class Job implements Serializable {
 
-    @SerializedName("status")
-    private JobStatus status;
 
 
     @SerializedName("summary")
@@ -28,12 +26,13 @@ public class Job implements Serializable {
     @SerializedName("model")
     private String model;
 
-    @SerializedName("job_id")
-    private String job_id;
+
 
     @SerializedName("year")
     private int year;
 
+    @SerializedName("job_id")
+    private String job_id;
 
 
     @SerializedName("images")
@@ -66,6 +65,14 @@ public class Job implements Serializable {
         this.jobOptions = jobOptions;
         this.status = status;
     }
+    public String getJob_id() {
+        return job_id;
+    }
+
+    public void setJob_id(String job_id) {
+        this.job_id = job_id;
+    }
+
 
     public void setStatus(JobStatus status) {
         this.status = status;
@@ -148,8 +155,10 @@ public class Job implements Serializable {
         @SerializedName("working")
         private boolean carInWorkingCondition = false;
 
+
         @SerializedName("onsite_repair")
         private boolean repairCanBeDoneOnSite = false;
+
 
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;

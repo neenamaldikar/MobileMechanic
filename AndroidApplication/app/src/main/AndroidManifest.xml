@@ -40,7 +40,8 @@
 
         <activity
             android:name="com.mm.mobilemechanic.JobAddImagesActivity"
-            android:label="@string/title_profile_edit" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_dubmit_image" />
 
 
         <activity

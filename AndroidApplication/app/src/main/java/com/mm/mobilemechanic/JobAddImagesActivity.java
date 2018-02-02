@@ -23,7 +23,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,7 +76,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
     int mCount = 0;
     ImageView imageView;
     JobAddImageAdapter jobAddImageAdapter;
-    private String mJob;
+    private String mJob, newJobFlag;
     String[] PERMISSIONS = {android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA};
 
     private void showToast(final String message) {
@@ -88,6 +90,18 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     private void initUI() {
 
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white); // your drawable
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed(); // Implemented by activity
+            }
+        });
         Uri uri = null;
         mImageList = new ArrayList<Uri>();
         mImageList.add(uri);
@@ -97,6 +111,17 @@ public class JobAddImagesActivity extends AppCompatActivity {
         jobAddImageAdapter = new JobAddImageAdapter(JobAddImagesActivity.this, mImageList);
         rv.setAdapter(jobAddImageAdapter);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -263,12 +288,29 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-        File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
-        sendJobImages(mImgFile);
+        if (mImageList.get(0)!=null) {
+            File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
+            sendJobImages(mImgFile);
+        } else {
+            showToast("Please select Image");
+        }
+
+
     }
 
 
+    @OnClick(R.id.button_cancel_job)
     public void cancelJobOnClick(View view) {
+
+        if (newJobFlag.equalsIgnoreCase("yes"))
+            deleteJob();
+        else {
+            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
+
+        }
+
 
     }
 
@@ -289,7 +331,9 @@ public class JobAddImagesActivity extends AppCompatActivity {
         }
 
         mJob = getIntent().getExtras().getString("newJob");
+        newJobFlag = getIntent().getExtras().getString("newJobFlag");
         mJWToken = getIntent().getExtras().getString("JWT");
+
 
         initUI();
     }
@@ -314,6 +358,15 @@ public class JobAddImagesActivity extends AppCompatActivity {
         imageView = (ImageView) v;
         mPosition = position;
         showPictureDialog();
+
+    }
+
+    public void deleteImage(int position) {
+
+        mImageList.set(position, null);
+
+        jobAddImageAdapter.notifyItemChanged(mPosition, mImageList.size());
+        jobAddImageAdapter.notifyDataSetChanged();
 
     }
 
@@ -373,5 +426,41 @@ public class JobAddImagesActivity extends AppCompatActivity {
         }
 
     }
+
+    public void deleteJob() {
+        Utility.showSimpleProgressDialog(this);
+        RestClient.deleteJob(Profile.getCurrentProfile().getId(), mJob, mJWToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+                Utility.removeSimpleProgressDialog();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    showToast("Sorry, Please try again");
+
+                } else {
+
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, jObject.toString());
+                        showToast(jObject.getString("success"));
+                        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        setResult(Activity.RESULT_OK, resultIntent);
+                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+    }
+
 
 }

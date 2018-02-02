@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String TAG = "MainScreen";
     private User mCustomer;
     private String mJWTtoken;
-    List<Job> jobLists;
+
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
 
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }));
 
     }
+
 
     private void getJobs() {
 
@@ -451,6 +452,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
+    }
+
+    public void deleteJob(String jobID, final int position) {
+        Utility.showSimpleProgressDialog(this);
+        RestClient.deleteJob(Profile.getCurrentProfile().getId(), jobID, mJWTtoken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+                Utility.removeSimpleProgressDialog();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    showToast("Sorry, Please try again");
+
+                } else {
+
+                    try {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                showToast("Job Deleted");
+                                jobLists.remove(position);
+                                adapter.notifyItemRemoved(position);
+                                adapter.notifyItemRangeChanged(position, jobLists.size());
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
     }
 }
 
