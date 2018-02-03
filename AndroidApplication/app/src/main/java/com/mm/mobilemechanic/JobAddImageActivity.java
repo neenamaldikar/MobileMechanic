@@ -93,65 +93,6 @@ public class JobAddImageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-              /*  case CHOOSING_IMAGE_FROM_GALLERY:
-                    // When an Image is picked
-                    // Get the Image from data
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    ArrayList<String> imagesEncodedList = new ArrayList<String>();
-
-
-                    LinearLayout linearLayoutImages = (LinearLayout) findViewById(R.id.ll_images_from_gallery);
-
-
-                    if (data.getClipData() != null) {
-                        ClipData mClipData = data.getClipData();
-                        mArrayUri = new ArrayList<Uri>();
-
-                        for (int i = 0; i < mClipData.getItemCount(); i++) {
-                            ClipData.Item item = mClipData.getItemAt(i);
-                            Uri imageUri = item.getUri();
-                            File imageFile = new File(getRealPathFromURI(imageUri));
-                            imageUri = Uri.fromFile(imageFile);
-                            ImageView imgView = createImageViewsWhenChosen(imageUri);
-                            linearLayoutImages.addView(imgView);
-                            mArrayUri.add(imageUri);
-                        }
-                    } else if (data.getData() != null) {
-                        Uri imageUri = data.getData();
-                        File imageFile = new File(getRealPathFromURI(imageUri));
-                        imageUri = Uri.fromFile(imageFile);
-                        ImageView imgView = createImageViewsWhenChosen(imageUri);
-                        linearLayoutImages.addView(imgView);
-                        mArrayUri.add(imageUri);
-                    }
-
-
-                  *//*  if (data.getData() != null) {
-                        Uri imageUri = data.getData();
-                        File imageFile = new File(getRealPathFromURI(imageUri));
-                        imageUri = Uri.fromFile(imageFile);
-                        ImageView imgView = createImageViewsWhenChosen(imageUri);
-                        linearLayoutImages.addView(imgView);
-                        mArrayUri.add(imageUri);
-
-                    } else {
-                        if (data.getClipData() != null) {
-                            ClipData mClipData = data.getClipData();
-                            mArrayUri = new ArrayList<Uri>();
-
-                            for (int i = 0; i < mClipData.getItemCount(); i++) {
-                                ClipData.Item item = mClipData.getItemAt(i);
-                                Uri imageUri = item.getUri();
-                                File imageFile = new File(getRealPathFromURI(imageUri));
-                                imageUri = Uri.fromFile(imageFile);
-                                ImageView imgView = createImageViewsWhenChosen(imageUri);
-                                linearLayoutImages.addView(imgView);
-                                mArrayUri.add(imageUri);
-                            }
-                            Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
-                        }
-                    }*//*
-                  break;;*/
                 case CHOOSING_IMAGE_FROM_GALLERY: {
                     mArrayUri.clear();
                     LinearLayout linearLayoutImages = (LinearLayout) findViewById(R.id.ll_images_from_gallery);
@@ -183,16 +124,7 @@ public class JobAddImageActivity extends AppCompatActivity {
 
     public void ChoosePicturesFromGalleryOnClick(View view) {
         changesMade = true;
-      /*  Intent imageIntent = new Intent();
-        imageIntent.setType("image*//*");
-        imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
-*/
-
-     /*   Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image*//*"); //allows any image file type. Change * to specific extension to limit it
-/*//**These following line is the important one!
+        /* These following line is the important one!
          intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
          startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
          */
@@ -200,7 +132,6 @@ public class JobAddImageActivity extends AppCompatActivity {
                 .add(new ImageChooser(true))
                 .create("Select Image");
         startActivityForResult(intent, CHOOSING_IMAGE_FROM_GALLERY);
-
 
         LinearLayout imageLayout = (LinearLayout) findViewById(R.id.ll_images_from_gallery);
         if ((imageLayout).getChildCount() > 0)
@@ -257,7 +188,6 @@ public class JobAddImageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
-
     }
 
     @Override
@@ -271,8 +201,6 @@ public class JobAddImageActivity extends AppCompatActivity {
 
         mJob = getIntent().getExtras().getString("newJob");
         mJWToken = getIntent().getExtras().getString("JWT");
-
-
     }
 
     private String getRealPathFromURI(Uri contentURI) {
@@ -288,6 +216,4 @@ public class JobAddImageActivity extends AppCompatActivity {
         }
         return result;
     }
-
-
 }

@@ -215,20 +215,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
         imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         imageIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
-
-
-     /*   Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image*//*"); //allows any image file type. Change * to specific extension to limit it
-/*//**These following line is the important one!
-         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-         startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
-         */
-     /*   Intent intent = ImageChooserMaker.newChooser(JobAddImagesActivity.this)
-                .add(new ImageChooser(true))
-                .create("Select Image");
-        startActivityForResult(intent, CHOOSING_IMAGE_FROM_GALLERY);
-*/
-
     }
 
 
@@ -247,9 +233,8 @@ public class JobAddImagesActivity extends AppCompatActivity {
                 Utility.removeSimpleProgressDialog();
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                } else {
-
-
+                }
+                else {
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
                         Log.i(TAG, jObject.toString());
@@ -257,11 +242,8 @@ public class JobAddImagesActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
                     mCount++;
                     if (mCount < mImageList.size() && mImageList.get(mCount) != null) {
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -270,7 +252,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
                             }
                         });
 
-
                     } else {
                         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
                         Bundle b = new Bundle();
@@ -278,9 +259,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         resultIntent.putExtras(b);
                         startActivity(resultIntent);
                         finish();
-
                     }
-
                 }
             }
         });
@@ -294,8 +273,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
         } else {
             showToast("Please select Image");
         }
-
-
     }
 
 
@@ -310,15 +287,12 @@ public class JobAddImagesActivity extends AppCompatActivity {
             finish();
 
         }
-
-
     }
 
 
     @Override
     public void onBackPressed() {
         finish();
-
     }
 
     @Override
@@ -333,7 +307,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
         mJob = getIntent().getExtras().getString("newJob");
         newJobFlag = getIntent().getExtras().getString("newJobFlag");
         mJWToken = getIntent().getExtras().getString("JWT");
-
 
         initUI();
     }
@@ -354,11 +327,9 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
 
     public void recyclerViewListClicked(View v, int position) {
-
         imageView = (ImageView) v;
         mPosition = position;
         showPictureDialog();
-
     }
 
     public void deleteImage(int position) {
@@ -424,7 +395,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
             String errorMessage = "Whoops - your device doesn't support capturing images!";
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void deleteJob() {
@@ -461,6 +431,4 @@ public class JobAddImagesActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

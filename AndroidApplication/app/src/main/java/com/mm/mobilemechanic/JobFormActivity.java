@@ -1,6 +1,5 @@
 package com.mm.mobilemechanic;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,11 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
@@ -171,11 +168,9 @@ public class JobFormActivity extends AppCompatActivity {
         options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         inner.addProperty("status", "Submitted");
-
         inner.addProperty("address_line", "888 NE Caden Ave");
         inner.addProperty("city", "Hillsboro");
         inner.addProperty("state", "OR");
-
         inner.addProperty("zipcode", "97124");
 
 
@@ -189,8 +184,6 @@ public class JobFormActivity extends AppCompatActivity {
 
         JsonObject jobObj = new JsonObject();
         jobObj.addProperty("job_id", job.getJob_id());
-
-
         JsonObject updated_values = new JsonObject();
 
         updated_values.addProperty("make", job.getMake());
@@ -203,14 +196,13 @@ public class JobFormActivity extends AppCompatActivity {
         options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
         options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
         options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
-                options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         updated_values.addProperty("status", "Submitted");
         updated_values.add("options", options);
 
         jobObj.add("updated_values", updated_values);
         jsonObject.add("job", jobObj);
-
         return jsonObject.toString();
     }
 
@@ -231,17 +223,17 @@ public class JobFormActivity extends AppCompatActivity {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                 } else {
-                    String jobid = "";
+                    String jobId = "";
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
                         Log.i(TAG, jObject.toString());
                         Log.i(TAG, jObject.getString("job_id"));
-                        jobid = jObject.getString("job_id");
+                        jobId = jObject.getString("job_id");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                    resultIntent.putExtra("newJob", jobid);
+                    resultIntent.putExtra("newJob", jobId);
                     resultIntent.putExtra("newJobFlag", "yes");
                     resultIntent.putExtra("JWT", mJWToken);
                     //  setResult(Activity.RESULT_OK, resultIntent);
@@ -292,7 +284,6 @@ public class JobFormActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-
         if (fieldsCount == 0) {
             mJob.setSummary(mEditTextSummary.getText().toString());
             mJob.setDescription(mEditTextDescription.getText().toString());
@@ -309,13 +300,9 @@ public class JobFormActivity extends AppCompatActivity {
                 String jobPayload = updateJsonFromFields(mJob);
                 updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
             }
-
-
         } else {
             showToast("Missing required fields");
         }
-
-
     }
 
 
@@ -339,7 +326,6 @@ public class JobFormActivity extends AppCompatActivity {
         } else {
             finish();
         }
-
     }
 
     public void cancelJobOnClick(View view) {
@@ -458,7 +444,6 @@ public class JobFormActivity extends AppCompatActivity {
             addListenerToEditTexts();
 
         }
-
     }
 
 
@@ -477,5 +462,4 @@ public class JobFormActivity extends AppCompatActivity {
         mSwitchOnsiteRepair.setChecked(mJob.getJobOptions().isRepairCanBeDoneOnSite());
         mSwitchParkingAvailable.setChecked(mJob.getJobOptions().isParkingAvailable());
     }
-
 }
