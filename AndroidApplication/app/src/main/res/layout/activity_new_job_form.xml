@@ -36,10 +36,19 @@
         <EditText
             android:id="@+id/editText_job_description"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="80dp"
+            android:gravity="top"
             android:layout_marginBottom="4dp"
             android:hint="Enter description of problem"
             android:inputType="textMultiLine" />
+
+        <EditText
+            android:id="@+id/editText_job_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter address" />
+
 
         <EditText
             android:id="@+id/editText_car_make"
@@ -243,12 +252,13 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:text="Submit" />
+                android:text="Next" />
 
             <Button
                 android:id="@+id/button_choose_pictures"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:onClick="ChoosePicturesFromGalleryOnClick"

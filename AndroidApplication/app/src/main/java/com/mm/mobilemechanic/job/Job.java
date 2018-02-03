@@ -1,12 +1,19 @@
 package com.mm.mobilemechanic.job;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
- *
  * Created by ndw6152 on 5/22/2017.
  */
 
-public class Job {
+
+
+
+public class Job implements Serializable {
+
+
+
     @SerializedName("summary")
     private String summary;
 
@@ -22,6 +29,7 @@ public class Job {
     @SerializedName("year")
     private int year;
 
+
     @SerializedName("address_line")
     private String address;
 
@@ -34,6 +42,13 @@ public class Job {
     @SerializedName("zipcode")
     private int zipCode;
 
+    @SerializedName("job_id")
+    private String job_id;
+
+    @SerializedName("images")
+    private String[] images;
+
+
     @SerializedName("options")
     private JobOptions jobOptions;
 
@@ -45,12 +60,28 @@ public class Job {
         this.jobOptions = new JobOptions();
     }
 
+
     public Job (String summary, String description, JobOptions jobOptions, JobStatus status) {
         this.summary = summary;
         this.description = description;
         this.jobOptions = jobOptions;
         this.status = status;
+
     }
+    public Job(String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
+
+        this.summary = summary;
+        this.description = description;
+        this.jobOptions = jobOptions;
+        this.status = status;
+    }
+    public String getJob_id() {
+        return job_id;
+    }
+    public void setJob_id(String job_id) {
+        this.job_id = job_id;
+    }
+
 
     public void setStatus(JobStatus status) {
         this.status = status;
@@ -109,7 +140,7 @@ public class Job {
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
     public void setAddress(String address) {
         this.address = address;
@@ -121,25 +152,31 @@ public class Job {
     public int getZipCode() {
         return zipCode;
     }
+
+    public String[] getImages() {
+        return images;
+    }
+    public void setImages(String[] images) {
+        this.images = images;
+    }
+
     public JobOptions getJobOptions() {
         return jobOptions;
     }
-
     public void setJobOptions(JobOptions jobOptions) {
         this.jobOptions = jobOptions;
     }
 
-    public class JobOptions{
+
+    public class JobOptions implements Serializable {
+
 
         @SerializedName("onsite_diagnostic")
         private boolean onSiteDiagnostic = false;
-
         @SerializedName("working")
         private boolean carInWorkingCondition = false;
-
         @SerializedName("onsite_repair")
         private boolean repairCanBeDoneOnSite = false;
-
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;
 
@@ -149,7 +186,6 @@ public class Job {
         public boolean isOnSiteDiagnostic() {
             return onSiteDiagnostic;
         }
-
         public void setOnSiteDiagnostic(boolean onSiteDiagnostic) {
             this.onSiteDiagnostic = onSiteDiagnostic;
         }
@@ -157,7 +193,6 @@ public class Job {
         public boolean isCarInWorkingCondition() {
             return carInWorkingCondition;
         }
-
         public void setCarInWorkingCondition(boolean carInWorkingCondition) {
             this.carInWorkingCondition = carInWorkingCondition;
         }
@@ -165,7 +200,6 @@ public class Job {
         public boolean isRepairCanBeDoneOnSite() {
             return repairCanBeDoneOnSite;
         }
-
         public void setRepairCanBeDoneOnSite(boolean repairCanBeDoneOnSite) {
             this.repairCanBeDoneOnSite = repairCanBeDoneOnSite;
         }
@@ -173,7 +207,6 @@ public class Job {
         public boolean isCarPickUpAndDropOff() {
             return carPickUpAndDropOff;
         }
-
         public void setCarPickUpAndDropOff(boolean carPickUpAndDropOff) {
             this.carPickUpAndDropOff = carPickUpAndDropOff;
         }
@@ -181,27 +214,9 @@ public class Job {
         public boolean isParkingAvailable() {
             return parkingAvailable;
         }
-
         public void setParkingAvailable(boolean parkingAvailable) {
             this.parkingAvailable = parkingAvailable;
         }
-    }
 
-    /*{
-        "description": "tube",
-            "images": [],
-        "job_id": "7889b9e7-c5d8-4767-97f5-0a71d3821c30",
-            "make": "ford",
-            "model": "falcon",
-            "options": {
-        "onsite_diagnostic": true,
-                "onsite_repair": false,
-                "pickup_dropoff": false,
-                "working": true
-    },
-        "status": "Submitted",
-            "summary": "summary xyz",
-            "user_id": "790175691186546",
-            "year": 2014
-    }*/
+    }
 }

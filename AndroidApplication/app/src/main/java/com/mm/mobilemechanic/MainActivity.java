@@ -3,6 +3,8 @@ package com.mm.mobilemechanic;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -29,8 +32,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
+
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
+
+import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.user.Mechanic;
+
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -52,7 +60,9 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "MainScreen";
+    private User mCustomer;
     private String mJWTtoken;
+
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
 
@@ -68,9 +78,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
     private void getJobs() {
 
         String jwtoken = getIntent().getExtras().getString("JWT");
+        Log.i(TAG, jwtoken);
+
         Utility.showSimpleProgressDialog(MainActivity.this);
 
         RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
@@ -98,7 +111,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         for (int i = 0; i < jsonArray.length(); i++) {
                             Type collectionType = new TypeToken<Job>() {
                             }.getType();
-                            Job job = (Job) new Gson().fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
+                            Job job = (Job) new Gson()
+                                    .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
+
+
                             jobLists.add(job);
 
                         }
@@ -121,14 +137,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+
     private void initUI() {
-        jobLists = new ArrayList<>();
+        jobLists = new ArrayList<Job>();
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv_main_homescreen_jobs_table);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new JobRequestsAdapter(this, jobLists);
         rv.setAdapter(adapter);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -179,10 +195,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         Intent intent;
+        Bundle b;
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-                Bundle b = new Bundle();
+                 b = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
@@ -197,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_sign_up_mech:
                 intent = new Intent(this, MechEditActivity.class);
+                b = new Bundle();
+                b.putString("JWT", mJWTtoken);
+                intent.putExtras(b);
                 startActivity(intent);
                 break;
             case R.id.nav_sign_out:
@@ -256,11 +276,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+
     public void showPopup(View view) {
         PopupMenu popup = new PopupMenu(this, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         popup.show();
+    }
+    public void editJobOnClick(View view, Job job) {
+        Intent intent;
+        intent = new Intent(this, JobFormActivity.class);
+        Bundle b = new Bundle();
+        b.putString("JWT", mJWTtoken);
+        b.putSerializable("Job", job);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 
 
@@ -290,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newToken", "Token sent successfully!");
                     setResult(Activity.RESULT_OK, resultIntent);
-//                    finish();
                 }
             }
         });
@@ -343,6 +372,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onResume();
 
         getJobs();
+    }
+
+    public void downloadImage(String jobId, String pictureId, final ImageView iv) {
+        RestClient.getJobImage(Profile.getCurrentProfile().getId(), mJWTtoken, jobId, pictureId, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    // TODO on failure what happens
+                } else {
+                    Log.i(TAG, response.message());
+                    try {
+
+
+                        Thread thread = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                byte[] data = new byte[0];
+                                try {
+                                    data = response.body().bytes();
+                                    final Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            iv.setImageBitmap(bmp);
+                                        }
+                                    });
+
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        thread.start();
+                        //   Log.i(TAG, jObject.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // TODO when setting user fails
+                    }
+                }
+            }
+        });
+
+
+    }
+
+    public void deleteJob(String jobID, final int position) {
+        Utility.showSimpleProgressDialog(this);
+        RestClient.deleteJob(Profile.getCurrentProfile().getId(), jobID, mJWTtoken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+                Utility.removeSimpleProgressDialog();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    showToast("Sorry, Please try again");
+
+                } else {
+
+                    try {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                showToast("Job Deleted");
+                                jobLists.remove(position);
+                                adapter.notifyItemRemoved(position);
+                                adapter.notifyItemRangeChanged(position, jobLists.size());
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
     }
 }
 
