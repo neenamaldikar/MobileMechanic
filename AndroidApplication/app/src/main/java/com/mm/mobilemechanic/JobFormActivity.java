@@ -178,30 +178,17 @@ public class JobFormActivity extends AppCompatActivity {
     }
 
     public String updateJsonFromFields(Job job) {
-        JsonObject jsonObject = new JsonObject();
+        JsonObject jobUpdateJSON = new JsonObject();
 
-        JsonObject jobObj = new JsonObject();
-        jobObj.addProperty("job_id", job.getJob_id());
-        JsonObject updated_values = new JsonObject();
+        job.setStatus(JobStatus.SUBMITTED);
+        Gson gson = new Gson();
+        JsonObject jobUpdatedValuesJSON = new JsonObject();
+        JsonParser parser = new JsonParser();
+        JsonObject jobJson = parser.parse(gson.toJson(job)).getAsJsonObject();
+        jobUpdatedValuesJSON.add("updated_values", jobJson);
+        jobUpdateJSON.add("job", jobUpdatedValuesJSON);
 
-        updated_values.addProperty("make", job.getMake());
-        updated_values.addProperty("model", job.getModel());
-        updated_values.addProperty("year", job.getYear());
-        updated_values.addProperty("summary", job.getSummary());
-        updated_values.addProperty("description", job.getDescription());
-
-        JsonObject options = new JsonObject();
-        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
-        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
-        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
-        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
-
-        updated_values.addProperty("status", "Submitted");
-        updated_values.add("options", options);
-
-        jobObj.add("updated_values", updated_values);
-        jsonObject.add("job", jobObj);
-        return jsonObject.toString();
+        return jobUpdateJSON.toString();
     }
 
 
