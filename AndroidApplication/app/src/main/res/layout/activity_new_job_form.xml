@@ -43,14 +43,6 @@
             android:inputType="textMultiLine" />
 
         <EditText
-            android:id="@+id/editText_job_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Enter address" />
-
-
-        <EditText
             android:id="@+id/editText_car_make"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
