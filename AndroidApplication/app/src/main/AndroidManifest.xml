@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.mm.mobilemechanic">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo_mm"
-        android:label="@string/title_main"
+        android:label="Mobile Mechanic"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="label">
 
-        <activity
-            android:name="com.mm.mobilemechanic.LoginActivity"
-            android:label="@string/title_main">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+
+        <activity android:name="com.mm.mobilemechanic.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name="com.mm.mobilemechanic.JobAddImagesActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_dubmit_image" />
+
 
         <activity
             android:name="com.mm.mobilemechanic.MainActivity"
@@ -40,7 +63,13 @@
             android:name="com.mm.mobilemechanic.authorization.RestClientActivity"
             android:label="@string/test_rest_client_name" />
 
-        <service android:name=".MyFirebaseInstanceIdService">
+
+        <activity
+            android:name="com.mm.mobilemechanic.JobAddImageActivity"
+            android:label="Add Image" />
+
+        <!-- [START firebase_service] -->
+        <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -55,6 +84,10 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GOOGLE_API_KEY" />
 
 
     </application>

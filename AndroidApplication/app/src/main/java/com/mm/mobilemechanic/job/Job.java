@@ -1,12 +1,19 @@
 package com.mm.mobilemechanic.job;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
- *
  * Created by ndw6152 on 5/22/2017.
  */
 
-public class Job {
+
+
+
+public class Job implements Serializable {
+
+
+
     @SerializedName("summary")
     private String summary;
 
@@ -19,8 +26,18 @@ public class Job {
     @SerializedName("model")
     private String model;
 
+
+
     @SerializedName("year")
     private int year;
+
+    @SerializedName("job_id")
+    private String job_id;
+
+
+    @SerializedName("images")
+    private String[] images;
+
 
     @SerializedName("options")
     private JobOptions jobOptions;
@@ -33,16 +50,34 @@ public class Job {
         this.jobOptions = new JobOptions();
     }
 
+
     public Job (String summary, String description, JobOptions jobOptions, JobStatus status) {
         this.summary = summary;
         this.description = description;
         this.jobOptions = jobOptions;
         this.status = status;
+
     }
+    public Job(String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
+
+        this.summary = summary;
+        this.description = description;
+        this.jobOptions = jobOptions;
+        this.status = status;
+    }
+    public String getJob_id() {
+        return job_id;
+    }
+
+    public void setJob_id(String job_id) {
+        this.job_id = job_id;
+    }
+
 
     public void setStatus(JobStatus status) {
         this.status = status;
     }
+
     public JobStatus getStatus() {
         return this.status;
     }
@@ -62,6 +97,8 @@ public class Job {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
 
 
 
@@ -89,6 +126,14 @@ public class Job {
         this.year = year;
     }
 
+    public String[] getImages() {
+        return images;
+    }
+
+    public void setImages(String[] images) {
+        this.images = images;
+    }
+
     public JobOptions getJobOptions() {
         return jobOptions;
     }
@@ -97,7 +142,12 @@ public class Job {
         this.jobOptions = jobOptions;
     }
 
-    public class JobOptions{
+
+
+
+
+    public class JobOptions implements Serializable {
+
 
         @SerializedName("onsite_diagnostic")
         private boolean onSiteDiagnostic = false;
@@ -105,8 +155,10 @@ public class Job {
         @SerializedName("working")
         private boolean carInWorkingCondition = false;
 
+
         @SerializedName("onsite_repair")
         private boolean repairCanBeDoneOnSite = false;
+
 
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;
@@ -153,6 +205,7 @@ public class Job {
         public void setParkingAvailable(boolean parkingAvailable) {
             this.parkingAvailable = parkingAvailable;
         }
+
     }
 
     /*{

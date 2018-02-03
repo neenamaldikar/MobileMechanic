@@ -21,48 +21,157 @@
             android:src="@drawable/ic_menu_manage" />
 
         <LinearLayout
+            android:id="@+id/ll_mech_profile_text_views"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/ll_mech_profile_text_views"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
 
-
+            <TextView
+                android:id="@+id/textView_mech_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="Phone Number"
+                android:textSize="@dimen/text_body" />
 
             <EditText
-                android:id="@+id/editText_mech_res_address"
+                android:id="@+id/editText_mech_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Residential Address"
-                android:inputType="textMultiLine" />
+                android:inputType="phone"
+                android:maxLength="10"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/textView_work_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="Mechanic Shop Address"
+                android:textSize="@dimen/text_body" />
+
 
             <EditText
                 android:id="@+id/editText_mech_work_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Mechanic Shop Address"
                 android:inputType="textMultiLine" />
 
+            <TextView
+                android:id="@+id/textView_mech_work_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="City"
+                android:textSize="@dimen/text_body" />
+
+
             <EditText
-                android:id="@+id/editText_mech_expertise"
+                android:id="@+id/editText_mech_work_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Expertise"
-                android:inputType="textMultiLine" />
+                android:singleLine="true"
+
+                />
+
+            <TextView
+                android:id="@+id/textView_mech_work_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="State"
+                android:textSize="@dimen/text_body" />
+
 
             <EditText
-                android:id="@+id/editText_mech_summary"
+                android:id="@+id/editText_mech_work_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Summary"
-                android:inputType="textMultiLine" />
+                android:inputType="text"
+                android:singleLine="true" />
+
+
+            <!-- <fragment
+                 android:id="@+id/place_autocomplete_fragment"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                 />-->
+
+
+            <TextView
+                android:id="@+id/textView_mech_zpcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="Zipcode"
+                android:textSize="@dimen/text_body" />
+
+            <EditText
+                android:id="@+id/editText_mech_zipcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="4"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/textView_mech_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/input_total_area"
+                android:text="Rate"
+                android:textSize="@dimen/text_body" />
+
+
+
+            <EditText
+                android:id="@+id/editText_mech_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Rating"
+                android:textSize="@dimen/text_body"
+                android:visibility="gone" />
+
+
+            <RatingBar
+                android:id="@+id/rating_mech_rating"
+                style="?android:attr/ratingBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/RATINGseekBarID"
+                android:isIndicator="false"
+                android:numStars="5"
+                android:visibility="gone" />
 
 
         </LinearLayout>

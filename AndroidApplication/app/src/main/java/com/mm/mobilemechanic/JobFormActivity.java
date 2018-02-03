@@ -1,6 +1,5 @@
 package com.mm.mobilemechanic;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +20,10 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.facebook.Profile;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
-import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.util.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +61,20 @@ public class JobFormActivity extends AppCompatActivity {
     @BindView(R.id.editText_car_year)
     EditText mEditTextCarYear;
 
-    private int fieldsCount = 5;
+    @BindView(R.id.switch_car_in_working_condition)
+    Switch mSwitchCarWorkingCondition;
+    @BindView(R.id.switch_car_pick_up_drop_off)
+    Switch mSwitchCarPickUp;
+    @BindView(R.id.switch_on_site_diagnostic)
+    Switch mSwitchOnsiteDiagnostic;
+    @BindView(R.id.switch_repair_done_on_site)
+    Switch mSwitchOnsiteRepair;
+    @BindView(R.id.switch_parking_available)
+    Switch mSwitchParkingAvailable;
+
+
+    private int fieldsCount = 6;
+
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -72,6 +82,7 @@ public class JobFormActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         }));
+
     }
 
     private ImageView createImageViewsWhenChosen(Uri imageUri) {
@@ -142,51 +153,137 @@ public class JobFormActivity extends AppCompatActivity {
     }
 
     public String createJsonFromFields(Job job) {
-        job.setStatus(JobStatus.SUBMITTED);
+        JsonObject updated_values = new JsonObject();
+        JsonObject inner = new JsonObject();
+        inner.addProperty("make", job.getMake());
+        inner.addProperty("model", job.getModel());
+        inner.addProperty("year", job.getYear());
+        inner.addProperty("summary", job.getSummary());
+        inner.addProperty("description", job.getDescription());
 
-        Gson gson = new Gson();
-        JsonObject jobRequestJSON = new JsonObject();
-        JsonParser parser = new JsonParser();
-        JsonObject jobJson = parser.parse(gson.toJson(job)).getAsJsonObject();
-        jobRequestJSON.add("job", jobJson);
+        JsonObject options = new JsonObject();
+        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
+        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
-        return jobRequestJSON.toString();
+        inner.addProperty("status", "Submitted");
+        inner.addProperty("address_line", "888 NE Caden Ave");
+        inner.addProperty("city", "Hillsboro");
+        inner.addProperty("state", "OR");
+        inner.addProperty("zipcode", "97124");
+
+
+        inner.add("options", options);
+        updated_values.add("job", inner);
+        return updated_values.toString();
     }
 
-    public void sendJob(String json, String userId, String authToken) {
+    public String updateJsonFromFields(Job job) {
+        JsonObject jsonObject = new JsonObject();
 
+        JsonObject jobObj = new JsonObject();
+        jobObj.addProperty("job_id", job.getJob_id());
+        JsonObject updated_values = new JsonObject();
+
+        updated_values.addProperty("make", job.getMake());
+        updated_values.addProperty("model", job.getModel());
+        updated_values.addProperty("year", job.getYear());
+        updated_values.addProperty("summary", job.getSummary());
+        updated_values.addProperty("description", job.getDescription());
+
+        JsonObject options = new JsonObject();
+        options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
+        options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
+        options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
+
+        updated_values.addProperty("status", "Submitted");
+        updated_values.add("options", options);
+
+        jobObj.add("updated_values", updated_values);
+        jsonObject.add("job", jobObj);
+        return jsonObject.toString();
+    }
+
+
+    public void sendJob(String json, String userId, String authToken) {
+        Utility.showSimpleProgressDialog(this);
         RestClient.createJob(userId, json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
                 Log.e(TAG, "Fail = " + e.getMessage());
+                Utility.removeSimpleProgressDialog();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Utility.removeSimpleProgressDialog();
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                 } else {
-
+                    String jobId = "";
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
                         Log.i(TAG, jObject.toString());
                         Log.i(TAG, jObject.getString("job_id"));
+                        jobId = jObject.getString("job_id");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("newJob", "" + new Gson().toJson(mJob));
-                    setResult(Activity.RESULT_OK, resultIntent);
+                    Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
+                    resultIntent.putExtra("newJob", jobId);
+                    resultIntent.putExtra("newJobFlag", "yes");
+                    resultIntent.putExtra("JWT", mJWToken);
+                    //  setResult(Activity.RESULT_OK, resultIntent);
+                    startActivity(resultIntent);
                     finish();
                 }
             }
         });
     }
 
+    public void updateJob(String json, String userId, String authToken) {
+        Utility.showSimpleProgressDialog(this);
+        RestClient.updateJob(userId, mJob.getJob_id(), json, authToken, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+                Utility.removeSimpleProgressDialog();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Utility.removeSimpleProgressDialog();
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                } else {
+                    String jobid = "";
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i(TAG, jObject.toString());
+                        Log.i(TAG, jObject.getString("job_id"));
+                        jobid = jObject.getString("job_id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
+                    resultIntent.putExtra("newJob", jobid);
+                    resultIntent.putExtra("JWT", mJWToken);
+                    resultIntent.putExtra("newJobFlag", "no");
+                    //  setResult(Activity.RESULT_OK, resultIntent);
+                    startActivity(resultIntent);
+                    finish();
+                }
+            }
+        });
+    }
+
+
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-
         if (fieldsCount == 0) {
             mJob.setSummary(mEditTextSummary.getText().toString());
             mJob.setDescription(mEditTextDescription.getText().toString());
@@ -195,13 +292,17 @@ public class JobFormActivity extends AppCompatActivity {
             if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
-            String jobPayload = createJsonFromFields(mJob);
-            sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+
+            if (mJob.getJob_id() == null) {
+                String jobPayload = createJsonFromFields(mJob);
+                sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+            } else {
+                String jobPayload = updateJsonFromFields(mJob);
+                updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+            }
         } else {
             showToast("Missing required fields");
         }
-
-
     }
 
 
@@ -225,7 +326,6 @@ public class JobFormActivity extends AppCompatActivity {
         } else {
             finish();
         }
-
     }
 
     public void cancelJobOnClick(View view) {
@@ -289,7 +389,9 @@ public class JobFormActivity extends AppCompatActivity {
         for (int i = 0; i < jobEditTextViews.getChildCount(); i++) {
             if (jobEditTextViews.getChildAt(i) instanceof EditText) {
                 final EditText editText = ((EditText) jobEditTextViews.getChildAt(i));
-                editText.setError("Field cannot be empty");
+                if (mJob.getSummary() == null)
+                    editText.setError("Field cannot be empty");
+
                 editText.addTextChangedListener(new TextWatcher() {
                     int prevSize;
 
@@ -332,11 +434,32 @@ public class JobFormActivity extends AppCompatActivity {
         mJob = new Job();
 
         mJWToken = getIntent().getExtras().getString("JWT");
+        mJob = (Job) getIntent().getExtras().getSerializable("Job");
 
-        initializeSwitches();
-        addListenerToEditTexts();
+        if (mJob != null)
+            setJobData();
+        else {
+            mJob = new Job();
+            initializeSwitches();
+            addListenerToEditTexts();
 
+        }
     }
 
 
+    private void setJobData() {
+        initializeSwitches();
+        addListenerToEditTexts();
+        mEditTextSummary.setText(mJob.getSummary());
+        mEditTextDescription.setText(mJob.getDescription());
+        mEditTextCarMake.setText(mJob.getMake());
+        mEditTextCarModel.setText(mJob.getModel());
+        mEditTextCarYear.setText(mJob.getYear() + "");
+
+        mSwitchCarPickUp.setChecked(mJob.getJobOptions().isCarPickUpAndDropOff());
+        mSwitchCarWorkingCondition.setChecked(mJob.getJobOptions().isCarInWorkingCondition());
+        mSwitchOnsiteDiagnostic.setChecked(mJob.getJobOptions().isOnSiteDiagnostic());
+        mSwitchOnsiteRepair.setChecked(mJob.getJobOptions().isRepairCanBeDoneOnSite());
+        mSwitchParkingAvailable.setChecked(mJob.getJobOptions().isParkingAvailable());
+    }
 }
