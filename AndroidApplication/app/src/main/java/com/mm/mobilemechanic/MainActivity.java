@@ -348,32 +348,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mJWTtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, mJWTtoken);
 
-        // creation of notifications
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        if(notificationManager != null) {
-            notificationManager.getActiveNotifications();
-        }
-        else {
-            Log.e(TAG, "notification manager is null");
-        }
-
-        // Handle possible data accompanying notification message.
-        // [START handle_data_extras]
-        if (getIntent().getExtras() != null) {
-            for (String key : getIntent().getExtras().keySet()) {
-                Object value = getIntent().getExtras().get(key);
-                Log.d("Key value for add. data", "Key: " + key + " Value: " + value);
-            }
-        }
-        // [END handle_data_extras]
-        // [START subscribe_topics]
-        FirebaseMessaging.getInstance().subscribeToTopic("someInterestingTopic");
-        // [END subscribe_topics]
-        // Log and toast
-        String msg = "Subscription has started";
-        Log.d("Subscription started", msg);
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-
         String token = FirebaseInstanceId.getInstance().getToken();
         // log and toast
         Log.d("mainActivityLog", "In main activity the token is " + token);
