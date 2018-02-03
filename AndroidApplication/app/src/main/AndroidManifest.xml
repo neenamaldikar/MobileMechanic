@@ -60,16 +60,11 @@
             android:label="New Job" />
 
         <activity
-            android:name="com.mm.mobilemechanic.authorization.RestClientActivity"
-            android:label="@string/test_rest_client_name" />
-
-
-        <activity
             android:name="com.mm.mobilemechanic.JobAddImageActivity"
             android:label="Add Image" />
 
         <!-- [START firebase_service] -->
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
