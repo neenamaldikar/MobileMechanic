@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void getJobs() {
-
         String jwtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, jwtoken);
 
@@ -97,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     LoginManager.getInstance().logOut();
                 } else {
                     Log.i(TAG, response.message());
-
-
                     try {
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         Log.i(TAG, jsonArray.toString());
@@ -108,12 +105,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }.getType();
                             Job job = (Job) new Gson()
                                     .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
-
-
                             jobLists.add(job);
 
                         }
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -121,12 +115,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         });
 
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
         });
@@ -245,14 +236,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     System.out.println("came from user profile activity");
                     break;
                 case (FROM_NEW_JOB_SCREEN):
-                    String jsonMyObject = "";
-                    Bundle extras = data.getExtras();
-                    if (extras != null) {
-                        jsonMyObject = extras.getString("newJob");
-                    }
 
-                    Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
-                    newJob.getSummary();
                     break;
             }
         }
@@ -372,10 +356,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                     // TODO on failure what happens
                 } else {
-                    Log.i(TAG, response.message());
+
+                    Log.i(TAG + "_downloadImage", response.message());
                     try {
-
-
                         Thread thread = new Thread(new Runnable() {
 
                             @Override
@@ -398,18 +381,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
                         });
-
                         thread.start();
-                        //   Log.i(TAG, jObject.toString());
-                    } catch (Exception e) {
+
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         // TODO when setting user fails
                     }
                 }
             }
         });
-
-
     }
 
     public void deleteJob(String jobID, final int position) {
@@ -428,15 +409,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                     showToast("Sorry, Please try again");
-
-                } else {
-
+                }
+                else {
                     try {
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 showToast("Job Deleted");
                                 jobLists.remove(position);
                                 adapter.notifyItemRemoved(position);
@@ -446,7 +425,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         });
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 

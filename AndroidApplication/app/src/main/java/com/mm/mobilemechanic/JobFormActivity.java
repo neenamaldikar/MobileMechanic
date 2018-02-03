@@ -76,7 +76,7 @@ public class JobFormActivity extends AppCompatActivity {
     EditText mEditTextJobZipCode;
 
 
-    private int fieldsCount = 9;
+    private int requiredEntryCount = 9;
 
     @BindView(R.id.switch_car_in_working_condition)
     Switch mSwitchCarWorkingCondition;
@@ -282,7 +282,7 @@ public class JobFormActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-        if (fieldsCount == 0) {
+        if (requiredEntryCount == 0) {
             mJob.setSummary(mEditTextSummary.getText().toString());
             mJob.setDescription(mEditTextDescription.getText().toString());
             mJob.setMake(mEditTextCarMake.getText().toString());
@@ -386,10 +386,13 @@ public class JobFormActivity extends AppCompatActivity {
         });
     }
 
-    public void addListenerToEditTextHelper(View childrenView) {
+    public void addListenerToEditTextHelper(View childrenView, boolean newJob) {
         if (childrenView instanceof EditText) {
             final EditText editText = ((EditText) childrenView);
-            editText.setError("Field cannot be empty");
+            if(newJob) {
+                editText.setError("Field cannot be empty");
+            }
+
             TextWatcher textWatcher = new TextWatcher() {
                 int prevSize;
 
@@ -406,10 +409,10 @@ public class JobFormActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable s) {
                     if (editText.getText().toString().isEmpty()) {
                         editText.setError("Field cannot be empty");
-                        fieldsCount++;
+                        requiredEntryCount++;
                     } else {
                         if (prevSize == 0) {
-                            fieldsCount--;
+                            requiredEntryCount--;
                         }
                     }
                 }
@@ -418,15 +421,15 @@ public class JobFormActivity extends AppCompatActivity {
         }
     }
 
-    public void addListenerToEditTexts(LinearLayout linearLayout) {
+    public void addListenerToEditTexts(LinearLayout linearLayout, boolean newJob) {
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             if (linearLayout.getChildAt(i) instanceof EditText) {
-                addListenerToEditTextHelper(linearLayout.getChildAt(i));
+                addListenerToEditTextHelper(linearLayout.getChildAt(i), newJob);
             }
             if (linearLayout.getChildAt(i) instanceof LinearLayout) {
                 LinearLayout innerLayout = (LinearLayout) linearLayout.getChildAt(i);
                 for (int j = 0; j < innerLayout.getChildCount(); j++) {
-                    addListenerToEditTextHelper(innerLayout.getChildAt(j));
+                    addListenerToEditTextHelper(innerLayout.getChildAt(j), newJob);
                 }
             }
         }
@@ -443,32 +446,37 @@ public class JobFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_job_form);
         ButterKnife.bind(this);
-        mJob = new Job();
 
         mJWToken = getIntent().getExtras().getString("JWT");
         mJob = (Job) getIntent().getExtras().getSerializable("Job");
 
-
-        initializeSwitches();
-        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_create_job));
-        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_job_location));
-
-        if (mJob != null)
-            setJobData();
+        boolean newJob = true;
+        if (mJob != null) {
+            setJobData();   // updating previous job
+            newJob = false;
+        }
         else {
             mJob = new Job();
-            initializeSwitches();
         }
+
+        initializeSwitches();
+        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_create_job), newJob);
+        addListenerToEditTexts((LinearLayout)findViewById(R.id.ll_job_location), newJob);
     }
 
 
     private void setJobData() {
-        initializeSwitches();
+        requiredEntryCount = 0;
         mEditTextSummary.setText(mJob.getSummary());
         mEditTextDescription.setText(mJob.getDescription());
         mEditTextCarMake.setText(mJob.getMake());
         mEditTextCarModel.setText(mJob.getModel());
         mEditTextCarYear.setText(mJob.getYear() + "");
+
+        mEditTextJobAddress.setText(mJob.getAddress());
+        mEditTextJobCity.setText(mJob.getCity());
+        mEditTextJobState.setText(mJob.getState());
+        mEditTextJobZipCode.setText(mJob.getZipCode() + "");
 
         mSwitchCarPickUp.setChecked(mJob.getJobOptions().isCarPickUpAndDropOff());
         mSwitchCarWorkingCondition.setChecked(mJob.getJobOptions().isCarInWorkingCondition());
