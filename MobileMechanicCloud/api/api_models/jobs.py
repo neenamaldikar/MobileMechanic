@@ -4,7 +4,7 @@
 # TODO: Update with custom error messages
 from flask_restful import Resource, reqparse, abort
 from flask_jwt import jwt_required, current_identity
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from database.job_request import JobRequestDAO
 from database.user_request import UserDAO
 from database.mechanic_request import MechanicDAO
@@ -14,8 +14,6 @@ import logging.config
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
 import pdb
-push_service = FCMNotification(api_key="AAAAhsujFZI:APA91bHf7jR3Unw8M9PAXj9hoIp_Sj2_098fxYJ2KJ92atv5Z1jLjvRMq8ng4rijfKRIfCxZbjeXXk5sSAklqwpGzYm3wHXpKbiNW8lri2bJOkEH4vm0GGHfVR4tVkJLTqqdSDslES86")
-
 
 class JobAPI(Resource):
 
@@ -26,6 +24,7 @@ class JobAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('job', type=dict, location='json')
         self.reqparse.add_argument('job_id', type=str, location='args')
+        self.push_service = FCMNotification(api_key=current_app.config.get('FCM_SERVER_KEY'))
 
     @jwt_required()
     def get(self, user_id):
@@ -95,7 +94,7 @@ class JobAPI(Resource):
             message_body = "Hello fellow mechanic, there is a " + job_inserted['model'] + " nearby who wants your help."
             # pdb.set_trace()
             logging.debug("Sending notification to " + registration_id)
-            result = push_service.notify_single_device(registration_id=registration_id,
+            result = self.push_service.notify_single_device(registration_id=registration_id,
                                                        message_title=message_title,
                                                        message_body=message_body)
             logging.debug('Notification result is ' + str(result))

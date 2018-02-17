@@ -31,8 +31,8 @@ class TokenDAO:
     def find_user(self, user_id):
         try:
             token_data = self.db.userTokens.find_one({'user_id': user_id})
-            logging.debug('User found in userTokens ...')
             if token_data:
+                logging.debug('User found in userTokens ...')
                 return True
             return False
         except:

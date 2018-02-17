@@ -34,10 +34,15 @@ class JobRequestDAO:
             if zipcodes:
                 cursor = self.db.jobs.find({"zipcode": {"$in": zipcodes}})
 
-            data = list(cursor)
-            logging.debug('Cursor data is', data)
             if not cursor:
                 logging.debug('No cursor data')
+
+            data = list(cursor)
+            if not data:
+                logging.debug("Job list is empty")
+            else:
+                logging.debug('Cursor data is', data)
+
             output_list = []
             for i in data:
                 output_list.append(job_model.JobRequest(i['user_id'], i['job_id'], i['make'], i['model'], i['year'],
