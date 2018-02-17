@@ -179,8 +179,8 @@ public class Job implements Serializable {
         private boolean repairCanBeDoneOnSite = false;
         @SerializedName("pickup_dropoff")
         private boolean carPickUpAndDropOff = false;
-
-        private boolean parkingAvailable = false;  // TODO will add field
+        @SerializedName("parking_available")
+        private boolean parkingAvailable = false;
 
 
         public boolean isOnSiteDiagnostic() {
