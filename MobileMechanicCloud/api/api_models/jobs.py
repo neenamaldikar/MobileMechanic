@@ -1,7 +1,3 @@
-# TODO: Enforce a already exists check, so that users use PUT to update instead
-# TODO: find an alternative to _get_current_object call
-# TODO: look at validation options
-# TODO: Update with custom error messages
 from flask_restful import Resource, reqparse, abort
 from flask_jwt import jwt_required, current_identity
 from flask import jsonify, request, current_app
@@ -13,7 +9,6 @@ from configuration import LOGGING_JSON
 import logging.config
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
-import pdb
 
 class JobAPI(Resource):
 
@@ -81,25 +76,19 @@ class JobAPI(Resource):
         job = self.jobsDAO.find_job(user_id, job_id)
         if not job:
             abort(404)
+        self.send_notifications(job_inserted)
+        return job.as_dict()
 
-        # SENDING NOTIFICATIONS:
-        # Since job is successful, send a notification to the mechanic whose nearby
-        # get the list of all avaialable mechanics
-        # TODO: implement sending notifications as Asynchronous process
+    # TODO: implement sending notifications as Asynchronous process
+    def send_notifications(self, job_inserted):
         registration_ids = self.mechanicDAO.get_relevant_mechanic_tokens(job_inserted['zipcode'])
         logging.debug("Got registration ids for job -> " + str(registration_ids))
-        for registration_id in registration_ids:
-            message_title = "Customers need your help"
-            # TODO: replace fellow mechanic with the name of the mechanic
-            message_body = "Hello fellow mechanic, there is a " + job_inserted['model'] + " nearby who wants your help."
-            # pdb.set_trace()
-            logging.debug("Sending notification to " + registration_id)
-            result = self.push_service.notify_single_device(registration_id=registration_id,
-                                                       message_title=message_title,
-                                                       message_body=message_body)
-            logging.debug('Notification result is ' + str(result))
-
-        return job.as_dict()
+        message_title = "New job"
+        message_body = "New job available in your area"
+        result = self.push_service.notify_multiple_devices(registration_ids=registration_ids,
+                                                  message_title=message_title,
+                                                  message_body=message_body)
+        logging.debug('Notification result is ' + str(result))
 
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted
     @jwt_required()
