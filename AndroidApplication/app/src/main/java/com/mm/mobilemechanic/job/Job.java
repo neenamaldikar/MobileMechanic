@@ -23,6 +23,12 @@ public class Job implements Serializable {
     @SerializedName("make")
     private String make;
 
+
+
+
+    @SerializedName("zipcode")
+    private String zipcode;
+
     @SerializedName("model")
     private String model;
 
@@ -33,6 +39,17 @@ public class Job implements Serializable {
 
     @SerializedName("job_id")
     private String job_id;
+
+
+
+    @SerializedName("city")
+    private String city;
+
+
+
+    @SerializedName("address_line")
+    private String address;
+
 
 
     @SerializedName("images")
@@ -98,8 +115,21 @@ public class Job implements Serializable {
         this.description = description;
     }
 
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
 
     public String getMake() {
@@ -143,7 +173,13 @@ public class Job implements Serializable {
     }
 
 
+    public String getZipcode() {
+        return zipcode;
+    }
 
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
 
 
     public class JobOptions implements Serializable {

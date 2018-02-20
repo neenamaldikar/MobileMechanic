@@ -111,7 +111,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
             // TODO open summary and job req info
             @Override
             public void onClick(View v) {
-                showPopup(v, job,position);
+                showPopup(v, job, position);
             }
         });
 
@@ -151,7 +151,14 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
 
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
-
+        if (mActivity instanceof MainActivity) {
+            MenuItem menuItem;
+            if (((MainActivity) mActivity).isMechanic == true && job.getStatus().equals("Submitted")) {
+                menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(true);
+            } else {
+                menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(false);
+            }
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -164,6 +171,12 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
                     case R.id.menu_card_delete:
                         if (mActivity instanceof MainActivity) {
                             ((MainActivity) mActivity).deleteJob(job.getJob_id(), position);
+                        }
+                        return true;
+
+                    case R.id.menu_card_sendquote:
+                        if (mActivity instanceof MainActivity) {
+                            ((MainActivity) mActivity).submitJobQuote();
                         }
                         return true;
 

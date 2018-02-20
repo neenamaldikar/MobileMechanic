@@ -132,8 +132,8 @@ public class MechEditActivity extends AppCompatActivity {
         inner.add("reviews", mJsonReviews);
 
         JsonArray mJsonZipcodes = new JsonArray();
-        mJsonZipcodes.add("76013");
-        mJsonZipcodes.add("76017");
+        mJsonZipcodes.add( mEditTextMechZipcode.getText().toString());
+
 
         inner.add("serving_zipcodes", mJsonZipcodes);
 

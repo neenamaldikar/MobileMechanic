@@ -42,7 +42,7 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:1.0.1'
-  //  androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+    //  androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
     androidTestCompile 'com.android.support:support-annotations:23.3.0'
 
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -50,7 +50,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs'
     })*/
-  // end of optional
+    // end of optional
 
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.facebook.android:facebook-android-sdk:4.27.0'
@@ -69,6 +69,7 @@ dependencies {
 
 
 }
+
 
 
 apply plugin: 'com.google.gms.google-services'

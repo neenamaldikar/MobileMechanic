@@ -37,10 +37,69 @@
             android:id="@+id/editText_job_description"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:gravity="top"
             android:layout_marginBottom="4dp"
+            android:gravity="top"
             android:hint="Enter description of problem"
             android:inputType="textMultiLine" />
+
+        <TextView
+            android:id="@+id/textView_job_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/input_total_area"
+            android:text="City"
+            android:textSize="@dimen/text_body" />
+
+
+        <EditText
+            android:id="@+id/editText_job_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:singleLine="true"
+
+            />
+
+        <TextView
+            android:id="@+id/textView_job_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/input_total_area"
+            android:text="State"
+            android:textSize="@dimen/text_body" />
+
+
+        <Spinner
+            android:id="@+id/spinner_job_state"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:ems="10" />
+
+
+        <TextView
+            android:id="@+id/textView_job_zipcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/input_total_area"
+            android:text="Zipcode"
+            android:textSize="@dimen/text_body" />
+
+        <EditText
+            android:id="@+id/editText_job_zipcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="5"
+            android:singleLine="true" />
+
 
         <EditText
             android:id="@+id/editText_job_address"
@@ -153,11 +212,11 @@
                 android:id="@+id/button_choose_pictures"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:onClick="ChoosePicturesFromGalleryOnClick"
-                android:text="Add pictures" />
+                android:text="Add pictures"
+                android:visibility="gone" />
         </RelativeLayout>
 
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,10 +14,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +32,15 @@ import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.util.Utility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +59,7 @@ public class JobFormActivity extends AppCompatActivity {
 
     private boolean changesMade = false;
     private String mJWToken;
-
+    ArrayList<String> stateList = new ArrayList<String>();
     private Job mJob;
     @BindView(R.id.editText_job_summary)
     EditText mEditTextSummary;
@@ -63,6 +71,12 @@ public class JobFormActivity extends AppCompatActivity {
     EditText mEditTextCarModel;
     @BindView(R.id.editText_car_year)
     EditText mEditTextCarYear;
+    @BindView(R.id.editText_job_zipcode)
+    EditText mEditTextZipCode;
+    @BindView(R.id.editText_job_city)
+    EditText mEditTextCity;
+    @BindView(R.id.editText_job_address)
+    EditText mEditTextAddress;
 
     @BindView(R.id.switch_car_in_working_condition)
     Switch mSwitchCarWorkingCondition;
@@ -75,8 +89,10 @@ public class JobFormActivity extends AppCompatActivity {
     @BindView(R.id.switch_parking_available)
     Switch mSwitchParkingAvailable;
 
+    @BindView(R.id.spinner_job_state)
+    Spinner mSpinnerJobState;
 
-    private int fieldsCount = 6;
+    private int fieldsCount = 8;
 
 
     private void showToast(final String message) {
@@ -176,7 +192,7 @@ public class JobFormActivity extends AppCompatActivity {
         inner.addProperty("city", "Hillsboro");
         inner.addProperty("state", "OR");
 
-        inner.addProperty("zipcode", "97124");
+        inner.addProperty("zipcode", job.getZipcode());
 
 
         inner.add("options", options);
@@ -198,12 +214,13 @@ public class JobFormActivity extends AppCompatActivity {
         updated_values.addProperty("year", job.getYear());
         updated_values.addProperty("summary", job.getSummary());
         updated_values.addProperty("description", job.getDescription());
+        updated_values.addProperty("zipcode", job.getZipcode());
 
         JsonObject options = new JsonObject();
         options.addProperty("onsite_diagnostic", job.getJobOptions().isOnSiteDiagnostic());
         options.addProperty("working", job.getJobOptions().isCarInWorkingCondition());
         options.addProperty("onsite_repair", job.getJobOptions().isRepairCanBeDoneOnSite());
-                options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
+        options.addProperty("pickup_dropoff", job.getJobOptions().isCarPickUpAndDropOff());
 
         updated_values.addProperty("status", "Submitted");
         updated_values.add("options", options);
@@ -298,16 +315,36 @@ public class JobFormActivity extends AppCompatActivity {
             mJob.setDescription(mEditTextDescription.getText().toString());
             mJob.setMake(mEditTextCarMake.getText().toString());
             mJob.setModel(mEditTextCarModel.getText().toString());
+            mJob.setZipcode(mEditTextZipCode.getText().toString());
+           mJob.setAddress(mEditTextAddress.getText().toString());
+            mJob.setCity(mEditTextCity.getText().toString());
             if (!mEditTextCarYear.getText().toString().equals("")) {
                 mJob.setYear(Integer.parseInt(mEditTextCarYear.getText().toString()));
             }
 
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);
-                sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+          //      sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+
+                Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
+                //resultIntent.putExtra("newJob", jobid);
+                resultIntent.putExtra("jobPayload", jobPayload);
+                resultIntent.putExtra("newJobFlag", "yes");
+                resultIntent.putExtra("JWT", mJWToken);
+                //  setResult(Activity.RESULT_OK, resultIntent);
+                startActivity(resultIntent);
+               // finish();
             } else {
                 String jobPayload = updateJsonFromFields(mJob);
-                updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+                //updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+                Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
+                resultIntent.putExtra("newJob", mJob.getJob_id());
+                resultIntent.putExtra("jobPayload", jobPayload);
+                resultIntent.putExtra("JWT", mJWToken);
+                resultIntent.putExtra("newJobFlag", "no");
+                //  setResult(Activity.RESULT_OK, resultIntent);
+                startActivity(resultIntent);
+             //   finish();
             }
 
 
@@ -450,6 +487,7 @@ public class JobFormActivity extends AppCompatActivity {
         mJWToken = getIntent().getExtras().getString("JWT");
         mJob = (Job) getIntent().getExtras().getSerializable("Job");
 
+        parseStates();
         if (mJob != null)
             setJobData();
         else {
@@ -467,7 +505,10 @@ public class JobFormActivity extends AppCompatActivity {
         addListenerToEditTexts();
         mEditTextSummary.setText(mJob.getSummary());
         mEditTextDescription.setText(mJob.getDescription());
+        mEditTextZipCode.setText(mJob.getZipcode());
+        mEditTextCity.setText(mJob.getCity());
         mEditTextCarMake.setText(mJob.getMake());
+        mEditTextAddress.setText(mJob.getAddress());
         mEditTextCarModel.setText(mJob.getModel());
         mEditTextCarYear.setText(mJob.getYear() + "");
 
@@ -477,5 +518,63 @@ public class JobFormActivity extends AppCompatActivity {
         mSwitchOnsiteRepair.setChecked(mJob.getJobOptions().isRepairCanBeDoneOnSite());
         mSwitchParkingAvailable.setChecked(mJob.getJobOptions().isParkingAvailable());
     }
+
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("states.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
+
+    private void parseStates() {
+        try {
+
+
+            //    JSONObject obj = new JSONObject(loadJSONFromAsset());
+            JSONArray m_jArry = new JSONArray(loadJSONFromAsset());
+
+            for (int i = 0; i < m_jArry.length(); i++) {
+                JSONObject jo_inside = m_jArry.getJSONObject(i);
+                Log.d("Details-->", jo_inside.getString("name"));
+                String name = jo_inside.getString("name");
+                String value = jo_inside.getString("abbreviation");
+                stateList.add(name);
+            }
+
+            setStateSpinner();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setStateSpinner() {
+        ArrayAdapter<String> dataReasonAdapter = new ArrayAdapter<String>(JobFormActivity.this, android.R.layout.simple_spinner_item, stateList);
+        dataReasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerJobState.setAdapter(dataReasonAdapter);
+        mSpinnerJobState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
 
 }

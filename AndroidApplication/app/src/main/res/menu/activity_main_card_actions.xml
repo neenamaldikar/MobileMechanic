@@ -4,12 +4,19 @@
     <item
         android:id="@+id/menu_card_delete"
         android:orderInCategory="100"
-        android:title="Delete card"
+        android:title="Delete Job"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_card_edit"
         android:orderInCategory="100"
-        android:title="Edit card"
+        android:title="Edit Job"
+        app:showAsAction="" />
+
+    <item
+        android:id="@+id/menu_card_sendquote"
+        android:orderInCategory="100"
+        android:title="Send Quote"
+        android:visible="false"
         app:showAsAction="" />
 </menu>
