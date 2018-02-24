@@ -7,13 +7,7 @@ import java.io.Serializable;
  * Created by ndw6152 on 5/22/2017.
  */
 
-
-
-
 public class Job implements Serializable {
-
-
-
     @SerializedName("summary")
     private String summary;
 
@@ -28,7 +22,6 @@ public class Job implements Serializable {
 
     @SerializedName("year")
     private int year;
-
 
     @SerializedName("address_line")
     private String address;
