@@ -42,22 +42,17 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:1.0.1'
-    //  androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'com.android.support:support-annotations:23.3.0'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestCompile 'com.android.support:support-annotations:27.0.2'
 
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    /*androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.google.code.findbugs'
-    })*/
-    // end of optional
 
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.facebook.android:facebook-android-sdk:4.27.0'
     compile 'com.google.firebase:firebase-messaging:11.8.0'
 
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
-    compile 'android.arch.lifecycle:extensions:1.0.0'
+    compile 'android.arch.lifecycle:extensions:1.1.0'
 
     final BUTTERKNIFE_VERSION = '8.5.1'  // view binding library
     compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
@@ -66,8 +61,6 @@ dependencies {
     compile 'com.google.dagger:dagger-android:2.12'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.12'
     compile 'com.tuanchauict.intentchooser:intentchooser:0.1.+'
-
-
 }
 
 

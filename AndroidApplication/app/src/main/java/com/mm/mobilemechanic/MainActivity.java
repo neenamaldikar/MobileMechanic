@@ -1,9 +1,11 @@
 package com.mm.mobilemechanic;
 
 import android.app.Activity;
+
 import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,7 +32,6 @@ import android.widget.Toast;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -43,6 +44,7 @@ import com.mm.mobilemechanic.job.JobStatus;
 import com.mm.mobilemechanic.user.Mechanic;
 
 import com.mm.mobilemechanic.user.MechanicViewModel;
+
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void getJobs() {
-
         String jwtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, jwtoken);
 
@@ -108,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     LoginManager.getInstance().logOut();
                 } else {
                     Log.i(TAG, response.message());
-
-
                     try {
                         JSONArray jsonArray = new JSONArray(response.body().string());
                         Log.i(TAG, jsonArray.toString());
@@ -119,12 +118,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }.getType();
                             Job job = (Job) new Gson()
                                     .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
-
-
                             jobLists.add(job);
 
                         }
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -132,12 +128,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         });
 
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
         });
@@ -183,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        getMenuInflater().inflate(R.menu.activity_main_logo, menu);
         return true;
     }
 
@@ -229,8 +222,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
                 break;
             case R.id.nav_history:
-                //intent = new Intent(this, RestClientActivity.class);
-                //startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);
 
                 break;
             case R.id.nav_payment:
@@ -276,14 +267,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     System.out.println("came from user profile activity");
                     break;
                 case (FROM_NEW_JOB_SCREEN):
-                    String jsonMyObject = "";
-                    Bundle extras = data.getExtras();
-                    if (extras != null) {
-                        jsonMyObject = extras.getString("newJob");
-                    }
 
-                    Job newJob = new Gson().fromJson(jsonMyObject, Job.class);
-                    newJob.getSummary();
                     break;
             }
         }
@@ -318,9 +302,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void sendToken(String json, String userId, String authToken) {
+    public void sendFirebaseToken(String authToken) {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        JsonObject token_json = new JsonObject();
+        token_json.addProperty("fcmtoken", token);
+        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
+        JsonObject final_token_json = new JsonObject();
+        final_token_json.add("tokenData", token_json);
 
-        RestClient.createToken(userId, json, authToken, new Callback() {
+        String userId = Profile.getCurrentProfile().getId();
+        RestClient.createToken(userId, final_token_json.toString(), authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -333,10 +324,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                 } else {
-
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
-                        Log.i(TAG, jObject.toString());
                         Log.i(TAG, jObject.getString("token"));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -344,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newToken", "Token sent successfully!");
                     setResult(Activity.RESULT_OK, resultIntent);
-//                    finish();
                 }
             }
         });
@@ -369,9 +357,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         mJWTtoken = getIntent().getExtras().getString("JWT");
         Log.i(TAG, mJWTtoken);
+
+
 
         // creation of notifications
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -381,38 +370,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.e(TAG, "notification manager is null");
         }
 
-        // Handle possible data accompanying notification message.
-        // [START handle_data_extras]
-        if (getIntent().getExtras() != null) {
-            for (String key : getIntent().getExtras().keySet()) {
-                Object value = getIntent().getExtras().get(key);
-                Log.d("Key value for add. data", "Key: " + key + " Value: " + value);
-            }
-        }
-        // [END handle_data_extras]
-        // [START subscribe_topics]
-        FirebaseMessaging.getInstance().subscribeToTopic("someInterestingTopic");
-        // [END subscribe_topics]
-        // Log and toast
-        String msg = "Subscription has started";
-        Log.d("Subscription started", msg);
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-
-        String token = FirebaseInstanceId.getInstance().getToken();
-        // log and toast
-        Log.d("mainActivityLog", "In main activity the token is " + token);
-        Toast.makeText(MainActivity.this, "the token in main activity is " + token, Toast.LENGTH_SHORT).show();
-        // added code to insert into a seperate temporary collection containing users and their tokens only
-        JsonObject token_json = new JsonObject();
-        token_json.addProperty("fcmtoken", token);
-        // for now hardcode the user id
-        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
-        // print the token
-        JsonObject final_token_json = new JsonObject();
-        final_token_json.add("tokenData", token_json);
-        Log.d("mainActivityLog", "The token json is " + final_token_json);
-        sendToken(final_token_json.toString(), Profile.getCurrentProfile().getId(), mJWTtoken);
-
+        sendFirebaseToken(mJWTtoken);
         initUI();
     }
 
@@ -439,10 +397,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                     // TODO on failure what happens
                 } else {
-                    Log.i(TAG, response.message());
+
+                    Log.i(TAG + "_downloadImage", response.message());
                     try {
-
-
                         Thread thread = new Thread(new Runnable() {
 
                             @Override
@@ -465,18 +422,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
                         });
-
                         thread.start();
-                        //   Log.i(TAG, jObject.toString());
-                    } catch (Exception e) {
+
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         // TODO when setting user fails
                     }
                 }
             }
         });
-
-
     }
 
     public void deleteJob(String jobID, final int position) {
@@ -495,15 +450,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
                     showToast("Sorry, Please try again");
-
-                } else {
-
+                }
+                else {
                     try {
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 showToast("Job Deleted");
                                 jobLists.remove(position);
                                 adapter.notifyItemRemoved(position);
@@ -513,7 +466,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         });
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 

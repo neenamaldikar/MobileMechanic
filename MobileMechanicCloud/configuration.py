@@ -40,6 +40,7 @@ class DevelopmentConfig:
     # if we work with multiple databases, we'll need to use the
     # configuration prefix for each of the databases
     MONGO_URI = os.getenv('MONGO_URI', '')
+    FCM_SERVER_KEY = os.getenv('FCM_SERVER_KEY', '')
 
 class ProductionConfig:
     DEBUG = False
@@ -50,3 +51,4 @@ class ProductionConfig:
     JWT_AUTH_URL_RULE = os.getenv('JWT_AUTH_RULE', '')
     JWT_EXPIRATION_DELTA = datetime.timedelta(minutes=15)
     MONGO_URI = os.getenv('MONGO_URI', '')
+    FCM_SERVER_KEY = os.getenv('FCM_SERVER_KEY', '')

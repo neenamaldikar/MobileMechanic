@@ -56,7 +56,7 @@ import butterknife.ButterKnife;
  */
 
 public class MechEditActivity extends AppCompatActivity {
-    private String TAG = "MechincScreen";
+    private String TAG = "MechanicScreen";
     private boolean textChanged = false;
 
     @BindView(R.id.editText_mech_phone)

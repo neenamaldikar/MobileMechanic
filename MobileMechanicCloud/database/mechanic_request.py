@@ -47,11 +47,11 @@ class MechanicDAO:
             return False
 
     # TODO: replace summary with location
-    def get_relevant_mechanic_tokens(self, job_model, job_summary):
+    def get_relevant_mechanic_tokens(self, zipcode):
         try:
             logging.debug('Fetching the tokens for the mechanics ...')
             # TODO: replace with proper location based token result
-            mechanic_ids = [i.get('user_id') for i in self.db.mechanics.find()]
+            mechanic_ids = [i.get('user_id') for i in self.db.mechanics.find({"serving_zipcodes": zipcode})]
             registration_ids = [i.get('token') for i in self.db.userTokens.find() if i.get('user_id') in mechanic_ids]
             return registration_ids
         except:

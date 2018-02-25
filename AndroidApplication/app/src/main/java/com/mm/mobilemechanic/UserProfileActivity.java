@@ -195,6 +195,4 @@ public class UserProfileActivity extends AppCompatActivity {
 
         addOnTextChangedListenerToAllEditText(R.id.ll_profile_text_views);
     }
-
-
 }

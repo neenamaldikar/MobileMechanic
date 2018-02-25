@@ -72,7 +72,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
     public List<Uri> mImageList;
     String imageFilePath;
     private Uri outputUri = null;
-    String jobPayload = "";
+
     int mCount = 0;
     ImageView imageView;
     JobAddImageAdapter jobAddImageAdapter;
@@ -102,7 +102,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
                 onBackPressed(); // Implemented by activity
             }
         });
-
         Uri uri = null;
         mImageList = new ArrayList<Uri>();
         mImageList.add(uri);
@@ -211,27 +210,11 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void choosePicturesFromGalleryOnClick() {
         changesMade = true;
-
-
-        Intent i = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
-
-
-     /*   Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image*//*"); //allows any image file type. Change * to specific extension to limit it
-/*//**These following line is the important one!
-         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-         startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
-         */
-     /*   Intent intent = ImageChooserMaker.newChooser(JobAddImagesActivity.this)
-                .add(new ImageChooser(true))
-                .create("Select Image");
-        startActivityForResult(intent, CHOOSING_IMAGE_FROM_GALLERY);
-*/
-
+        Intent imageIntent = new Intent();
+        imageIntent.setType("image*//*");
+        imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), CHOOSING_IMAGE_FROM_GALLERY);
     }
 
 
@@ -250,9 +233,8 @@ public class JobAddImagesActivity extends AppCompatActivity {
                 Utility.removeSimpleProgressDialog();
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                } else {
-
-
+                }
+                else {
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
                         Log.i(TAG, jObject.toString());
@@ -260,11 +242,8 @@ public class JobAddImagesActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
                     mCount++;
                     if (mCount < mImageList.size() && mImageList.get(mCount) != null) {
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -273,7 +252,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
                             }
                         });
 
-
                     } else {
                         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
                         Bundle b = new Bundle();
@@ -281,9 +259,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         resultIntent.putExtras(b);
                         startActivity(resultIntent);
                         finish();
-
                     }
-
                 }
             }
         });
@@ -291,58 +267,32 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-
-        sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
-       /* if (mImageList.get(0) != null) {
+        if (mImageList.get(0)!=null) {
             File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
             sendJobImages(mImgFile);
         } else {
-            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-            Bundle b = new Bundle();
-            b.putString("JWT", mJWToken);
-            resultIntent.putExtras(b);
-            startActivity(resultIntent);
-            finish();
-
-        }*/
-
-
-    }
-
-    @OnClick(R.id.button_skip_job)
-    public void skipJobOnClick(View view) {
-
-        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-        Bundle b = new Bundle();
-        b.putString("JWT", mJWToken);
-        resultIntent.putExtras(b);
-        startActivity(resultIntent);
-        finish();
-
-
+            showToast("Please select Image");
+        }
     }
 
 
     @OnClick(R.id.button_cancel_job)
     public void cancelJobOnClick(View view) {
 
-     /*   if (newJobFlag.equalsIgnoreCase("yes"))
+        if (newJobFlag.equalsIgnoreCase("yes"))
             deleteJob();
-        else {*/
+        else {
             Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
 
-     //   }
-
-
+        }
     }
 
 
     @Override
     public void onBackPressed() {
         finish();
-
     }
 
     @Override
@@ -357,8 +307,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
         mJob = getIntent().getExtras().getString("newJob");
         newJobFlag = getIntent().getExtras().getString("newJobFlag");
         mJWToken = getIntent().getExtras().getString("JWT");
-        jobPayload= getIntent().getStringExtra("jobPayload");
-
 
         initUI();
     }
@@ -379,11 +327,9 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
 
     public void recyclerViewListClicked(View v, int position) {
-
         imageView = (ImageView) v;
         mPosition = position;
         showPictureDialog();
-
     }
 
     public void deleteImage(int position) {
@@ -449,7 +395,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
             String errorMessage = "Whoops - your device doesn't support capturing images!";
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void deleteJob() {
@@ -486,48 +431,4 @@ public class JobAddImagesActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void sendJob(String json, String userId, String authToken) {
-        Utility.showSimpleProgressDialog(this);
-        RestClient.createJob(userId, json, authToken, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // TODO on failure what happens
-                Log.e(TAG, "Fail = " + e.getMessage());
-                Utility.removeSimpleProgressDialog();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Utility.removeSimpleProgressDialog();
-                if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                } else {
-                    String jobid = "";
-                    try {
-                        JSONObject jObject = new JSONObject(response.body().string());
-                        Log.i(TAG, jObject.toString());
-                        Log.i(TAG, jObject.getString("job_id"));
-                        mJob = jObject.getString("job_id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (mImageList.get(0) != null) {
-                        File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
-                        sendJobImages(mImgFile);
-                    } else {
-                        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        Bundle b = new Bundle();
-                        b.putString("JWT", mJWToken);
-                        resultIntent.putExtras(b);
-                        startActivity(resultIntent);
-                        finish();
-
-                    }
-                }
-            }
-        });
-    }
-
-
 }
