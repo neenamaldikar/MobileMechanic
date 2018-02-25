@@ -282,7 +282,7 @@ public class JobFormActivity extends AppCompatActivity {
             mJob.setDescription(mEditTextDescription.getText().toString());
             mJob.setMake(mEditTextCarMake.getText().toString());
             mJob.setModel(mEditTextCarModel.getText().toString());
-
+            mJob.setYear(mEditTextCarYear.getText().toString());
             mJob.setAddress(mEditTextJobAddress.getText().toString());
             mJob.setCity(mEditTextJobCity.getText().toString());
             mJob.setState(mEditTextJobState.getText().toString());
@@ -482,7 +482,7 @@ public class JobFormActivity extends AppCompatActivity {
 
         mEditTextCarMake.setText(mJob.getMake());
         mEditTextCarModel.setText(mJob.getModel());
-        mEditTextCarYear.setText(mJob.getYear() + "");
+        mEditTextCarYear.setText(mJob.getYear());
 
         mEditTextJobAddress.setText(mJob.getAddress());
         mEditTextJobCity.setText(mJob.getCity());

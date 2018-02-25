@@ -43,16 +43,6 @@
             android:inputType="textMultiLine" />
 
 
-        <TextView
-            android:id="@+id/textView_job_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/input_total_area"
-            android:text="State"
-            android:textSize="@dimen/text_body" />
-
         <EditText
             android:id="@+id/editText_car_make"
             android:layout_width="match_parent"
