@@ -200,79 +200,7 @@ public class JobFormActivity extends AppCompatActivity {
     }
 
 
-    public void sendJob(String json, String userId, String authToken) {
-        Utility.showSimpleProgressDialog(this);
-        RestClient.createJob(userId, json, authToken, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // TODO on failure what happens
-                Log.e(TAG, "Fail = " + e.getMessage());
-                Utility.removeSimpleProgressDialog();
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Utility.removeSimpleProgressDialog();
-                if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                } else {
-                    String jobId = "";
-                    try {
-                        JSONObject jObject = new JSONObject(response.body().string());
-                        Log.i(TAG, jObject.toString());
-                        Log.i(TAG, jObject.getString("job_id"));
-                        jobId = jObject.getString("job_id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                    resultIntent.putExtra("newJob", jobId);
-                    resultIntent.putExtra("newJobFlag", "yes");
-                    resultIntent.putExtra("JWT", mJWToken);
-                    //  setResult(Activity.RESULT_OK, resultIntent);
-                    startActivity(resultIntent);
-                    finish();
-                }
-            }
-        });
-    }
-
-    public void updateJob(String json, String userId, String authToken) {
-        Utility.showSimpleProgressDialog(this);
-        RestClient.updateJob(userId, mJob.getJob_id(), json, authToken, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // TODO on failure what happens
-                Log.e(TAG, "Fail = " + e.getMessage());
-                Utility.removeSimpleProgressDialog();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Utility.removeSimpleProgressDialog();
-                if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
-                } else {
-                    String jobid = "";
-                    try {
-                        JSONObject jObject = new JSONObject(response.body().string());
-                        Log.i(TAG, jObject.toString());
-                        Log.i(TAG, jObject.getString("job_id"));
-                        jobid = jObject.getString("job_id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                    resultIntent.putExtra("newJob", jobid);
-                    resultIntent.putExtra("JWT", mJWToken);
-                    resultIntent.putExtra("newJobFlag", "no");
-                    //  setResult(Activity.RESULT_OK, resultIntent);
-                    startActivity(resultIntent);
-                    finish();
-                }
-            }
-        });
-    }
 
 
     @OnClick(R.id.button_submit_job)
@@ -295,7 +223,7 @@ public class JobFormActivity extends AppCompatActivity {
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
                 //resultIntent.putExtra("newJob", jobid);
                 resultIntent.putExtra("jobPayload", jobPayload);
-                resultIntent.putExtra("newJobFlag", "yes");
+                resultIntent.putExtra("newJobFlag", true);
                 resultIntent.putExtra("JWT", mJWToken);
                 //  setResult(Activity.RESULT_OK, resultIntent);
                 startActivity(resultIntent);
@@ -304,10 +232,10 @@ public class JobFormActivity extends AppCompatActivity {
                 String jobPayload = updateJsonFromFields(mJob);
                 //updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                resultIntent.putExtra("newJob", mJob.getJob_id());
+                resultIntent.putExtra("jobId", mJob.getJob_id());
                 resultIntent.putExtra("jobPayload", jobPayload);
                 resultIntent.putExtra("JWT", mJWToken);
-                resultIntent.putExtra("newJobFlag", "no");
+                resultIntent.putExtra("newJobFlag", false);
                 //  setResult(Activity.RESULT_OK, resultIntent);
                 startActivity(resultIntent);
              //   finish();

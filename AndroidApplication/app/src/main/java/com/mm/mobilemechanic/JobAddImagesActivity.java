@@ -26,7 +26,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mm.mobilemechanic.authorization.RestClient;
+import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobAddImageAdapter;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -63,7 +67,8 @@ public class JobAddImagesActivity extends AppCompatActivity {
     int mCount = 0;
     ImageView imageView;
     JobAddImageAdapter jobAddImageAdapter;
-    private String mJob, newJobFlag;
+    private String job_id;
+    private boolean newJobFlag;
     String[] PERMISSIONS = {android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA};
 
     private void showToast(final String message) {
@@ -210,7 +215,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void sendJobImages(File imgFile) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.addJobImage(Profile.getCurrentProfile().getId(), mJob, imgFile, mJWToken, new Callback() {
+        RestClient.addJobImage(Profile.getCurrentProfile().getId(), job_id, imgFile, mJWToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -327,11 +332,10 @@ public class JobAddImagesActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
 
-        mJob = getIntent().getExtras().getString("newJob");
-        newJobFlag = getIntent().getExtras().getString("newJobFlag");
+        job_id = getIntent().getExtras().getString("jobId");
+        newJobFlag = getIntent().getExtras().getBoolean("newJobFlag", true);
         mJWToken = getIntent().getExtras().getString("JWT");
-        jobPayload= getIntent().getStringExtra("jobPayload");
-
+        jobPayload = getIntent().getStringExtra("jobPayload");
 
         initUI();
     }
@@ -427,7 +431,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void deleteJob() {
         Utility.showSimpleProgressDialog(this);
-        RestClient.deleteJob(Profile.getCurrentProfile().getId(), mJob, mJWToken, new Callback() {
+        RestClient.deleteJob(Profile.getCurrentProfile().getId(), job_id, mJWToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -462,7 +466,62 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void sendJob(String json, String userId, String authToken) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.createJob(userId, json, authToken, new Callback() {
+        if(newJobFlag) {
+            RestClient.createJob(userId, json, authToken, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // TODO on failure what happens
+                    Log.e(TAG, "Fail = " + e.getMessage());
+                    Utility.removeSimpleProgressDialog();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Utility.removeSimpleProgressDialog();
+                    if (!response.isSuccessful()) {
+                        Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    } else {
+                        String jobid = "";
+                        try {
+                            JSONObject jObject = new JSONObject(response.body().string());
+                            Log.i(TAG, jObject.toString());
+                            Log.i(TAG, jObject.getString("job_id"));
+                            job_id = jObject.getString("job_id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (mImageList.get(0) != null) {
+                            File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
+                            sendJobImages(mImgFile);
+                        } else {
+                            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            Bundle b = new Bundle();
+                            b.putString("JWT", mJWToken);
+                            resultIntent.putExtras(b);
+                            startActivity(resultIntent);
+                            finish();
+
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            updateJob(userId, json, authToken);
+        }
+    }
+
+    public void updateJob(String userId, String json, String authToken) {
+        Utility.showSimpleProgressDialog(this);
+
+        JsonParser parser = new JsonParser();
+        JsonObject obj = parser.parse(json).getAsJsonObject();
+        String jobStr = obj.get("job").toString();
+        JsonObject obj2 = parser.parse(jobStr).getAsJsonObject();
+        String jobJson = obj2.get("updated_values").toString();
+
+        Job job = new Gson().fromJson(jobJson, Job.class);
+        RestClient.updateJob(userId, job.getJob_id(), json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -481,7 +540,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         JSONObject jObject = new JSONObject(response.body().string());
                         Log.i(TAG, jObject.toString());
                         Log.i(TAG, jObject.getString("job_id"));
-                        mJob = jObject.getString("job_id");
+                        job_id = jObject.getString("job_id");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -495,12 +554,10 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         resultIntent.putExtras(b);
                         startActivity(resultIntent);
                         finish();
-
                     }
                 }
             }
         });
     }
-
 
 }
