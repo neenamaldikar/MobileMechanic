@@ -60,7 +60,6 @@ public class JobFormActivity extends AppCompatActivity {
 
     private boolean changesMade = false;
     private String mJWToken;
-    ArrayList<String> stateList = new ArrayList<String>();
     private Job mJob;
     @BindView(R.id.editText_job_summary)
     EditText mEditTextSummary;
@@ -128,11 +127,6 @@ public class JobFormActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CHOOSING_IMAGE_FROM_GALLERY:
-                    // When an Image is picked
-                    // Get the Image from data
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    ArrayList<String> imagesEncodedList = new ArrayList<String>();
-
                     LinearLayout linearLayoutImages = (LinearLayout) findViewById(R.id.ll_images_from_gallery);
 
                     if (data.getData() != null) {
@@ -218,27 +212,23 @@ public class JobFormActivity extends AppCompatActivity {
 
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);
-          //      sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
 
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                //resultIntent.putExtra("newJob", jobid);
                 resultIntent.putExtra("jobPayload", jobPayload);
                 resultIntent.putExtra("newJobFlag", true);
                 resultIntent.putExtra("JWT", mJWToken);
-                //  setResult(Activity.RESULT_OK, resultIntent);
                 startActivity(resultIntent);
-               // finish();
+
             } else {
                 String jobPayload = updateJsonFromFields(mJob);
-                //updateJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
                 resultIntent.putExtra("jobId", mJob.getJob_id());
                 resultIntent.putExtra("jobPayload", jobPayload);
                 resultIntent.putExtra("JWT", mJWToken);
                 resultIntent.putExtra("newJobFlag", false);
-                //  setResult(Activity.RESULT_OK, resultIntent);
                 startActivity(resultIntent);
-             //   finish();
+
             }
         } else {
             showToast("Missing required fields");

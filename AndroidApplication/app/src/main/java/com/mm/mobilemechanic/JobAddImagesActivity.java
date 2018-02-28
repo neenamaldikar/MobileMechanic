@@ -123,8 +123,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
             switch (requestCode) {
 
                 case CHOOSING_IMAGE_FROM_GALLERY:
-
-
                     if (data.getData() != null) {
                         Uri imageUri = data.getData();
                         File imageFile = new File(getRealPathFromURI(imageUri));
@@ -142,7 +140,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         } else {
                             //  showToast("yyyyyyyyyyyyyy");
                         }
-
                     } else {
                         if (data.getClipData() != null) {
 
@@ -182,9 +179,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
                         //  showToast("yyyyyyyyyyyyyy");
                     }
 
-
                     break;
-
             }
         }
     }
@@ -203,8 +198,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void choosePicturesFromGalleryOnClick() {
         changesMade = true;
-
-
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
@@ -269,58 +262,31 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-
         sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
-       /* if (mImageList.get(0) != null) {
-            File mImgFile = new File(getRealPathFromURI(mImageList.get(0)));
-            sendJobImages(mImgFile);
-        } else {
-            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-            Bundle b = new Bundle();
-            b.putString("JWT", mJWToken);
-            resultIntent.putExtras(b);
-            startActivity(resultIntent);
-            finish();
-
-        }*/
-
-
     }
 
     @OnClick(R.id.button_skip_job)
     public void skipJobOnClick(View view) {
-
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         Bundle b = new Bundle();
         b.putString("JWT", mJWToken);
         resultIntent.putExtras(b);
         startActivity(resultIntent);
         finish();
-
-
     }
 
 
     @OnClick(R.id.button_cancel_job)
     public void cancelJobOnClick(View view) {
-
-     /*   if (newJobFlag.equalsIgnoreCase("yes"))
-            deleteJob();
-        else {*/
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
-
-        //   }
-
-
     }
 
 
     @Override
     public void onBackPressed() {
         finish();
-
     }
 
     @Override
@@ -458,7 +424,6 @@ public class JobAddImagesActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         });

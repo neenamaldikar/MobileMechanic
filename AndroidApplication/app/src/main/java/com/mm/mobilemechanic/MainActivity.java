@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private JobRequestsAdapter adapter;
     public boolean isMechanic = false;
 
+    private String fbUserId;
+
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
             public void run() {
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Utility.showSimpleProgressDialog(MainActivity.this);
 
-        RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
+        RestClient.getUserJobs(fbUserId, jwtoken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void checkMechanic() {
         viewModel = ViewModelProviders.of(this).get(MechanicViewModel.class);
-        viewModel.init(Profile.getCurrentProfile().getId(), mJWTtoken);
+        viewModel.init(fbUserId, mJWTtoken);
         viewModel.getMechanic().observe(this, new Observer<Mechanic>() {
             @Override
             public void onChanged(@Nullable Mechanic mechanic) {
@@ -306,11 +308,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String token = FirebaseInstanceId.getInstance().getToken();
         JsonObject token_json = new JsonObject();
         token_json.addProperty("fcmtoken", token);
-        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
+        token_json.addProperty("user_id", fbUserId);  // which user the token is associated with
         JsonObject final_token_json = new JsonObject();
         final_token_json.add("tokenData", token_json);
 
-        String userId = Profile.getCurrentProfile().getId();
+        String userId = fbUserId;
         RestClient.createToken(userId, final_token_json.toString(), authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -338,54 +340,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        mJWTtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, mJWTtoken);
-
-
-
-        // creation of notifications
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        if (notificationManager != null) {
-            notificationManager.getActiveNotifications();
-        } else {
-            Log.e(TAG, "notification manager is null");
-        }
-
-        sendFirebaseToken(mJWTtoken);
-        initUI();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        getJobs();
-        checkMechanic();
-
-    }
-
     public void downloadImage(String jobId, String pictureId, final ImageView iv) {
-        RestClient.getJobImage(Profile.getCurrentProfile().getId(), mJWTtoken, jobId, pictureId, new Callback() {
+        RestClient.getJobImage(fbUserId, mJWTtoken, jobId, pictureId, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -436,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void deleteJob(String jobID, final int position) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.deleteJob(Profile.getCurrentProfile().getId(), jobID, mJWTtoken, new Callback() {
+        RestClient.deleteJob(fbUserId, jobID, mJWTtoken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -479,6 +435,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void submitJobQuote() {
         Intent intent = new Intent(getApplicationContext(), MechSubmitQuote.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        mJWTtoken = getIntent().getExtras().getString("JWT");
+        fbUserId = ((MobileMechanicApplication) getApplication()).getFbUserId();
+        Log.i(TAG, mJWTtoken);
+
+        // creation of notifications
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        if (notificationManager != null) {
+            notificationManager.getActiveNotifications();
+        } else {
+            Log.e(TAG, "notification manager is null");
+        }
+
+        sendFirebaseToken(mJWTtoken);
+        initUI();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getJobs();
+        checkMechanic();
     }
 }
 
