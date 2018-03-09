@@ -47,10 +47,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/button_submit_job"
-            android:layout_toStartOf="@+id/button_submit_job"
+            android:layout_toLeftOf="@+id/button_skip_job"
+            android:layout_toStartOf="@+id/button_skip_job"
             android:onClick="cancelJobOnClick"
             android:text="Cancel" />
+
+        <Button
+            android:id="@+id/button_skip_job"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/button_submit_job"
+            android:layout_toStartOf="@+id/button_submit_job"
+            android:onClick="skipJobOnClick"
+            android:visibility="gone"
+            android:text="Skip" />
+
 
         <Button
             android:id="@+id/button_submit_job"

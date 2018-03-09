@@ -48,7 +48,7 @@ public class UserRepository {
                         Log.d(TAG, "LoginActivity Response " + response.toString());
 
                         try {
-                            if(mUser != null) {
+                            if(mUser != null && object != null) {
                                 mGender = object.getString("gender");
                                 mUser.setGender(mGender);
                                 data.postValue(mUser);

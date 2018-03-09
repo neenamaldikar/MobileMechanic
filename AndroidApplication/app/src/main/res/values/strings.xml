@@ -18,10 +18,8 @@
     <string name="facebook_app_id">851675724996702</string>
     <string name="GOOGLE_API_KEY">AIzaSyC4Prnt1pyNLy86MmYTWL1xVbba1nqTCa0</string>
 
-    <string-array name="gender_arrays">
-        <item>Not Specified</item>
-        <item>Male</item>
-        <item>Female</item>
 
-    </string-array>
+    <string name="test_rest_client_name">Test Rest Client</string>
+
+    <string name="title_activity_job_quote">JobQuoteActivity</string>
 </resources>

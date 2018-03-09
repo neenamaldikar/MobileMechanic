@@ -132,8 +132,8 @@ public class MechEditActivity extends AppCompatActivity {
         inner.add("reviews", mJsonReviews);
 
         JsonArray mJsonZipcodes = new JsonArray();
-        mJsonZipcodes.add("76013");
-        mJsonZipcodes.add("76017");
+        mJsonZipcodes.add( mEditTextMechZipcode.getText().toString());
+
 
         inner.add("serving_zipcodes", mJsonZipcodes);
 
@@ -234,9 +234,9 @@ public class MechEditActivity extends AppCompatActivity {
     private void initUI() {
 
         mJWToken = getIntent().getExtras().getString("JWT");
-
+        String fbId = ((MobileMechanicApplication)getApplication()).getFbUserId();
         viewModel = ViewModelProviders.of(this).get(MechanicViewModel.class);
-        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken);
+        viewModel.init(fbId, mJWToken);
         viewModel.getMechanic().observe(this, new Observer<Mechanic>() {
             @Override
             public void onChanged(@Nullable Mechanic mechanic) {
@@ -248,15 +248,11 @@ public class MechEditActivity extends AppCompatActivity {
                     mEditTextMechRate.setText(mechanic.getmRate());
                     mEditTextMechState.setText(mechanic.getState());
                     mEditTextMechCity.setText(mechanic.getCity());
-                    //mRatingMechRating.setRating(Integer.parseInt(mechanic.getmRating()));
-                  //  mRatingMechRating.setRating(3);
-
+                    // mRatingMechRating.setRating(Integer.parseInt(mechanic.getmRating()));
+                    // mRatingMechRating.setRating(3);
                 }
-
             }
         });
-
-
     }
 
     public void addListenerToEditTexts() {

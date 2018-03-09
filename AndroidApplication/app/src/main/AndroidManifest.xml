@@ -12,13 +12,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".MobileMechanicApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo_mm"
         android:label="Mobile Mechanic"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -29,39 +29,37 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-
-        <activity android:name="com.mm.mobilemechanic.LoginActivity">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
-            android:name="com.mm.mobilemechanic.JobAddImagesActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_dubmit_image" />
-
-
+            android:name=".JobAddImagesActivity"
+            android:label="@string/title_dubmit_image"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.mm.mobilemechanic.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.mm.mobilemechanic.UserProfileActivity"
+            android:name=".UserProfileActivity"
             android:label="@string/title_profile_edit" />
         <activity
-            android:name="com.mm.mobilemechanic.MechEditActivity"
+            android:name=".MechEditActivity"
             android:label="@string/title_profile_edit" />
-
         <activity
-            android:name="com.mm.mobilemechanic.JobFormActivity"
+            android:name=".JobFormActivity"
             android:label="New Job" />
+        <activity
+            android:name=".authorization.RestClientActivity"
+            android:label="@string/test_rest_client_name" />
 
         <activity
-            android:name="com.mm.mobilemechanic.JobAddImageActivity"
-            android:label="Add Image" />
+            android:name=".MechSubmitQuote"
+            android:label="Submit Quote" />
 
         <!-- [START firebase_service] -->
         <service android:name=".MyFirebaseInstanceIdService">
@@ -79,11 +77,9 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/GOOGLE_API_KEY" />
-
 
     </application>
 

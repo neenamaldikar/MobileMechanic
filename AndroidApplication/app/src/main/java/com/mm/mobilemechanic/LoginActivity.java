@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 mFbToken = loginResult.getAccessToken();
                 mProgress.show();
+                ((MobileMechanicApplication) getApplication()).setFbUserId(loginResult.getAccessToken().getUserId());
                 RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
             }
 

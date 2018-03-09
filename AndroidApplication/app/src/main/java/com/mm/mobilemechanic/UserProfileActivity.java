@@ -49,6 +49,7 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.editText_profile_phone_number) EditText mEditTextPhoneNumber;
 
     private String mJWToken;
+    private String fbUserId;
 
     public void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -173,9 +174,10 @@ public class UserProfileActivity extends AppCompatActivity {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mJWToken = getIntent().getExtras().getString("JWT");
+        fbUserId = ((MobileMechanicApplication)getApplication()).getFbUserId();
 
         viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
-        viewModel.init(Profile.getCurrentProfile().getId(), mJWToken);
+        viewModel.init(fbUserId, mJWToken);
         viewModel.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {

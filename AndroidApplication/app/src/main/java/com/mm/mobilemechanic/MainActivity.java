@@ -1,11 +1,17 @@
 package com.mm.mobilemechanic;
 
 import android.app.Activity;
+
+import android.app.NotificationManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,6 +40,11 @@ import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
 
+import com.mm.mobilemechanic.job.JobStatus;
+import com.mm.mobilemechanic.user.Mechanic;
+
+import com.mm.mobilemechanic.user.MechanicViewModel;
+
 import com.mm.mobilemechanic.user.User;
 import com.mm.mobilemechanic.util.Utility;
 
@@ -57,12 +68,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String TAG = "MainScreen";
     private User mCustomer;
     private String mJWTtoken;
+    private MechanicViewModel viewModel;
 
     private static final int FROM_USER_PROFILE_SCREEN = 123;
     private static final int FROM_NEW_JOB_SCREEN = 124;
 
     private List<Job> jobLists;
     private JobRequestsAdapter adapter;
+    public boolean isMechanic = false;
+
+    private String fbUserId;
 
     private void showToast(final String message) {
         runOnUiThread(new Thread(new Runnable() {
@@ -80,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Utility.showSimpleProgressDialog(MainActivity.this);
 
-        RestClient.getUserJobs(Profile.getCurrentProfile().getId(), jwtoken, new Callback() {
+        RestClient.getUserJobs(fbUserId, jwtoken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -130,6 +145,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new JobRequestsAdapter(this, jobLists);
         rv.setAdapter(adapter);
+
+    }
+
+    private void checkMechanic() {
+        viewModel = ViewModelProviders.of(this).get(MechanicViewModel.class);
+        viewModel.init(fbUserId, mJWTtoken);
+        viewModel.getMechanic().observe(this, new Observer<Mechanic>() {
+            @Override
+            public void onChanged(@Nullable Mechanic mechanic) {
+
+                if (mechanic != null) {
+                    isMechanic = true;
+
+                } else {
+                    isMechanic = false;
+                }
+            }
+        });
     }
 
     @Override
@@ -185,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 intent = new Intent(this, UserProfileActivity.class);
-                 b = new Bundle();
+                b = new Bundle();
                 b.putString("JWT", mJWTtoken);
                 intent.putExtras(b);
                 startActivityForResult(intent, FROM_USER_PROFILE_SCREEN);  // starting the intent with special id that will be called back
@@ -229,8 +262,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch(requestCode) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
 
                 case (FROM_USER_PROFILE_SCREEN):
                     System.out.println("came from user profile activity");
@@ -253,13 +286,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     public void showPopup(View view) {
         PopupMenu popup = new PopupMenu(this, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         popup.show();
     }
+
     public void editJobOnClick(View view, Job job) {
         Intent intent;
         intent = new Intent(this, JobFormActivity.class);
@@ -275,11 +308,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String token = FirebaseInstanceId.getInstance().getToken();
         JsonObject token_json = new JsonObject();
         token_json.addProperty("fcmtoken", token);
-        token_json.addProperty("user_id", Profile.getCurrentProfile().getId());  // which user the token is associated with
+        token_json.addProperty("user_id", fbUserId);  // which user the token is associated with
         JsonObject final_token_json = new JsonObject();
         final_token_json.add("tokenData", token_json);
 
-        String userId = Profile.getCurrentProfile().getId();
+        String userId = fbUserId;
         RestClient.createToken(userId, final_token_json.toString(), authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -307,44 +340,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        mJWTtoken = getIntent().getExtras().getString("JWT");
-        Log.i(TAG, mJWTtoken);
-
-
-        sendFirebaseToken(mJWTtoken);
-
-        initUI();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        getJobs();
-    }
-
     public void downloadImage(String jobId, String pictureId, final ImageView iv) {
-        RestClient.getJobImage(Profile.getCurrentProfile().getId(), mJWTtoken, jobId, pictureId, new Callback() {
+        RestClient.getJobImage(fbUserId, mJWTtoken, jobId, pictureId, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -395,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void deleteJob(String jobID, final int position) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.deleteJob(Profile.getCurrentProfile().getId(), jobID, mJWTtoken, new Callback() {
+        RestClient.deleteJob(fbUserId, jobID, mJWTtoken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -433,6 +430,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+    }
+
+    public void submitJobQuote() {
+        Intent intent = new Intent(getApplicationContext(), MechSubmitQuote.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        mJWTtoken = getIntent().getExtras().getString("JWT");
+        fbUserId = ((MobileMechanicApplication) getApplication()).getFbUserId();
+        Log.i(TAG, mJWTtoken);
+
+        // creation of notifications
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        if (notificationManager != null) {
+            notificationManager.getActiveNotifications();
+        } else {
+            Log.e(TAG, "notification manager is null");
+        }
+
+        sendFirebaseToken(mJWTtoken);
+        initUI();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getJobs();
+        checkMechanic();
     }
 }
 

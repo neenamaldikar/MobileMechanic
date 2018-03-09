@@ -17,11 +17,13 @@ public class Job implements Serializable {
     @SerializedName("make")
     private String make;
 
+
+
     @SerializedName("model")
     private String model;
 
     @SerializedName("year")
-    private int year;
+    private String year;
 
     @SerializedName("address_line")
     private String address;
@@ -111,10 +113,10 @@ public class Job implements Serializable {
         this.model = model;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -139,12 +141,13 @@ public class Job implements Serializable {
         this.address = address;
     }
 
-    public void setZipCode(int zipCode) {
-        this.zipCode = zipCode;
-    }
     public int getZipCode() {
         return zipCode;
     }
+    public void setZipCode(int zipCode) {
+        this.zipCode = zipCode;
+    }
+
 
     public String[] getImages() {
         return images;
@@ -159,7 +162,6 @@ public class Job implements Serializable {
     public void setJobOptions(JobOptions jobOptions) {
         this.jobOptions = jobOptions;
     }
-
 
     public class JobOptions implements Serializable {
 

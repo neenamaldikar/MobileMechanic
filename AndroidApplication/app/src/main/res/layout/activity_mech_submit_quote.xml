@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_create_job"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Labour Cost:"
+            android:textSize="@dimen/text_body" />
+
+        <include layout="@layout/fragment_quote_labour_cost" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Part Cost:"
+            android:textSize="@dimen/text_body" />
+
+        <include layout="@layout/fragment_quote_labour_cost" />
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Onsite Service Cost:"
+            android:textSize="@dimen/text_body" />
+
+        <EditText
+            android:id="@+id/editText_quote_service_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_job_summary"
+            android:layout_toEndOf="@+id/textView_quotes"
+            android:layout_weight="1"
+            android:hint="Amount"
+
+            android:textSize="@dimen/text_small_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Part Cost:"
+            android:textSize="@dimen/text_body" />
+
+        <include layout="@layout/fragment_quote_labour_cost" />
+
+
+        <EditText
+            android:id="@+id/editText_quote_total_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Total Cost"
+            android:textSize="@dimen/text_small_body"/>
+
+        <EditText
+            android:id="@+id/editText_quote_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Comments"
+            android:textSize="@dimen/text_small_body"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Submit"
+            android:layout_gravity="right"
+            android:id="@+id/button_quote_submit" />
+
+
+
+    </LinearLayout>
+
+
+</ScrollView>
+
+

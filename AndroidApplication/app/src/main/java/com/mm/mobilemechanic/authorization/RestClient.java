@@ -179,8 +179,6 @@ public class RestClient {
     public static void getJobImage(String userId, String authToken, String jobId, String pictureId , Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB + "/"+jobId + URI_PICTURE + "?picture_id=" +pictureId;
         RestClient.GETMULTIPART(url, authToken, responseCallback);
-
-
     }
 
     public static void updateJob(String userId,String jobId, String json, String authToken, Callback responseCallback) {
