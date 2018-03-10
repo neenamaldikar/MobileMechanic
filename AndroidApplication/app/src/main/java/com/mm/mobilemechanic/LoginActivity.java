@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO
-                Log.e(TAG +"1", e.getMessage());
+                Log.e(TAG +"OnFail", "" + e.getMessage());
 
                 onFailureJWT("Error retrieving user information, please try again later");
             }
@@ -161,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
         mFbToken =  AccessToken.getCurrentAccessToken();
         if (mFbToken != null) {  // get the JWT directly and open the next screen
             mProgress.show();
+            ((MobileMechanicApplication) getApplication()).setFbUserId(mFbToken.getUserId());
             RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
         }
 
