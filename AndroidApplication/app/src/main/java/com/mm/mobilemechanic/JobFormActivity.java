@@ -208,7 +208,7 @@ public class JobFormActivity extends AppCompatActivity {
             mJob.setAddress(mEditTextJobAddress.getText().toString());
             mJob.setCity(mEditTextJobCity.getText().toString());
             mJob.setState(mEditTextJobState.getText().toString());
-            mJob.setZipCode(Integer.parseInt(mEditTextJobZipCode.getText().toString()));
+            mJob.setZipCode(mEditTextJobZipCode.getText().toString());
 
             if (mJob.getJob_id() == null) {
                 String jobPayload = createJsonFromFields(mJob);

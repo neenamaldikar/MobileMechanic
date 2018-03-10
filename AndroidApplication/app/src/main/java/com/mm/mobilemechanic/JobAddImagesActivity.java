@@ -208,7 +208,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void sendJobImages(File imgFile) {
         Utility.showSimpleProgressDialog(this);
-        RestClient.addJobImage(Profile.getCurrentProfile().getId(), job_id, imgFile, mJWToken, new Callback() {
+        RestClient.addJobImage(((MobileMechanicApplication) getApplication()).getFbUserId(), job_id, imgFile, mJWToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -262,7 +262,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_submit_job)
     public void submitJobOnClick(View view) {
-        sendJob(jobPayload, Profile.getCurrentProfile().getId(), mJWToken);
+        sendJob(jobPayload, ((MobileMechanicApplication) getApplication()).getFbUserId(), mJWToken);
     }
 
     @OnClick(R.id.button_skip_job)
@@ -397,7 +397,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
 
     public void deleteJob() {
         Utility.showSimpleProgressDialog(this);
-        RestClient.deleteJob(Profile.getCurrentProfile().getId(), job_id, mJWToken, new Callback() {
+        RestClient.deleteJob(((MobileMechanicApplication) getApplication()).getFbUserId(), job_id, mJWToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -409,7 +409,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Utility.removeSimpleProgressDialog();
                 if (!response.isSuccessful()) {
-                    Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                    Log.e(TAG, "Code 2= " + response.code() + " " + response.message());
                     showToast("Sorry, Please try again");
 
                 } else {
@@ -444,7 +444,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
                 public void onResponse(Call call, Response response) throws IOException {
                     Utility.removeSimpleProgressDialog();
                     if (!response.isSuccessful()) {
-                        Log.e(TAG, "Code = " + response.code() + " " + response.message());
+                        Log.e(TAG, "Code 1= " + response.code() + " " + response.message());
                     } else {
                         String jobid = "";
                         try {

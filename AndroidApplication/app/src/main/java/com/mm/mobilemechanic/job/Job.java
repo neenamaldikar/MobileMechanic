@@ -35,7 +35,7 @@ public class Job implements Serializable {
     private String state;
 
     @SerializedName("zipcode")
-    private int zipCode;
+    private String zipCode;
 
     @SerializedName("job_id")
     private String job_id;
@@ -141,10 +141,10 @@ public class Job implements Serializable {
         this.address = address;
     }
 
-    public int getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
-    public void setZipCode(int zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
