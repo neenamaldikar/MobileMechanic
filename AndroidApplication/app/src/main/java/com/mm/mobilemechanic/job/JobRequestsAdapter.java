@@ -60,7 +60,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         TextView text1 = (TextView) dialog.findViewById(R.id.textView_dialog_job_description);
         text1.setText("Description: \n" + job.getDescription());
         TextView text2 = (TextView) dialog.findViewById(R.id.textView_dialog_onSiteDiagnostic);
-        text2.setText("On Site Diagnostic = " + job.getJobOptions().isOnSiteDiagnostic());
+        text2.setText("On-site diagnostic = " + job.getJobOptions().isOnSiteDiagnostic());
         TextView text3 = (TextView) dialog.findViewById(R.id.textView_dialog_carInWorkingCondition);
         text3.setText("Car in working condition = " + job.getJobOptions().isCarInWorkingCondition());
         TextView text4 = (TextView) dialog.findViewById(R.id.textView_dialog_repairCanBeDoneOnSite);
@@ -95,7 +95,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     public void onBindViewHolder(JobCardsViewHolder holder, final int position) {
         final Job job = mJobsList.get(position);
         holder.jobSummary.setText(job.getSummary());
-        holder.numberOfQuotes.setText(5 + "");  // TODO get actual number of quotes
+        holder.numberOfQuotes.setText(0 + "");  // TODO get actual number of quotes
         holder.currentStatus.setText(job.getStatus().toString());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {  // TODO open summary and job req info
@@ -114,8 +114,6 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
                 showPopup(v, job, position);
             }
         });
-
-        //5a58fc37b4c7370004114f63
     }
 
     @Override
