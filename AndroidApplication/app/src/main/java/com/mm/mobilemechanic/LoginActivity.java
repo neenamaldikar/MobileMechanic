@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         if (mFbToken != null) {  // get the JWT directly and open the next screen
             mProgress.show();
             ((MobileMechanicApplication) getApplication()).setFbUserId(mFbToken.getUserId());
-            RestClient.getUserJWT(mFbToken, getUserTokenCallback);  //TODO uncomment when python service is running
+            RestClient.getUserJWT(mFbToken, getUserTokenCallback);
         }
 
 

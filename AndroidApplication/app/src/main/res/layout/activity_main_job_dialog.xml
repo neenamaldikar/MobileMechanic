@@ -14,13 +14,14 @@
     <TextView
         android:id="@+id/textView_dialog_job_description"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"/>
 
     <!-- just draw a red line -->
     <View
         android:layout_width="wrap_content"
         android:layout_height="2dip"
-        android:background="#000000" />
+        android:background="#505050" />
 
     <TextView
         android:id="@+id/textView_dialog_onSiteDiagnostic"

@@ -40,8 +40,6 @@ class JobRequestDAO:
             data = list(cursor)
             if not data:
                 logging.debug("Job list is empty")
-            else:
-                logging.debug('Cursor data is', data)
 
             output_list = []
             for i in data:
