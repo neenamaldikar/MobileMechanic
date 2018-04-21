@@ -151,7 +151,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         if (mActivity instanceof MainActivity) {
             MenuItem menuItem;
-            if (((MainActivity) mActivity).isMechanic == true && job.getStatus().equals("Submitted")) {
+            if (((MainActivity) mActivity).isMechanic && job.getStatus() == JobStatus.SUBMITTED) {
                 menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(true);
             } else {
                 menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(false);
