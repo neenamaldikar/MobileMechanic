@@ -1,9 +1,8 @@
-package com.mm.mobilemechanic.user;
+package com.mm.mobilemechanic.models;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Bundle;
-import android.support.v7.util.SortedList;
 import android.util.Log;
 
 import com.facebook.AccessToken;

@@ -1,4 +1,4 @@
-package com.mm.mobilemechanic.user;
+package com.mm.mobilemechanic.models;
 
 /**
  * Created by ndw6152 on 4/15/2017.

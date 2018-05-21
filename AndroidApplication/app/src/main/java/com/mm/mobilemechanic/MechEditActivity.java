@@ -11,42 +11,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.Profile;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mm.mobilemechanic.user.Mechanic;
-import com.mm.mobilemechanic.user.MechanicViewModel;
-import com.mm.mobilemechanic.user.User;
-import com.mm.mobilemechanic.user.UserProfileViewModel;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.mm.mobilemechanic.models.Mechanic;
+import com.mm.mobilemechanic.models.MechanicViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

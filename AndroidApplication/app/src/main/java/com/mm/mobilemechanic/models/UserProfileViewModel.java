@@ -1,4 +1,4 @@
-package com.mm.mobilemechanic.user;
+package com.mm.mobilemechanic.models;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;

@@ -58,7 +58,7 @@
             android:label="@string/test_rest_client_name" />
 
         <activity
-            android:name=".MechSubmitQuote"
+            android:name=".MechSubmitQuoteActivity"
             android:label="Submit Quote" />
 
         <!-- [START firebase_service] -->

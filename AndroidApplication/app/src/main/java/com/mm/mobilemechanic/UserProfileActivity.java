@@ -18,10 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.Profile;
 import com.google.gson.JsonObject;
-import com.mm.mobilemechanic.user.User;
-import com.mm.mobilemechanic.user.UserProfileViewModel;
+import com.mm.mobilemechanic.models.User;
+import com.mm.mobilemechanic.models.UserProfileViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

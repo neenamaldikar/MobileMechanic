@@ -186,17 +186,15 @@ public class RestClient {
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 
-
+    public static void deleteJob(String userId,String jobId, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB+"?job_id="+jobId;
+        RestClient.DELETE(url, authToken, responseCallback);
+    }
 
     public static void createToken(String userId, String json, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_TOKEN;
         Log.d("mainActivityLog", "Create token function is called ... " + url);
         RestClient.POST(url, authToken, json, responseCallback);
-    }
-
-    public static void deleteJob(String userId,String jobId, String authToken, Callback responseCallback) {
-        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB+"?job_id="+jobId;
-        RestClient.DELETE(url, authToken, responseCallback);
     }
 
 }

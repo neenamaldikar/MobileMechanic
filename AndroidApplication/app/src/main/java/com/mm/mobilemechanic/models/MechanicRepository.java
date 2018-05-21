@@ -1,13 +1,9 @@
-package com.mm.mobilemechanic.user;
+package com.mm.mobilemechanic.models;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.mm.mobilemechanic.authorization.RestClient;
 
 import org.json.JSONException;
