@@ -61,6 +61,8 @@ dependencies {
     compile 'com.google.dagger:dagger-android:2.12'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.12'
     compile 'com.tuanchauict.intentchooser:intentchooser:0.1.+'
+
+    implementation 'io.github.yavski:fab-speed-dial:1.0.6'
 }
 
 

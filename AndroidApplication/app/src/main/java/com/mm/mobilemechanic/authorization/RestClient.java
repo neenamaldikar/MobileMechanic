@@ -25,8 +25,8 @@ public class RestClient {
     private static OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
-    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
-//    private static String URL_BASE = "http://192.168.56.1:5000";
+    //private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
+    private static String URL_BASE = "http://192.168.86.49:5000";
     private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";

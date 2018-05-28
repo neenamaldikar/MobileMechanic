@@ -56,10 +56,9 @@
         <activity
             android:name=".authorization.RestClientActivity"
             android:label="@string/test_rest_client_name" />
-
         <activity
             android:name=".MechSubmitQuoteActivity"
-            android:label="Submit Quote" />
+            android:label="@string/title_activity_job_quote" />
 
         <!-- [START firebase_service] -->
         <service android:name=".MyFirebaseInstanceIdService">

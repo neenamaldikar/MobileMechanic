@@ -61,7 +61,6 @@ public class Job implements Serializable {
         this.description = description;
         this.jobOptions = jobOptions;
         this.status = status;
-
     }
     public Job(String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
 

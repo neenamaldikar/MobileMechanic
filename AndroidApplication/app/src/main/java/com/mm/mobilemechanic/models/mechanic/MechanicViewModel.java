@@ -1,7 +1,9 @@
-package com.mm.mobilemechanic.models;
+package com.mm.mobilemechanic.models.mechanic;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+
+import com.mm.mobilemechanic.models.UserRepository;
 
 import javax.inject.Inject;
 

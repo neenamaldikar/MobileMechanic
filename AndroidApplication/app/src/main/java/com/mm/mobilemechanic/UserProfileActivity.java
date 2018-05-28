@@ -22,6 +22,8 @@ import com.google.gson.JsonObject;
 import com.mm.mobilemechanic.models.User;
 import com.mm.mobilemechanic.models.UserProfileViewModel;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -169,7 +171,7 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
 
-        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        Objects.requireNonNull(this.getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mJWToken = getIntent().getExtras().getString("JWT");

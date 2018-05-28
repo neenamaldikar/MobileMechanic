@@ -1,4 +1,4 @@
-package com.mm.mobilemechanic.models;
+package com.mm.mobilemechanic.models.mechanic;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

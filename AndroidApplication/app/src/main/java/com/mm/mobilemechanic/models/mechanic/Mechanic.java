@@ -1,4 +1,6 @@
-package com.mm.mobilemechanic.models;
+package com.mm.mobilemechanic.models.mechanic;
+
+import com.mm.mobilemechanic.models.User;
 
 /**
  * Created by ndw6152 on 4/15/2017.

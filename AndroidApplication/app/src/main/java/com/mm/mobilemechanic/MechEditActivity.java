@@ -21,8 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mm.mobilemechanic.models.Mechanic;
-import com.mm.mobilemechanic.models.MechanicViewModel;
+import com.mm.mobilemechanic.models.mechanic.Mechanic;
+import com.mm.mobilemechanic.models.mechanic.MechanicViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

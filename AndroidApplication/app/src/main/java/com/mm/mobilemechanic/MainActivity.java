@@ -35,8 +35,8 @@ import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
-import com.mm.mobilemechanic.models.Mechanic;
-import com.mm.mobilemechanic.models.MechanicViewModel;
+import com.mm.mobilemechanic.models.mechanic.Mechanic;
+import com.mm.mobilemechanic.models.mechanic.MechanicViewModel;
 import com.mm.mobilemechanic.models.User;
 import com.mm.mobilemechanic.util.Utility;
 
