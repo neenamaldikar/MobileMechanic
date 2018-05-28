@@ -39,7 +39,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     public void showJobInformation(Activity activity, Job job) {
         // custom dialog
         final Dialog dialog = new Dialog(activity);
-        dialog.setContentView(R.layout.activity_main_job_dialog);
+        dialog.setContentView(R.layout.dialog_display_job);
         dialog.setTitle("Job Information");
 
         // set the custom dialog components - text, image and button

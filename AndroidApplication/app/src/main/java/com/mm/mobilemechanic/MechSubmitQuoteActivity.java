@@ -93,7 +93,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
     public void showAddServiceChargeDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.activity_jobquote_onsitecharge_dialog, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_jobquote_onsitecharge, null);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(false);
         final EditText editText_onSiteCost = dialogView.findViewById(R.id.editText_onSiteCost);
@@ -125,7 +125,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
     public void showAddItemDialog(final ArrayList<ListViewItem> array, final ItemCostAdapter adapter) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.activity_jobquote_listview_item_dialog, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_jobquote_listview_item, null);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(false);
         final EditText editTextName = dialogView.findViewById(R.id.editText_item_name);
@@ -157,7 +157,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
     public void showAddCommentsDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.activity_jobquote_comments_dialog, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_jobquote_comments, null);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(false);
         final EditText editText = dialogView.findViewById(R.id.editText_comments);
