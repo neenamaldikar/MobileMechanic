@@ -44,7 +44,7 @@ public class ItemCostAdapter extends BaseAdapter {
         return i;
     }
 
-    public void removeItem(int position) {
+    private void removeItem(int position) {
         Log.i("removing", "" + position);
         itemList.remove(position);
         this.notifyDataSetChanged();
@@ -57,20 +57,18 @@ public class ItemCostAdapter extends BaseAdapter {
                     inflate(R.layout.activity_jobquote_item_cost, viewGroup, false);
         }
 
-        TextView name = view.findViewById(R.id.textView_item_name);
-        TextView cost = view.findViewById(R.id.textView_item_cost);
+        TextView textView_name = view.findViewById(R.id.textView_item_name);
+        TextView textView_cost = view.findViewById(R.id.textView_item_cost);
         Button deleteButton = view.findViewById(R.id.button_item_remove);
 
-        name.setText(itemList.get(i).itemName);
+        textView_name.setText(itemList.get(i).itemName);
         double value = itemList.get(i).itemCost;
-        cost.setText("$" + value + "");
+        textView_cost.setText("$" + value + "");
 
-        final String str = name.getText() + "";
         final int position = i;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
                 removeItem(position);
             }
         });

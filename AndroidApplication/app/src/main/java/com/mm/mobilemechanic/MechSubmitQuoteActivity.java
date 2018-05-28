@@ -27,6 +27,8 @@ import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 
 public class MechSubmitQuoteActivity extends AppCompatActivity {
 
+    private String TAG = "SubmitQuote";
+
     private final ArrayList<ListViewItem> laborCostArray = new ArrayList<>();
     private final ArrayList<ListViewItem> partsCostArray = new ArrayList<>();
     private double onSiteServiceCharge = 0.0;
@@ -58,6 +60,10 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         return false;
     }
 
+    public void submitQuote() {
+
+    }
+
     public JobQuote createJobQuote() {
         return new JobQuote(laborCostArray, partsCostArray, onSiteServiceCharge, comments);
     }
@@ -76,7 +82,10 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         {
             JobQuote quote = createJobQuote();
             String str = toJson(quote);
-            Log.i("Save quote", str);
+            Log.i(TAG, str);
+
+            submitQuote();
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -94,7 +103,12 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         dialogBuilder.setMessage("Enter on-site service charge:");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                onSiteServiceCharge = Double.parseDouble(editText_onSiteCost.getText().toString());
+                Double value = 0.0;
+                try {
+                    value = Double.parseDouble(editText_onSiteCost.getText().toString());
+                }
+                catch (NullPointerException ignored) {}
+                onSiteServiceCharge = value;
                 String charge = "$" + editText_onSiteCost.getText().toString();
                 textView_onSiteCost.setText(charge);
             }
@@ -121,7 +135,13 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         dialogBuilder.setMessage("Enter on-site service charge:");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                array.add(new ListViewItem(editTextName.getText().toString(), Double.parseDouble(editTextCost.getText().toString())));
+                Double value = 0.0;
+                try {
+                    value = Double.parseDouble(editTextCost.getText().toString());
+                }
+                catch (NullPointerException ignored) {}
+
+                array.add(new ListViewItem(editTextName.getText().toString(), value));
                 adapter.notifyDataSetChanged();
             }
         });
@@ -193,11 +213,9 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
 
                     case R.id.action_add_labor_cost:
                         showAddItemDialog(laborCostArray, laborCostAdapter);
-
                         break;
 
                     case R.id.action_add_parts_cost:
-                        //partsCostArray.add(new ListViewItem("Parts" + count, count++));
                         showAddItemDialog(partsCostArray, partsCostAdapter);
                         break;
 
@@ -219,7 +237,6 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         Objects.requireNonNull(this.getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        laborCostArray.add(new ListViewItem("hello", 20));
         initQuoteListViews();
         initFabActions();
     }
