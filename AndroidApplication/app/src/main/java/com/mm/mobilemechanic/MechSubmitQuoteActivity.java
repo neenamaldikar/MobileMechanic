@@ -105,12 +105,15 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Double value = 0.0;
                 try {
-                    value = Double.parseDouble(editText_onSiteCost.getText().toString());
+                    if(!editText_onSiteCost.getText().toString().equals("")) {
+                        value = Double.parseDouble(editText_onSiteCost.getText().toString());
+                        onSiteServiceCharge = value;
+                        String charge = "$" + editText_onSiteCost.getText().toString();
+                        textView_onSiteCost.setText(charge);
+                    }
                 }
                 catch (NullPointerException ignored) {}
-                onSiteServiceCharge = value;
-                String charge = "$" + editText_onSiteCost.getText().toString();
-                textView_onSiteCost.setText(charge);
+
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -132,17 +135,20 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         final EditText editTextCost = dialogView.findViewById(R.id.editText_item_cost);
 
 
-        dialogBuilder.setMessage("Enter on-site service charge:");
+        dialogBuilder.setMessage("Enter item charge:");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Double value = 0.0;
                 try {
-                    value = Double.parseDouble(editTextCost.getText().toString());
+                    if(!editTextCost.getText().toString().equals("")) {
+                        value = Double.parseDouble(editTextCost.getText().toString());
+                        array.add(new ListViewItem(editTextName.getText().toString(), value));
+                        adapter.notifyDataSetChanged();
+                    }
                 }
                 catch (NullPointerException ignored) {}
 
-                array.add(new ListViewItem(editTextName.getText().toString(), value));
-                adapter.notifyDataSetChanged();
+
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
-            android:background="#fc999d" />
+            android:background="#b2dfdb" />
 
 
         <TextView
@@ -52,7 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
-            android:background="#a4eda3" />
+            android:background="#b2dfdb" />
+
 
         <LinearLayout
             android:id="@+id/ll_on_site_charge"
