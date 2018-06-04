@@ -6,6 +6,8 @@ from flask_pymongo import PyMongo
 from waitress import serve
 # to avoid circular dependencies in PyMongo, JWT and flask_restful
 from flask_jwt import JWT
+
+from api.api_models.quotes import QuotesAPI
 from extensions import mongo, api
 from configuration import LOGGING_JSON
 from api.api_models.users import UserAPI
@@ -24,11 +26,13 @@ def initialize_app():
     jwt = JWT(app, authenticate, identity)
     api_base_string = '/mobilemechanic/api/v1.0/'
     api.add_resource(UserAPI, api_base_string + 'users/<int:user_id>')
-    api.add_resource(JobAPI, api_base_string + 'users/<int:user_id>/jobs')
-    api.add_resource(ImageUploadAPI,
-                     api_base_string + 'users/<int:user_id>/jobs/<job_id>/picture')
-    api.add_resource(MechanicAPI, api_base_string + 'users/<int:user_id>/mechanic')
     api.add_resource(TokenAPI, api_base_string + 'users/<int:user_id>/token')
+    api.add_resource(MechanicAPI, api_base_string + 'users/<int:user_id>/mechanic')
+    api.add_resource(JobAPI, api_base_string + 'users/<int:user_id>/jobs')
+    api.add_resource(ImageUploadAPI,api_base_string +
+                     'users/<int:user_id>/jobs/<int:job_id>/picture')
+    api.add_resource(QuotesAPI, api_base_string +
+                     'users/<int:user_id>/jobs/<int:job_id>/quotes/')
     api.init_app(app)
     return app
 
