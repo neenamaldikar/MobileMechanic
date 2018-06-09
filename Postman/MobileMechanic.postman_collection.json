@@ -1,0 +1,699 @@
+{
+	"info": {
+		"name": "MobileMechanic",
+		"_postman_id": "d357be7d-9ed1-3c46-4c92-092a7d1780dc",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "JWT AUTH TOKEN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"auth_token\", jsonData.access_token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"EAAMGmDUNYF4BAMkDX6Ave434ZBPUpcJQJy4GQxFGBHfRjnWgR66qrnXoj3uGnMfdShff2QmKUhBEggpWHKCcNsZCn7ZAw03BHj4lyFwrjBeQybyVTCMd1i3LRrQwihkpZC6zTmIPRquZBkHEZBuYa9WrkKNwfBnZC2CFePehPNEGC7oGaFv9hkg8gWWwGXwlKHPMBZCi27zBnvlsuBXuRhZChYhHhso8hGjVGPUgZBSGEkFAZDZD\",\n\t\"password\": \"none\"\n}"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/auth",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER GET",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MECHANIC GET",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/mechanic",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"mechanic"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MECHANIC PUT",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"updated_values\": {\n\t\t\"address_line\": \"881 NE Caden Ave\",\n\t\t\"city\": \"Hillsboro\",\n\t\t\"state\": \"OR\",\n\t\t\"zipcode\": \"97124\",\n\t\t\"phone_number\": \"5034567812\",\n\t\t\"rate\": \"60\",\n\t\t\"rating\": \"8.45\",\n\t\t\"reviews\": [\"Great mechanic\", \"Okayish mechanic\", \"Gets the job done!\"],\n\t\t\"serving_zipcodes\": [\"97126\", \"97125\", \"97124\"]\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/mechanic",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"mechanic"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER PUT",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"updated_values\": {\n\t\t\"address_line\": \"South St., Great Apts.\",\n\t\t\"city\": \"New York\",\n\t\t\"state\": \"New York\",\n\t\t\"zipcode\": \"12345\",\n\t\t\"phone_number\": \"1234567890\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JOB GET",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"job_id\", jsonData[0].job_id);",
+							"var job_id_var = postman.getEnvironmentVariable(\"job_id\");",
+							"console.log(\"Data is \" + job_id_var);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JOB GET SINGLE",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs?job_id={{job_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "{{job_id}}",
+							"equals": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JOB POST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eacdfb0d-abd6-4a65-a9a4-e3f8efd315b8",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"job_id\", jsonData.job_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"job\": {\n    \"make\": \"TEST\",\n    \"model\": \"TEST\",\n    \"year\": \"TEST\",\n    \"options\": {\"onsite_diagnostic\": true,\n          \"working\": true,\n          \"onsite_repair\": true,\n          \"pickup_dropoff\": false},\n    \"summary\": \"Car fell into a ditch\",\n    \"description\": \"Car won't start as it fell into a ditch\",\n    \"status\": \"submitted\",\n    \"address_line\": \"888 NE Caden Ave\",\n    \"city\": \"Hillsboro\",\n    \"state\": \"OR\",\n    \"zipcode\": \"97124\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "JOB PUT",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"job\": {\r\n\t\t\"updated_values\": {\r\n\t\t\t\"model\": \"Reventon\"\r\n\t\t}\r\n\t }\r\n}"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs?job_id={{job_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "{{job_id}}",
+							"equals": true
+						}
+					]
+				},
+				"description": "Job put request"
+			},
+			"response": []
+		},
+		{
+			"name": "JOB DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs?job_id={{job_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "{{job_id}}",
+							"equals": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IMAGE POST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"image_id\", jsonData.results.images[0]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imagefile",
+							"type": "file",
+							"value": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs/{{job_id}}/picture",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IMAGE GET",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{user_id}}/jobs/{{job_id}}/picture?picture_id={{image_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"picture"
+					],
+					"query": [
+						{
+							"key": "picture_id",
+							"value": "{{image_id}}",
+							"equals": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "QUOTES GET",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{customer_user_id}}/jobs/{{job_id}}/quotes",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{customer_user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"quotes"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "QUOTES POST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4cbd5be4-bb9c-467f-9b7c-855b6f01b94d",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"quote_id\", jsonData.quote_id);",
+							"postman.setEnvironmentVariable(\"customer_user_id\", jsonData.customer_user_id);",
+							"postman.setEnvironmentVariable(\"mechanic_user_id\",jsonData.mechanic_user_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{\r\n\t\"quote\": {\r\n\t\t\"labor_cost\": {\r\n\t\t\t\"Breaks\":100, \r\n\t\t\t\"oil change\":40\r\n\t\t}, \r\n\t\t\"part_cost\": {\r\n\t\t\t\"break pads\":100, \r\n\t\t\t\"oil\":10\r\n\t\t},\r\n\t\t\"onsite_service_charges\": 10,\r\n\t\t\"comments\":\"part cost may change by 10%\"\r\n\t}\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{customer_user_id}}/jobs/{{job_id}}/quotes",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{customer_user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"quotes"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "QUOTES DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{customer_user_id}}/jobs/{{job_id}}/quotes",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{customer_user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"quotes"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "QUOTES GET SINGLE",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{auth_token}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{app_url}}/mobilemechanic/api/v1.0/users/{{customer_user_id}}/jobs/{{job_id}}/quotes?quote_id={{quote_id}}",
+					"protocol": "http",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"mobilemechanic",
+						"api",
+						"v1.0",
+						"users",
+						"{{customer_user_id}}",
+						"jobs",
+						"{{job_id}}",
+						"quotes"
+					],
+					"query": [
+						{
+							"key": "quote_id",
+							"value": "{{quote_id}}",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
