@@ -29,10 +29,11 @@ def initialize_app():
     api.add_resource(TokenAPI, api_base_string + 'users/<int:user_id>/token')
     api.add_resource(MechanicAPI, api_base_string + 'users/<int:user_id>/mechanic')
     api.add_resource(JobAPI, api_base_string + 'users/<int:user_id>/jobs')
-    api.add_resource(ImageUploadAPI,api_base_string +
-                     'users/<int:user_id>/jobs/<int:job_id>/picture')
+    api.add_resource(ImageUploadAPI, api_base_string +
+                     'users/<int:user_id>/jobs/<job_id>/picture')
     api.add_resource(QuotesAPI, api_base_string +
-                     'users/<int:user_id>/jobs/<int:job_id>/quotes/')
+                     'users/<int:user_id>/jobs/<job_id>/quotes')
+
     api.init_app(app)
     return app
 

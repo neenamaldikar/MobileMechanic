@@ -5,11 +5,13 @@ from database.quote_request import QuoteRequestDAO
 from database.user_request import UserDAO
 from database.mechanic_request import MechanicDAO
 from database.token_request import TokenDAO
+from database.job_request import JobRequestDAO
 from extensions import mongo
 from configuration import LOGGING_JSON
 import logging.config
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
+from enums.quote_status import QuoteStatus
 
 class QuotesAPI(Resource):
 
@@ -18,6 +20,7 @@ class QuotesAPI(Resource):
         self.userDAO = UserDAO(mongo)
         self.mechanicDAO = MechanicDAO(mongo)
         self.tokenDAO = TokenDAO(mongo)
+        self.jobsDAO = JobRequestDAO(mongo)
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('quote', type=dict, location='json')
         self.reqparse.add_argument('quote_id', type=str, location='args')
@@ -32,7 +35,7 @@ class QuotesAPI(Resource):
         else:
             mechanic_id = None
 
-        if (user_id != current_identity._get_current_object().id) or (not mechanic_id):
+        if (user_id != current_identity._get_current_object().id) and (not mechanic_id):
             abort(401, description="Unauthorized, not a mechanic or owner")
 
         args = self.reqparse.parse_args()
@@ -53,6 +56,8 @@ class QuotesAPI(Resource):
 
         if not self.current_user_is_mechanic():
             abort(401, description="User is not a mechanic")
+        else:
+            mechanic_id = current_identity._get_current_object().id
 
         job = self.jobsDAO.find_job(user_id=user_id, job_id=job_id)
         if job:
@@ -67,30 +72,44 @@ class QuotesAPI(Resource):
             abort(400)
 
         if not all(list(map(quote_details.get,
-                            ['labor_cost', 'part_cost', 'onsite_service_charges']))):
+                            ['labor_cost', 'part_cost']))):
             logging.debug('Quote missing a few parameters')
             abort(400)
+
         if not type(quote_details['labor_cost']) is dict:
             logging.debug('"labor_cost" field is not dict')
             abort(400)
+        else:
+            labor_cost=quote_details['labor_cost']
+
         if not type(quote_details['part_cost']) is dict:
             logging.debug('"labor_cost" field is not dict')
             abort(400)
+        else:
+            part_cost=quote_details['part_cost']
+
+        if 'onsite_service_charges' in quote_details:
+            onsite_service_charges = quote_details['onsite_service_charges']
+        else:
+            onsite_service_charges = 0
+
+        if 'comments' in quote_details:
+            comments = quote_details['comments']
+        else:
+            comments = None
 
         insertion_successful, quote_id = self.quotesDAO.insert_quote(job_id,
-                                        quote_details['make'], quote_details['model'],
-                                        quote_details['year'], quote_details['options'],
-                                        quote_details['summary'],quote_details['description'],
-                                        quote_details['status'], quote_details['address_line'],
-                                        quote_details['city'], quote_details['state'],
-                                        quote_details['zipcode'])
+                                        user_id, mechanic_id, labor_cost,part_cost,
+                                        onsite_service_charges, comments,
+                                        QuoteStatus.submitted
+                                        )
         if not insertion_successful:
             abort(500)
-        job = self.jobsDAO.find_job(user_id, job_id)
-        if not job:
+        quote_inserted = self.quotesDAO.find_quote(quote_id, job_id, mechanic_id)
+        if not quote_inserted:
             abort(404)
-        self.send_notifications(quote_details)
-        return job.as_dict()
+        self.send_notifications(user_id)
+        return quote_inserted.as_dict()
 
     def current_user_is_mechanic(self):
         mechanic_id = current_identity._get_current_object().id
@@ -101,13 +120,39 @@ class QuotesAPI(Resource):
             return True
 
     def send_notifications(self, customer_user_id):
-        registration_ids = self.tokenDAO.find_user_token(user_id=customer_user_id)
-        message_title = "New quote"
-        message_body = "New quote available for your job"
-        result = self.push_service.notify_single_device(registration_id=registration_ids,
+        registration_id = self.tokenDAO.find_user_token(user_id=customer_user_id)
+
+        if registration_id is None:
+            logging.debug('Registration id is missing for customer: ' + customer_user_id)
+        else:
+            message_title = "New quote"
+            message_body = "New quote available for your job"
+            result = self.push_service.notify_single_device(registration_id=registration_id,
                                                   message_title=message_title,
                                                   message_body=message_body)
-        logging.debug('Notification result is ' + str(result))
+            logging.debug('Notification result is ' + str(result))
+
+    @jwt_required()
+    def delete(self, user_id, job_id):
+        user_id = str(user_id)
+        is_mechanic = self.current_user_is_mechanic()
+        if is_mechanic:
+            mechanic_id = current_identity._get_current_object().id
+        else:
+            abort(401, description="Unauthorized, not a mechanic")
+
+        args = self.reqparse.parse_args()
+        quote_id = args.get('quote_id')
+        if quote_id:
+            delete_successful = self.quotesDAO.delete_one(quote_id,job_id,mechanic_id)
+        else:
+            delete_successful = self.quotesDAO.delete_quotes(job_id,mechanic_id)
+        if delete_successful:
+            return jsonify({"success": "Quote/s deleted succesfully."})
+        else:
+            return jsonify({"failure": "Quote/s not found."})
+
+
 '''
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted
     @jwt_required()
@@ -137,24 +182,8 @@ class QuotesAPI(Resource):
         if not update_successful:
             abort(404)
         job = self.jobsDAO.find_job(user_id, job_id)
-        if not job: 
+        if not job:
             logging.debug('Job not found')
             abort(404)
         return job.as_dict()
-
-    @jwt_required()
-    def delete(self, user_id, job_id):
-        user_id = str(user_id)
-        if user_id != current_identity._get_current_object().id:
-            abort(401)
-
-        args = self.reqparse.parse_args()
-        job_id = args.get('job_id')
-        if not job_id:
-            logging.debug('Cannot find job_id')
-            abort(404)
-        delete_successful = self.jobsDAO.delete_one(user_id, job_id)
-        if not delete_successful:
-            return jsonify({"failure": "Job not found."})
-        return jsonify({"success": "Job deleted succesfully."})
 '''

@@ -39,10 +39,10 @@ class QuoteRequestDAO:
         try:
             logging.debug('Finding quote for user: ' + user_id + 'and job: ' + job_id)
             if mechanic_id:
-                cursor = self.db.quotes.find({'user_id': user_id, 'job_id': job_id,
-                                              'mechanic_id' : mechanic_id})
+                cursor = self.db.quotes.find({'customer_user_id': user_id, 'job_id': job_id,
+                                              'mechanic_user_id' : mechanic_id})
             else:
-                cursor = self.db.quotes.find({'user_id': user_id, 'job_id': job_id})
+                cursor = self.db.quotes.find({'customer_user_id': user_id, 'job_id': job_id})
             if not cursor:
                 logging.debug('No cursor data for find_quotes')
 
@@ -55,7 +55,7 @@ class QuoteRequestDAO:
                 output_list.append(quote_model.QuoteRequest(
                     i['job_id'], i['customer_user_id'], i['mechanic_user_id'], i['quote_id'],
                     i['labor_cost'], i['part_cost'], i['onsite_service_charges'],
-                    i['comments'], ['status']
+                    i['comments'], i['status']
                 ))
             return output_list
         except:
@@ -76,13 +76,13 @@ class QuoteRequestDAO:
                 {'job_id': job_id, 'customer_user_id': customer_user_id,
                  'mechanic_user_id': mechanic_user_id, 'quote_id': unique_quote_id, 'labor_cost': labor_cost,
                  'part_cost': part_cost, 'onsite_service_charges': onsite_service_charges,
-                 'comments': comments, 'status': status}
+                 'comments': comments, 'status': status.name}
             )
             return (result.acknowledged, unique_quote_id)
         except:
             return False
 
-    def update_job(self, quote_id, job_id, updated_values):
+    def update_quote(self, quote_id, job_id, updated_values):
         try:
             result = self.db.quotes.update_one({'quote_id': quote_id, 'job_id': job_id},
                                              {'$set': updated_values})
@@ -93,9 +93,20 @@ class QuoteRequestDAO:
         except:
             return False
 
-    def delete_one(self, quote_id, job_id):
+    def delete_quotes(self, job_id, mechanic_user_id):
         try:
-            result = self.db.quotes.delete_one({'quote_id': quote_id, 'job_id': job_id})
+            result = self.db.quotes.delete_many({'mechanic_user_id': mechanic_user_id, 'job_id': job_id})
+            if result.deleted_count >= 1:
+                return True
+            else:
+                return False
+        except:
+            return False
+
+    def delete_one(self, quote_id, job_id, mechanic_user_id):
+        try:
+            result = self.db.quotes.delete_one({'quote_id': quote_id, 'job_id': job_id,
+                                                'mechanic_user_id':mechanic_user_id})
             if result.deleted_count == 1:
                 return True
             else:
