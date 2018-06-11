@@ -57,7 +57,7 @@ dependencies {
     final BUTTERKNIFE_VERSION = '8.5.1'  // view binding library
     compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
     annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTERKNIFE_VERSION"
-    compile 'com.google.android.gms:play-services-places:11.8.0';
+    compile 'com.google.android.gms:play-services-places:11.8.0'
     compile 'com.google.dagger:dagger-android:2.12'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.12'
     compile 'com.tuanchauict.intentchooser:intentchooser:0.1.+'

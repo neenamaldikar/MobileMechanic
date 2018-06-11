@@ -108,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Log.i(TAG, jsonArray.toString());
                         jobLists.clear();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            Type collectionType = new TypeToken<Job>() {
-                            }.getType();
+                            Type collectionType = new TypeToken<Job>() { }.getType();
                             Job job = (Job) new Gson()
                                     .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
                             jobLists.add(job);
@@ -419,8 +418,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    public void submitJobQuote() {
+    public void submitJobQuote(String customer_id, String job_id) {
         Intent intent = new Intent(getApplicationContext(), MechSubmitQuoteActivity.class);
+        Bundle b = new Bundle();
+        b.putString("customer_id", customer_id);
+        b.putString("job_id", job_id);
+        b.putString("JWT", mJWTtoken);
+        intent.putExtras(b);
         startActivity(intent);
     }
 

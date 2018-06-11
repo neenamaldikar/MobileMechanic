@@ -27,7 +27,7 @@ public class JobQuote {
     @SerializedName("labor_cost")
     private Hashtable<String, Double> laborCostMap;
 
-    @SerializedName("parts_cost")
+    @SerializedName("part_cost")
     private Hashtable<String, Double> partsCostMap;
 
     @SerializedName("onsite_service_charges")

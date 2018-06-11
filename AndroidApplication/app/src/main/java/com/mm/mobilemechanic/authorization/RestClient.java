@@ -31,6 +31,7 @@ public class RestClient {
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";
     private static String URI_TOKEN = "/token";
+    private static String URI_QUOTE = "/quotes";
 
 
     private static String URI_PICTURE = "/picture";
@@ -162,7 +163,6 @@ public class RestClient {
     public static void getUserJobs(String userId, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
         RestClient.GET(url, authToken, responseCallback);
-
     }
     ////////////////////
 
@@ -186,7 +186,7 @@ public class RestClient {
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 
-    public static void deleteJob(String userId,String jobId, String authToken, Callback responseCallback) {
+    public static void deleteJob(String userId, String jobId, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB+"?job_id="+jobId;
         RestClient.DELETE(url, authToken, responseCallback);
     }
@@ -194,6 +194,13 @@ public class RestClient {
     public static void createToken(String userId, String json, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_TOKEN;
         Log.d("mainActivityLog", "Create token function is called ... " + url);
+        RestClient.POST(url, authToken, json, responseCallback);
+    }
+
+
+    public static void createQuote(String authToken, String customerId, String jobId, String json, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + customerId + URI_JOB + "/" + jobId + URI_QUOTE;
+        Log.w("mainActivityLog", "Create new quote called " + url);
         RestClient.POST(url, authToken, json, responseCallback);
     }
 

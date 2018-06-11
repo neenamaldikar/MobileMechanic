@@ -8,6 +8,12 @@ import java.io.Serializable;
  */
 
 public class Job implements Serializable {
+    @SerializedName("job_id")
+    private String job_id;
+
+    @SerializedName("user_id")
+    private String user_id;
+
     @SerializedName("summary")
     private String summary;
 
@@ -16,7 +22,6 @@ public class Job implements Serializable {
 
     @SerializedName("make")
     private String make;
-
 
 
     @SerializedName("model")
@@ -36,9 +41,6 @@ public class Job implements Serializable {
 
     @SerializedName("zipcode")
     private String zipCode;
-
-    @SerializedName("job_id")
-    private String job_id;
 
     @SerializedName("images")
     private String[] images;
@@ -76,6 +78,12 @@ public class Job implements Serializable {
         this.job_id = job_id;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
 
     public void setStatus(JobStatus status) {
         this.status = status;

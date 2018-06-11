@@ -166,7 +166,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
                     case R.id.menu_card_sendquote:
                         if (mActivity instanceof MainActivity) {
-                            ((MainActivity) mActivity).submitJobQuote();
+                            ((MainActivity) mActivity).submitJobQuote(job.getUser_id(), job.getJob_id());
                         }
                         return true;
 

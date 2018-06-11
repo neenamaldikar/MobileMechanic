@@ -1,6 +1,8 @@
 package com.mm.mobilemechanic;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.internal.NavigationMenu;
 import android.support.v7.app.AlertDialog;
@@ -13,21 +15,37 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.models.jobQuote.ItemCostAdapter;
 import com.mm.mobilemechanic.models.jobQuote.JobQuote;
 import com.mm.mobilemechanic.models.jobQuote.ListViewItem;
+import com.mm.mobilemechanic.util.Utility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MechSubmitQuoteActivity extends AppCompatActivity {
 
     private String TAG = "SubmitQuote";
+
+    private String customer_id;
+    private String job_id;
+    private String JWTtoken;
 
     private final ArrayList<ListViewItem> laborCostArray = new ArrayList<>();
     private final ArrayList<ListViewItem> partsCostArray = new ArrayList<>();
@@ -36,6 +54,12 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
 
     private ItemCostAdapter laborCostAdapter;
     private ItemCostAdapter partsCostAdapter;
+
+
+    public void showToast(String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
 
     public String toJson(Object object) {
         Gson gson = new Gson();
@@ -60,8 +84,39 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         return false;
     }
 
-    public void submitQuote() {
+    public void submitQuote(JobQuote quote) {
+        Gson gson = new Gson();
+        JsonObject quoteJson = new JsonObject();
+        JsonParser parser = new JsonParser();
+        JsonObject json = parser.parse(gson.toJson(quote)).getAsJsonObject();
+        quoteJson.add("quote", json);
 
+        Log.w(TAG, quoteJson.toString());
+
+        RestClient.createQuote(JWTtoken, customer_id, job_id, quoteJson.toString(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // TODO on failure what happens
+                Log.e(TAG, "Fail = " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Code 2= " + response.code() + " " + response.message());
+                    showToast("Sorry, Please try again");
+
+                } else {
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.w(TAG, jObject.toString());
+                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public JobQuote createJobQuote() {
@@ -84,8 +139,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
             String str = toJson(quote);
             Log.i(TAG, str);
 
-            submitQuote();
-            finish();
+            submitQuote(quote);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -239,6 +293,10 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jobquote);
+
+        customer_id = Objects.requireNonNull(getIntent().getExtras()).getString("customer_id");
+        job_id = Objects.requireNonNull(getIntent().getExtras()).getString("job_id");
+        JWTtoken = Objects.requireNonNull(getIntent().getExtras()).getString("JWT");
 
         Objects.requireNonNull(this.getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
