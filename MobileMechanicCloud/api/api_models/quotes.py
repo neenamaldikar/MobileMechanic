@@ -9,9 +9,11 @@ from database.job_request import JobRequestDAO
 from extensions import mongo
 from configuration import LOGGING_JSON
 import logging.config
+
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
 from enums.quote_status import QuoteStatus
+
 
 class QuotesAPI(Resource):
 
@@ -51,7 +53,7 @@ class QuotesAPI(Resource):
             return jsonify([i.as_dict() for i in quotes_list])
 
     @jwt_required()
-    def post(self, user_id,job_id):
+    def post(self, user_id, job_id):
         user_id = str(user_id)
 
         if not self.current_user_is_mechanic():
@@ -80,13 +82,13 @@ class QuotesAPI(Resource):
             logging.debug('"labor_cost" field is not dict')
             abort(400)
         else:
-            labor_cost=quote_details['labor_cost']
+            labor_cost = quote_details['labor_cost']
 
         if not type(quote_details['part_cost']) is dict:
             logging.debug('"labor_cost" field is not dict')
             abort(400)
         else:
-            part_cost=quote_details['part_cost']
+            part_cost = quote_details['part_cost']
 
         if 'onsite_service_charges' in quote_details:
             onsite_service_charges = quote_details['onsite_service_charges']
@@ -99,16 +101,16 @@ class QuotesAPI(Resource):
             comments = None
 
         insertion_successful, quote_id = self.quotesDAO.insert_quote(job_id,
-                                        user_id, mechanic_id, labor_cost,part_cost,
-                                        onsite_service_charges, comments,
-                                        QuoteStatus.submitted
-                                        )
+                                                                     user_id, mechanic_id, labor_cost, part_cost,
+                                                                     onsite_service_charges, comments,
+                                                                     QuoteStatus.submitted
+                                                                     )
         if not insertion_successful:
             abort(500)
         quote_inserted = self.quotesDAO.find_quote(quote_id, job_id, mechanic_id)
         if not quote_inserted:
             abort(404)
-        self.send_notifications(user_id)
+        self.send_notifications(user_id)  ## TODO find why it is failing
         return quote_inserted.as_dict()
 
     def current_user_is_mechanic(self):
@@ -120,16 +122,17 @@ class QuotesAPI(Resource):
             return True
 
     def send_notifications(self, customer_user_id):
-        registration_id = self.tokenDAO.find_user_token(user_id=customer_user_id)
+        token_data = self.tokenDAO.find_user_token(user_id=customer_user_id)
 
-        if registration_id is None:
+        if token_data is None:
             logging.debug('Registration id is missing for customer: ' + customer_user_id)
         else:
+            registration_id = token_data.token
             message_title = "New quote"
-            message_body = "New quote available for your job"
+            message_body = "New quote available for your job request"
             result = self.push_service.notify_single_device(registration_id=registration_id,
-                                                  message_title=message_title,
-                                                  message_body=message_body)
+                                                            message_title=message_title,
+                                                            message_body=message_body)
             logging.debug('Notification result is ' + str(result))
 
     @jwt_required()
@@ -144,9 +147,9 @@ class QuotesAPI(Resource):
         args = self.reqparse.parse_args()
         quote_id = args.get('quote_id')
         if quote_id:
-            delete_successful = self.quotesDAO.delete_one(quote_id,job_id,mechanic_id)
+            delete_successful = self.quotesDAO.delete_one(quote_id, job_id, mechanic_id)
         else:
-            delete_successful = self.quotesDAO.delete_quotes(job_id,mechanic_id)
+            delete_successful = self.quotesDAO.delete_quotes(job_id, mechanic_id)
         if delete_successful:
             return jsonify({"success": "Quote/s deleted succesfully."})
         else:
