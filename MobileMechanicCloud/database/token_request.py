@@ -4,6 +4,7 @@ from configuration import LOGGING_JSON
 import logging.config
 logging.config.dictConfig(LOGGING_JSON)
 
+
 class TokenDAO:
     def __init__(self, mongo):
         self.db = mongo.db

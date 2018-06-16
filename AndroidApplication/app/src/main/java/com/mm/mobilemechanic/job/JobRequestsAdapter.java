@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,23 +14,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.Profile;
-import com.mm.mobilemechanic.JobAddImagesActivity;
 import com.mm.mobilemechanic.MainActivity;
 import com.mm.mobilemechanic.R;
-import com.mm.mobilemechanic.authorization.RestClient;
-import com.mm.mobilemechanic.user.Mechanic;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 /**
  * Created by ndw6152 on 10/13/2017.
@@ -51,7 +39,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     public void showJobInformation(Activity activity, Job job) {
         // custom dialog
         final Dialog dialog = new Dialog(activity);
-        dialog.setContentView(R.layout.activity_main_job_dialog);
+        dialog.setContentView(R.layout.dialog_display_job);
         dialog.setTitle("Job Information");
 
         // set the custom dialog components - text, image and button
@@ -150,11 +138,15 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         if (mActivity instanceof MainActivity) {
-            MenuItem menuItem;
-            if (((MainActivity) mActivity).isMechanic == true && job.getStatus().equals("Submitted")) {
-                menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(true);
+
+            if (((MainActivity) mActivity).isMechanic && job.getStatus() == JobStatus.SUBMITTED) { // if is mechanic show the send quote option
+                popup.getMenu().getItem(0).setVisible(false); // delete job
+                popup.getMenu().getItem(1).setVisible(false); // edit job
+                popup.getMenu().getItem(2).setVisible(true); // send quote
             } else {
-                menuItem = (MenuItem) popup.getMenu().getItem(2).setVisible(false);
+                popup.getMenu().getItem(0).setVisible(true);
+                popup.getMenu().getItem(1).setVisible(true);
+                popup.getMenu().getItem(2).setVisible(false);
             }
         }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -174,7 +166,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
                     case R.id.menu_card_sendquote:
                         if (mActivity instanceof MainActivity) {
-                            ((MainActivity) mActivity).submitJobQuote();
+                            ((MainActivity) mActivity).submitJobQuote(job.getUser_id(), job.getJob_id());
                         }
                         return true;
 

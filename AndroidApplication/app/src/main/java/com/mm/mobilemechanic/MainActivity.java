@@ -1,11 +1,9 @@
 package com.mm.mobilemechanic;
 
 import android.app.Activity;
-
 import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,23 +27,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mm.mobilemechanic.authorization.RestClient;
-
 import com.mm.mobilemechanic.job.Job;
 import com.mm.mobilemechanic.job.JobRequestsAdapter;
-
-import com.mm.mobilemechanic.job.JobStatus;
-import com.mm.mobilemechanic.user.Mechanic;
-
-import com.mm.mobilemechanic.user.MechanicViewModel;
-
-import com.mm.mobilemechanic.user.User;
+import com.mm.mobilemechanic.models.mechanic.Mechanic;
+import com.mm.mobilemechanic.models.mechanic.MechanicViewModel;
+import com.mm.mobilemechanic.models.User;
 import com.mm.mobilemechanic.util.Utility;
 
 import org.json.JSONArray;
@@ -116,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Log.i(TAG, jsonArray.toString());
                         jobLists.clear();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            Type collectionType = new TypeToken<Job>() {
-                            }.getType();
+                            Type collectionType = new TypeToken<Job>() { }.getType();
                             Job job = (Job) new Gson()
                                     .fromJson(jsonArray.getJSONObject(i).toString(), collectionType);
                             jobLists.add(job);
@@ -155,12 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onChanged(@Nullable Mechanic mechanic) {
 
-                if (mechanic != null) {
-                    isMechanic = true;
-
-                } else {
-                    isMechanic = false;
-                }
+                isMechanic = mechanic != null;
             }
         });
     }
@@ -432,8 +418,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    public void submitJobQuote() {
-        Intent intent = new Intent(getApplicationContext(), MechSubmitQuote.class);
+    public void submitJobQuote(String customer_id, String job_id) {
+        Intent intent = new Intent(getApplicationContext(), MechSubmitQuoteActivity.class);
+        Bundle b = new Bundle();
+        b.putString("customer_id", customer_id);
+        b.putString("job_id", job_id);
+        b.putString("JWT", mJWTtoken);
+        intent.putExtras(b);
         startActivity(intent);
     }
 

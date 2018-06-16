@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_add_service_cost"
+        android:orderInCategory="25"
+        android:icon="@drawable/outline_beenhere_white_18"
+        android:title="Add on-site service cost" />
+    <item
+        android:id="@+id/action_add_labor_cost"
+        android:orderInCategory="50"
+        android:icon="@drawable/outline_build_white_18"
+        android:title="Add labor cost" />
+    <item
+        android:id="@+id/action_add_parts_cost"
+        android:orderInCategory="100"
+        android:icon="@drawable/outline_settings_white_18"
+        android:title="Add parts cost"/>
+
+    <item
+        android:id="@+id/action_add_comments"
+        android:orderInCategory="110"
+        android:icon="@drawable/outline_comment_white_18"
+        android:title="Add comments" />
+
+</menu>

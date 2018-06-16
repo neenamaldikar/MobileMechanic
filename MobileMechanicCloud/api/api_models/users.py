@@ -6,6 +6,7 @@ from flask import jsonify
 from database.user_request import UserDAO
 from extensions import mongo
 
+
 class UserAPI(Resource):
 
     def __init__(self):
