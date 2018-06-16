@@ -13,6 +13,7 @@ import logging.config
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
 from enums.quote_status import QuoteStatus
+from enums.job_status import JobStatus
 
 
 class QuotesAPI(Resource):
@@ -103,13 +104,17 @@ class QuotesAPI(Resource):
         insertion_successful, quote_id = self.quotesDAO.insert_quote(job_id,
                                                                      user_id, mechanic_id, labor_cost, part_cost,
                                                                      onsite_service_charges, comments,
-                                                                     QuoteStatus.submitted
+                                                                     QuoteStatus.submitted.name
                                                                      )
         if not insertion_successful:
             abort(500)
         quote_inserted = self.quotesDAO.find_quote(quote_id, job_id, mechanic_id)
         if not quote_inserted:
             abort(404)
+        number_of_quotes = self.quotesDAO.getNumberOfQuotes(job_id,user_id)
+        self.jobsDAO.update_job(user_id,job_id,
+                                {"status":JobStatus.quotes_available.name,
+                                 "number_of_quotes":number_of_quotes})
         self.send_notifications(user_id)  ## TODO find why it is failing
         return quote_inserted.as_dict()
 

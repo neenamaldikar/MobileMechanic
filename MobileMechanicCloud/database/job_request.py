@@ -69,7 +69,8 @@ class JobRequestDAO:
                                               'options': options, 'summary': summary,
                                               'description': description, 'images': [],
                                               'status': status, 'address_line': address_line,
-                                              'city': city, 'state': state, 'zipcode': zipcode})
+                                              'city': city, 'state': state, 'zipcode': zipcode,
+                                              'number_of_quotes':0})
             return (result.acknowledged, unique_job_id)
         except:
             return False

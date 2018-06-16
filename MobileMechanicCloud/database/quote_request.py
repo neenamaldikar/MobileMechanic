@@ -1,5 +1,3 @@
-import time
-import bson
 import uuid
 from gridfs import GridFS
 from extensions import mongo
@@ -7,7 +5,6 @@ from model import quote_model
 from configuration import LOGGING_JSON
 import logging.config
 logging.config.dictConfig(LOGGING_JSON)
-
 
 class QuoteRequestDAO:
     def __init__(self, mongo):
@@ -76,7 +73,7 @@ class QuoteRequestDAO:
                 {'job_id': job_id, 'customer_user_id': customer_user_id,
                  'mechanic_user_id': mechanic_user_id, 'quote_id': unique_quote_id, 'labor_cost': labor_cost,
                  'part_cost': part_cost, 'onsite_service_charges': onsite_service_charges,
-                 'comments': comments, 'status': status.name}
+                 'comments': comments, 'status': status}
             )
             return (result.acknowledged, unique_quote_id)
         except:
@@ -113,3 +110,10 @@ class QuoteRequestDAO:
                 return False
         except:
             return False
+
+    def getNumberOfQuotes(self, job_id, user_id):
+        try:
+            result_count = self.db.quotes.count({"job_id":job_id,"customer_user_id":user_id})
+            return result_count
+        except:
+            return 0

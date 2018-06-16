@@ -10,7 +10,7 @@ import logging.config
 
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
-
+from enums.job_status import JobStatus
 
 class JobAPI(Resource):
 
@@ -70,7 +70,7 @@ class JobAPI(Resource):
                                                                job_inserted['make'], job_inserted['model'],
                                                                job_inserted['year'], job_inserted['options'],
                                                                job_inserted['summary'], job_inserted['description'],
-                                                               job_inserted['status'], job_inserted['address_line'],
+                                                               JobStatus.submitted.name, job_inserted['address_line'],
                                                                job_inserted['city'], job_inserted['state'],
                                                                job_inserted['zipcode'])
         if not insertion_successful:
