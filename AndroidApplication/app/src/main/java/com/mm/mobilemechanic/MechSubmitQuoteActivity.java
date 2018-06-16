@@ -56,8 +56,12 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
     private ItemCostAdapter partsCostAdapter;
 
 
-    public void showToast(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    public void showToast(final String text) {
+        runOnUiThread(new Thread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 
 
@@ -109,6 +113,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
                 } else {
                     try {
                         JSONObject jObject = new JSONObject(response.body().string());
+                        showToast("Quote Submitted");
                         Log.w(TAG, jObject.toString());
                         finish();
                     } catch (JSONException e) {

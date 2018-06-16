@@ -106,7 +106,7 @@ class QuoteRequestDAO:
     def delete_one(self, quote_id, job_id, mechanic_user_id):
         try:
             result = self.db.quotes.delete_one({'quote_id': quote_id, 'job_id': job_id,
-                                                'mechanic_user_id':mechanic_user_id})
+                                                'mechanic_user_id': mechanic_user_id})
             if result.deleted_count == 1:
                 return True
             else:

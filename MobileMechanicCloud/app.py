@@ -37,6 +37,7 @@ def initialize_app():
     api.init_app(app)
     return app
 
+
 if __name__ == '__main__':
     app = initialize_app()
     logging.config.dictConfig(LOGGING_JSON)

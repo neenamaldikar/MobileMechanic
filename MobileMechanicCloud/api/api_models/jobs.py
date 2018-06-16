@@ -7,8 +7,10 @@ from database.mechanic_request import MechanicDAO
 from extensions import mongo
 from configuration import LOGGING_JSON
 import logging.config
+
 logging.config.dictConfig(LOGGING_JSON)
 from pyfcm import FCMNotification
+
 
 class JobAPI(Resource):
 
@@ -26,7 +28,7 @@ class JobAPI(Resource):
         user_id = str(user_id)
         if user_id != current_identity._get_current_object().id:
             abort(401)
-        
+
         args = self.reqparse.parse_args()
         job_id = args.get('job_id')
         if job_id:
@@ -39,7 +41,7 @@ class JobAPI(Resource):
             if mechanic is None:
                 jobs_list = self.jobsDAO.find_job(user_id=user_id)
             else:
-                jobs_list=self.jobsDAO.find_job(zipcodes=mechanic.serving_zipcodes)
+                jobs_list = self.jobsDAO.find_job(zipcodes=mechanic.serving_zipcodes)
 
             return jsonify([i.as_dict() for i in jobs_list])
 
@@ -48,7 +50,7 @@ class JobAPI(Resource):
         user_id = str(user_id)
         if user_id != current_identity._get_current_object().id:
             abort(401)
-        
+
         args = self.reqparse.parse_args()
         job_inserted = args.get('job')
         # if there is a problem with the inserted job format
@@ -65,12 +67,12 @@ class JobAPI(Resource):
             abort(400)
 
         insertion_successful, job_id = self.jobsDAO.insert_job(user_id,
-                                        job_inserted['make'], job_inserted['model'],
-                                        job_inserted['year'], job_inserted['options'],
-                                        job_inserted['summary'],job_inserted['description'],
-                                        job_inserted['status'], job_inserted['address_line'],
-                                        job_inserted['city'], job_inserted['state'],
-                                        job_inserted['zipcode'])
+                                                               job_inserted['make'], job_inserted['model'],
+                                                               job_inserted['year'], job_inserted['options'],
+                                                               job_inserted['summary'], job_inserted['description'],
+                                                               job_inserted['status'], job_inserted['address_line'],
+                                                               job_inserted['city'], job_inserted['state'],
+                                                               job_inserted['zipcode'])
         if not insertion_successful:
             abort(500)
         job = self.jobsDAO.find_job(user_id, job_id)
@@ -86,8 +88,8 @@ class JobAPI(Resource):
         message_title = "New job"
         message_body = "New job available in your area"
         result = self.push_service.notify_multiple_devices(registration_ids=registration_ids,
-                                                  message_title=message_title,
-                                                  message_body=message_body)
+                                                           message_title=message_title,
+                                                           message_body=message_body)
         logging.debug('Notification result is ' + str(result))
 
     # TODO: check the dictionary for malicious fields and for whether only true false values are inserted
@@ -112,13 +114,13 @@ class JobAPI(Resource):
             logging.debug('Could not find a job of that given id.')
             abort(404)
 
-        #updated_values = {str(k): str(v) for k, v in job_data['updated_values'].items()}
+        # updated_values = {str(k): str(v) for k, v in job_data['updated_values'].items()}
         updated_values = job_data.get('updated_values')
         update_successful = self.jobsDAO.update_job(user_id, job_id, updated_values)
         if not update_successful:
             abort(404)
         job = self.jobsDAO.find_job(user_id, job_id)
-        if not job: 
+        if not job:
             logging.debug('Job not found')
             abort(404)
         return job.as_dict()
