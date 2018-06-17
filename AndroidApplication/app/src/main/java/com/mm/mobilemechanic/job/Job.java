@@ -23,7 +23,6 @@ public class Job implements Serializable {
     @SerializedName("make")
     private String make;
 
-
     @SerializedName("model")
     private String model;
 
@@ -52,6 +51,9 @@ public class Job implements Serializable {
     @SerializedName("status")
     private JobStatus status;
 
+    @SerializedName("number_of_quotes")
+    private int numberOfQuotes;
+
 
     public Job() {
         this.jobOptions = new JobOptions();
@@ -64,13 +66,7 @@ public class Job implements Serializable {
         this.jobOptions = jobOptions;
         this.status = status;
     }
-    public Job(String summary, String description, boolean onSiteDiagnostic, boolean carInWorkingCondition, boolean repairCanBeDoneOnSite, boolean carPickUpAndDropOff, JobStatus status) {
 
-        this.summary = summary;
-        this.description = description;
-        this.jobOptions = jobOptions;
-        this.status = status;
-    }
     public String getJob_id() {
         return job_id;
     }
@@ -155,12 +151,15 @@ public class Job implements Serializable {
         this.zipCode = zipCode;
     }
 
-
     public String[] getImages() {
         return images;
     }
     public void setImages(String[] images) {
         this.images = images;
+    }
+
+    public int getNumberOfQuotes() {
+        return numberOfQuotes;
     }
 
     public JobOptions getJobOptions() {
@@ -171,8 +170,6 @@ public class Job implements Serializable {
     }
 
     public class JobOptions implements Serializable {
-
-
         @SerializedName("onsite_diagnostic")
         private boolean onSiteDiagnostic = false;
         @SerializedName("working")
@@ -183,7 +180,6 @@ public class Job implements Serializable {
         private boolean carPickUpAndDropOff = false;
         @SerializedName("parking_available")
         private boolean parkingAvailable = false;
-
 
         public boolean isOnSiteDiagnostic() {
             return onSiteDiagnostic;

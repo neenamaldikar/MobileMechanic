@@ -1,9 +1,10 @@
 # TODO: add a few more validations to the fields
 
+
 class JobRequest:
     def __init__(self, user_id, job_id, make, model, year, options,
                  summary, description, images, status, address_line,
-                 city, state, zipcode):
+                 city, state, zipcode, number_of_quotes):
         self.user_id = user_id
         self.job_id = job_id
         self.make = make
@@ -14,10 +15,11 @@ class JobRequest:
         self.description = description
         self.images = images
         self.status = status
-        self.address_line=address_line
-        self.city=city
-        self.state=state
-        self.zipcode=zipcode
+        self.address_line = address_line
+        self.city = city
+        self.state = state
+        self.zipcode = zipcode
+        self.number_of_quotes = number_of_quotes
 
     def __str__(self):
         return "Job(user_id='{0}', job_id='{1}')".format(self.user_id, self.job_id)
@@ -37,5 +39,6 @@ class JobRequest:
             'address_line': self.address_line,
             'city': self.city,
             'state': self.state,
-            'zipcode': self.zipcode
+            'zipcode': self.zipcode,
+            'number_of_quotes': self.number_of_quotes
         }

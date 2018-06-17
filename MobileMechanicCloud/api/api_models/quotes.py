@@ -111,11 +111,11 @@ class QuotesAPI(Resource):
         quote_inserted = self.quotesDAO.find_quote(quote_id, job_id, mechanic_id)
         if not quote_inserted:
             abort(404)
-        number_of_quotes = self.quotesDAO.getNumberOfQuotes(job_id,user_id)
-        self.jobsDAO.update_job(user_id,job_id,
-                                {"status":JobStatus.quotes_available.name,
-                                 "number_of_quotes":number_of_quotes})
-        self.send_notifications(user_id)  ## TODO find why it is failing
+        number_of_quotes = self.quotesDAO.getNumberOfQuotes(job_id, user_id)
+        self.jobsDAO.update_job(user_id, job_id,
+                                {"status": JobStatus.quotes_available.name,
+                                 "number_of_quotes": number_of_quotes})
+        self.send_notifications(user_id)
         return quote_inserted.as_dict()
 
     def current_user_is_mechanic(self):

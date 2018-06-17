@@ -7,19 +7,19 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public enum JobStatus {
+    @SerializedName("submitted")
+    SUBMITTED("submitted"),
+    @SerializedName("quotes_available")
+    QUOTES_AVAILABLE("quotes_available"),
+    @SerializedName("quote_accepted")
+    QUOTE_ACCEPTED("quote_accepted"),
+    @SerializedName("job_in_progress")
+    JOB_IN_PROGRESS("job_in_progress"),
+    @SerializedName("job_completed")
+    JOB_DONE("job_completed"),
+    @SerializedName("job_request_closed")
+    CLOSED("job_request_closed");
 
-    @SerializedName("Quotes_requested")
-    QUOTES_REQUESTED("Quotes_requested"),
-    @SerializedName("Quotes_available")
-    QUOTES_AVAILABLE("Quotes_available"),
-    @SerializedName("Job_in_progress")
-    JOB_IN_PROGRESS("Job_in_progress"),
-    @SerializedName("Job_done")
-    JOB_DONE("Job_done"),
-    @SerializedName("Job_request_closed")
-    CLOSED("Job_request_closed"),
-    @SerializedName("Submitted")
-    SUBMITTED("Submitted");
 
     private final String name;
 

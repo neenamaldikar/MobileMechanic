@@ -83,7 +83,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
     public void onBindViewHolder(JobCardsViewHolder holder, final int position) {
         final Job job = mJobsList.get(position);
         holder.jobSummary.setText(job.getSummary());
-        holder.numberOfQuotes.setText(0 + "");  // TODO get actual number of quotes
+        holder.numberOfQuotes.setText(job.getNumberOfQuotes() + "" );  // TODO get actual number of quotes
         holder.currentStatus.setText(job.getStatus().toString());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {  // TODO open summary and job req info
@@ -139,7 +139,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
         inflater.inflate(R.menu.activity_main_card_actions, popup.getMenu());
         if (mActivity instanceof MainActivity) {
 
-            if (((MainActivity) mActivity).isMechanic && job.getStatus() == JobStatus.SUBMITTED) { // if is mechanic show the send quote option
+            if (((MainActivity) mActivity).isMechanic) { // if is mechanic show the send quote option
                 popup.getMenu().getItem(0).setVisible(false); // delete job
                 popup.getMenu().getItem(1).setVisible(false); // edit job
                 popup.getMenu().getItem(2).setVisible(true); // send quote

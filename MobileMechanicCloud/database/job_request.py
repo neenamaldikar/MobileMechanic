@@ -27,7 +27,7 @@ class JobRequestDAO:
                     return job_model.JobRequest(user_id, job_id, cursor['make'], cursor['model'], cursor['year'],
                                                 cursor['options'], cursor['summary'], cursor['description'],
                                                 cursor['images'], cursor['status'], cursor['address_line'],
-                                                cursor['city'], cursor['state'], cursor['zipcode'])
+                                                cursor['city'], cursor['state'], cursor['zipcode'], cursor['number_of_quotes'])
             if user_id:
                 cursor = self.db.jobs.find({'user_id': user_id})
 
@@ -46,7 +46,7 @@ class JobRequestDAO:
                 output_list.append(job_model.JobRequest(i['user_id'], i['job_id'], i['make'], i['model'], i['year'],
                                                         i['options'], i['summary'], i['description'],
                                                         i['images'], i['status'], i['address_line'], i['city'],
-                                                        i['state'], i['zipcode']))
+                                                        i['state'], i['zipcode'], i['number_of_quotes']))
             return output_list
         except:
             logging.debug('Exception in find request')
@@ -70,8 +70,8 @@ class JobRequestDAO:
                                               'description': description, 'images': [],
                                               'status': status, 'address_line': address_line,
                                               'city': city, 'state': state, 'zipcode': zipcode,
-                                              'number_of_quotes':0})
-            return (result.acknowledged, unique_job_id)
+                                              'number_of_quotes': 0})
+            return result.acknowledged, unique_job_id
         except:
             return False
 
