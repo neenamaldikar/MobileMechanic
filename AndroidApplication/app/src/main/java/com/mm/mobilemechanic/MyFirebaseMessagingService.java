@@ -28,15 +28,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d("debugMessage", "The received message handle was called ...");
             Log.d("currentMessage", "Message data payload: " + remoteMessage.getData());
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
+//            if (/* Check if data needs to be processed by long running job */ true) {
+//                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
 //                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
+//            } else {
+//                // Handle message within 10 seconds
 //                handleNow();
-            }
-
+//            }
         }
 
         // Check if message contains a notification payload.
@@ -50,6 +48,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
 
+    /**
+     * Function is called when the app is open
+     * This function will then handle the fcm notification and create a specific version of the notification tab
+     * @param messageBody The String body from the fcm notification
+     */
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -33,10 +33,6 @@ public class MechanicRepository {
         Log.i(TAG, userId + "  " + authToken);
         final MutableLiveData<Mechanic> data = new MutableLiveData<>();
 
-
-        // Facebook request to get user info
-
-
         RestClient.getMechanic(userId, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
