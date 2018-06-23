@@ -63,7 +63,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
 
         if (job.getImages().length != 0) {
             if (mActivity instanceof MainActivity) {
-                ((MainActivity) mActivity).downloadImage(job.getJob_id(), job.getImages()[0], imageView);
+                ((MainActivity) mActivity).downloadImage(job.getJobId(), job.getImages()[0], imageView);
             }
         }
         dialog.show();
@@ -142,11 +142,14 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
             if (((MainActivity) mActivity).isMechanic) { // if is mechanic show the send quote option
                 popup.getMenu().getItem(0).setVisible(false); // delete job
                 popup.getMenu().getItem(1).setVisible(false); // edit job
-                popup.getMenu().getItem(2).setVisible(true); // send quote
+                popup.getMenu().getItem(2).setVisible(true); // view quote
+                popup.getMenu().getItem(3).setVisible(true); // send quote
             } else {
                 popup.getMenu().getItem(0).setVisible(true);
                 popup.getMenu().getItem(1).setVisible(true);
-                popup.getMenu().getItem(2).setVisible(false);
+                popup.getMenu().getItem(2).setVisible(true);
+                popup.getMenu().getItem(3).setVisible(false); // send quote
+
             }
         }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -156,20 +159,22 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
                         if (mActivity instanceof MainActivity) {
                             ((MainActivity) mActivity).editJobOnClick(view, job);
                         }
-
                         return true;
                     case R.id.menu_card_delete:
                         if (mActivity instanceof MainActivity) {
-                            ((MainActivity) mActivity).deleteJob(job.getJob_id(), position);
+                            ((MainActivity) mActivity).deleteJob(job.getJobId(), position);
                         }
                         return true;
-
+                    case R.id.menue_card_viewquote:
+                        if (mActivity instanceof MainActivity) {
+                            ((MainActivity) mActivity).viewAllQuotes(job.getUserId(), job.getJobId());
+                        }
+                        return true;
                     case R.id.menu_card_sendquote:
                         if (mActivity instanceof MainActivity) {
-                            ((MainActivity) mActivity).submitJobQuote(job.getUser_id(), job.getJob_id());
+                            ((MainActivity) mActivity).submitJobQuote(job.getUserId(), job.getJobId());
                         }
                         return true;
-
 
                     default:
                         return false;

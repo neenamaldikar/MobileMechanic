@@ -22,4 +22,5 @@
     <string name="test_rest_client_name">Test Rest Client</string>
 
     <string name="title_activity_job_quote">Submit Job Quote</string>
+    <string name="title_activity_view_quote">Available Quotes</string>
 </resources>

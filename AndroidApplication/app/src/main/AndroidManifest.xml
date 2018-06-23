@@ -59,6 +59,10 @@
         <activity
             android:name=".MechSubmitQuoteActivity"
             android:label="@string/title_activity_job_quote" />
+        <activity
+            android:name=".ViewQuotesActivity"
+            android:label="@string/title_activity_view_quote" />
+
 
         <!-- [START firebase_service] -->
         <service android:name=".MyFirebaseInstanceIdService">

@@ -1,8 +1,6 @@
 package com.mm.mobilemechanic;
 
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.internal.NavigationMenu;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +22,6 @@ import com.mm.mobilemechanic.authorization.RestClient;
 import com.mm.mobilemechanic.models.jobQuote.ItemCostAdapter;
 import com.mm.mobilemechanic.models.jobQuote.JobQuote;
 import com.mm.mobilemechanic.models.jobQuote.ListViewItem;
-import com.mm.mobilemechanic.util.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +40,8 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
 
     private String TAG = "SubmitQuote";
 
-    private String customer_id;
-    private String job_id;
+    private String customerId;
+    private String jobId;
     private String JWTtoken;
 
     private final ArrayList<ListViewItem> laborCostArray = new ArrayList<>();
@@ -97,7 +94,7 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
 
         Log.w(TAG, quoteJson.toString());
 
-        RestClient.createQuote(JWTtoken, customer_id, job_id, quoteJson.toString(), new Callback() {
+        RestClient.createQuote(JWTtoken, customerId, jobId, quoteJson.toString(), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
@@ -299,8 +296,8 @@ public class MechSubmitQuoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jobquote);
 
-        customer_id = Objects.requireNonNull(getIntent().getExtras()).getString("customer_id");
-        job_id = Objects.requireNonNull(getIntent().getExtras()).getString("job_id");
+        customerId = Objects.requireNonNull(getIntent().getExtras()).getString("customerId");
+        jobId = Objects.requireNonNull(getIntent().getExtras()).getString("jobId");
         JWTtoken = Objects.requireNonNull(getIntent().getExtras()).getString("JWT");
 
         Objects.requireNonNull(this.getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);

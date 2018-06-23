@@ -67,17 +67,17 @@ public class Job implements Serializable {
         this.status = status;
     }
 
-    public String getJob_id() {
+    public String getJobId() {
         return job_id;
     }
-    public void setJob_id(String job_id) {
+    public void setJobId(String job_id) {
         this.job_id = job_id;
     }
 
-    public String getUser_id() {
+    public String getUserId() {
         return user_id;
     }
-    public void setUser_id(String user_id) {
+    public void setUserId(String user_id) {
         this.user_id = user_id;
     }
 

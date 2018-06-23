@@ -21,6 +21,15 @@ import java.util.Hashtable;
  */
 
 public class JobQuote {
+    @SerializedName("quote_id")
+    private String quoteId;
+
+    @SerializedName("job_id")
+    private String jobId;
+
+    @SerializedName("user_id")
+    private String userId;
+
     @SerializedName("comments")
     private String comments;
 
@@ -54,6 +63,13 @@ public class JobQuote {
             partsCostMap.put(temp.itemName, temp.itemCost);
         }
     }
+
+
+    public String getQuoteId() {
+        return quoteId;
+    }
+
+
 
 
 }

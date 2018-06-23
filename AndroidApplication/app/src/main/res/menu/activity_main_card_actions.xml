@@ -15,6 +15,11 @@
         app:showAsAction="" />
 
     <item
+        android:id="@+id/menue_card_viewquote"
+        android:orderInCategory="100"
+        android:title="View Quote"
+        app:showAsAction="" />
+    <item
         android:id="@+id/menu_card_sendquote"
         android:orderInCategory="100"
         android:title="Send Quote"

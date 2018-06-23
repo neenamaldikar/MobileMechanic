@@ -418,11 +418,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    public void submitJobQuote(String customer_id, String job_id) {
+    public void submitJobQuote(String customerId, String jobId) {
         Intent intent = new Intent(getApplicationContext(), MechSubmitQuoteActivity.class);
         Bundle b = new Bundle();
-        b.putString("customer_id", customer_id);
-        b.putString("job_id", job_id);
+        b.putString("customerId", customerId);
+        b.putString("jobId", jobId);
+        b.putString("JWT", mJWTtoken);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
+
+
+    public void viewAllQuotes(String customerId, String jobId) {
+        Intent intent = new Intent(getApplicationContext(), ViewQuotesActivity.class);
+        Bundle b = new Bundle();
+        b.putString("customerId", customerId);
+        b.putString("jobId", jobId);
         b.putString("JWT", mJWTtoken);
         intent.putExtras(b);
         startActivity(intent);

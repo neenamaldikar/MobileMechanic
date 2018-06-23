@@ -191,7 +191,7 @@ public class JobFormActivity extends AppCompatActivity {
             mJob.setState(mEditTextJobState.getText().toString());
             mJob.setZipCode(mEditTextJobZipCode.getText().toString());
 
-            if (mJob.getJob_id() == null) {
+            if (mJob.getJobId() == null) {
                 String jobPayload = createJsonFromFields(mJob);
 
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
@@ -204,7 +204,7 @@ public class JobFormActivity extends AppCompatActivity {
                 String jobPayload = updateJsonFromFields(mJob);
 
                 Intent resultIntent = new Intent(getApplicationContext(), JobAddImagesActivity.class);
-                resultIntent.putExtra("jobId", mJob.getJob_id());
+                resultIntent.putExtra("jobId", mJob.getJobId());
                 resultIntent.putExtra("jobPayload", jobPayload);
                 resultIntent.putExtra("JWT", mJWToken);
                 resultIntent.putExtra("newJobFlag", false);

@@ -25,8 +25,8 @@ public class RestClient {
     private static OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType form_data = MediaType.parse("multipart/form-data; charset=utf-8");
-    private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
-    //private static String URL_BASE = "http://192.168.86.49:5000";
+    //private static String URL_BASE ="http://mobilemechanic.herokuapp.com";
+    private static String URL_BASE = "http://192.168.86.49:5000";
     private static String URI_AUTH= "/mobilemechanic/api/v1.0/auth";
     private static String URI_USER = "/mobilemechanic/api/v1.0/users/";
     private static String URI_JOB = "/jobs";
@@ -124,7 +124,6 @@ public class RestClient {
                 .build();
         client.newCall(request).enqueue(responseCallback);
         Log.d("mainActivityLog", "DELETE call is now made ...");
-
     }
 
 
@@ -150,16 +149,6 @@ public class RestClient {
         RestClient.PUT(url, authToken, json, responseCallback);
     }
 
-    public static void createJob(String userId, String json, String authToken, Callback responseCallback) {
-        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
-        RestClient.POST(url, authToken, json, responseCallback);
-    }
-
-    public static void addJobImage(String userId, String jobId, File imgFile, String authToken, Callback responseCallback) {
-        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB + "/" + jobId + URI_PICTURE;
-        RestClient.POSTMULTIPART(url, authToken, imgFile, responseCallback);
-    }
-
     public static void getUserJobs(String userId, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
         RestClient.GET(url, authToken, responseCallback);
@@ -176,6 +165,17 @@ public class RestClient {
         RestClient.GET(url, authToken, responseCallback);
     }
 
+    ////////////////////
+    public static void createJob(String userId, String json, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB;
+        RestClient.POST(url, authToken, json, responseCallback);
+    }
+
+    public static void addJobImage(String userId, String jobId, File imgFile, String authToken, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB + "/" + jobId + URI_PICTURE;
+        RestClient.POSTMULTIPART(url, authToken, imgFile, responseCallback);
+    }
+
     public static void getJobImage(String userId, String authToken, String jobId, String pictureId , Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB + "/"+jobId + URI_PICTURE + "?picture_id=" +pictureId;
         RestClient.GETMULTIPART(url, authToken, responseCallback);
@@ -190,19 +190,37 @@ public class RestClient {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_JOB+"?job_id="+jobId;
         RestClient.DELETE(url, authToken, responseCallback);
     }
-
+    ////////////////////
     public static void createToken(String userId, String json, String authToken, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + userId + URI_TOKEN;
         Log.d("mainActivityLog", "Create token function is called ... " + url);
         RestClient.POST(url, authToken, json, responseCallback);
     }
-
-
+    ////////////////////
     public static void createQuote(String authToken, String customerId, String jobId, String json, Callback responseCallback) {
         String url = RestClient.URL_BASE + URI_USER + customerId + URI_JOB + "/" + jobId + URI_QUOTE;
         Log.w("mainActivityLog", "Create new quote called " + url);
         RestClient.POST(url, authToken, json, responseCallback);
     }
+
+    public static void getAllQuotes(String authToken, String customerId, String jobId, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + customerId + URI_JOB + "/" + jobId + URI_QUOTE;
+        Log.w("mainActivityLog", "Get all quotes" + url);
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
+    public static void getSingleQuote(String authToken, String customerId, String jobId, String quoteId, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + customerId + URI_JOB + "/" + jobId + URI_QUOTE + "?picture_id=" + quoteId;
+        Log.w("mainActivityLog", "Get single quote " + url);
+        RestClient.GET(url, authToken, responseCallback);
+    }
+
+    public static void deletetAllQuotes(String authToken, String customerId, String jobId, Callback responseCallback) {
+        String url = RestClient.URL_BASE + URI_USER + customerId + URI_JOB + "/" + jobId + URI_QUOTE;
+        Log.w("mainActivityLog", "Get all quotes" + url);
+        RestClient.DELETE(url, authToken, responseCallback);
+    }
+
 
 }
 

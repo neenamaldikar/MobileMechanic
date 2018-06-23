@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.facebook.Profile;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -486,7 +485,7 @@ public class JobAddImagesActivity extends AppCompatActivity {
         String jobJson = obj2.get("updated_values").toString();
 
         Job job = new Gson().fromJson(jobJson, Job.class);
-        RestClient.updateJob(userId, job.getJob_id(), json, authToken, new Callback() {
+        RestClient.updateJob(userId, job.getJobId(), json, authToken, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // TODO on failure what happens
