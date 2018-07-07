@@ -62,6 +62,8 @@
         <activity
             android:name=".ViewQuotesActivity"
             android:label="@string/title_activity_view_quote" />
+        <activity android:name=".DisplayJobQuoteActivity"
+            android:label="Quote" />
 
 
         <!-- [START firebase_service] -->

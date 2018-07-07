@@ -40,7 +40,7 @@ public class JobQuote {
     private Hashtable<String, Double> partsCostMap;
 
     @SerializedName("onsite_service_charges")
-    double onSiteServiceCharge;
+    private double onSiteServiceCharge;
 
     public JobQuote(ArrayList<ListViewItem> laborCostArray, ArrayList<ListViewItem> partsCostArray, double onSiteServiceCharge, String comments) {
         laborCostMap = new Hashtable<>();
@@ -64,12 +64,21 @@ public class JobQuote {
         }
     }
 
-
     public String getQuoteId() {
         return quoteId;
     }
 
+    public Hashtable<String, Double> getLaborCostMap() {
+        return laborCostMap;
+    }
+    public Hashtable<String, Double> getPartsCostMap() {
+        return partsCostMap;
+    }
 
-
-
+    public double getOnSiteServiceCharge() {
+        return onSiteServiceCharge;
+    }
+    public String getComments() {
+        return comments;
+    }
 }

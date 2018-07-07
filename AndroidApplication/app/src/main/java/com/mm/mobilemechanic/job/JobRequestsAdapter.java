@@ -142,7 +142,7 @@ public class JobRequestsAdapter extends RecyclerView.Adapter<JobRequestsAdapter.
             if (((MainActivity) mActivity).isMechanic) { // if is mechanic show the send quote option
                 popup.getMenu().getItem(0).setVisible(false); // delete job
                 popup.getMenu().getItem(1).setVisible(false); // edit job
-                popup.getMenu().getItem(2).setVisible(true); // view quote
+                popup.getMenu().getItem(2).setVisible(false); // view quote
                 popup.getMenu().getItem(3).setVisible(true); // send quote
             } else {
                 popup.getMenu().getItem(0).setVisible(true);

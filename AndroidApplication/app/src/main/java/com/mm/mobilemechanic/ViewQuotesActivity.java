@@ -1,5 +1,6 @@
 package com.mm.mobilemechanic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -58,7 +59,8 @@ public class ViewQuotesActivity extends AppCompatActivity {
 
 
     public void populateView() {
-        LinearLayout ll_available_quotes=(LinearLayout) findViewById(R.id.ll_available_quotes);
+        LinearLayout ll_available_quotes = (LinearLayout) findViewById(R.id.ll_available_quotes);
+        ll_available_quotes.removeAllViews();
         LayoutInflater ll_inflater = LayoutInflater.from(this);
         for (int i = 0; i < quotesLists.size(); i++) {
             final Button button_viewQuote = new Button(this);
@@ -69,6 +71,12 @@ public class ViewQuotesActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     JobQuote quote = quotesLists.get(index);
                     showToast(quote.getQuoteId());
+
+                    Intent intent = new Intent(getApplicationContext(), DisplayJobQuoteActivity.class);
+                    Gson gson = new Gson();
+                    String str = gson.toJson(quote);
+                    intent.putExtra("quote", str);
+                    startActivity(intent);
                 }
             });
 
@@ -135,14 +143,12 @@ public class ViewQuotesActivity extends AppCompatActivity {
         customerId = getIntent().getExtras().getString("customerId");
         jobId = getIntent().getExtras().getString("jobId");
 
-
-        quotesLists = new ArrayList<JobQuote>();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        quotesLists = new ArrayList<JobQuote>();
         getQuotes();
     }
 }
